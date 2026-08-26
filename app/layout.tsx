@@ -5,6 +5,8 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Providers from '@/components/Providers';
 import SVGSymbols from '@/components/SVGSymbols';
+import Banner from '@/components/Banner';
+import { getActiveBanner } from '@/lib/banner';
 
 export const viewport: Viewport = {
     themeColor: [
@@ -44,6 +46,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const banner = getActiveBanner();
+
     return (
         <html lang="de" suppressHydrationWarning>
             <head></head>
@@ -52,6 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Providers>
                     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-700">
                         <Navbar />
+                        <Banner banner={banner} />
                         <LayoutBody>{children}</LayoutBody>
                         <Footer />
                     </div>

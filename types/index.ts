@@ -1,6 +1,16 @@
 import { Photo } from 'react-photo-album';
 import { Icons } from '@/lib/icons';
 
+export interface BannerConfig {
+    id: string;
+    text: string;
+    link: string;
+    until: string;
+    badge?: string;
+    variant?: 'amber' | 'blue' | 'green' | 'red' | string;
+    dismissible?: boolean;
+}
+
 export interface PostMetadata {
     title: string;
     date: string;
@@ -13,6 +23,15 @@ export interface PostMetadata {
         height: number;
     };
     desc: string;
+    banner?: {
+        enabled?: boolean;
+        until: string;
+        text?: string;
+        badge?: string;
+        link?: string;
+        variant?: 'amber' | 'blue' | 'green' | 'red' | string;
+        dismissible?: boolean;
+    };
 }
 
 export interface ArcostData {

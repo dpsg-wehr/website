@@ -2,6 +2,7 @@ import fs from 'fs';
 import matter from 'gray-matter';
 import { PostMetadata } from '@/types';
 import imageSize from 'image-size';
+import { normalizeBannerUntil } from '@/lib/date';
 
 export default function getPostMetadata(): PostMetadata[] {
     const folder = 'content/posts/';
@@ -25,6 +26,36 @@ export default function getPostMetadata(): PostMetadata[] {
             }
         }
 
+        let banner = undefined;
+        if (matterResult.data.banner) {
+            const b = matterResult.data.banner;
+            const normalizedUntil = normalizeBannerUntil(b.until);
+            if (normalizedUntil) {
+                banner = {
+                    enabled: b.enabled !== false,
+                    until: normalizedUntil,
+                    text: b.text,
+                    badge: b.badge,
+                    link: b.link,
+                    variant: b.variant,
+                    dismissible: b.dismissible !== false,
+                };
+            }
+        } else if (matterResult.data.bannerUntil) {
+            const normalizedUntil = normalizeBannerUntil(matterResult.data.bannerUntil);
+            if (normalizedUntil) {
+                banner = {
+                    enabled: true,
+                    until: normalizedUntil,
+                    text: matterResult.data.bannerText,
+                    badge: matterResult.data.bannerBadge,
+                    link: matterResult.data.bannerLink,
+                    variant: matterResult.data.bannerVariant,
+                    dismissible: matterResult.data.bannerDismissible !== false,
+                };
+            }
+        }
+
         return {
             title: matterResult.data.title,
             date: matterResult.data.date,
@@ -41,6 +72,7 @@ export default function getPostMetadata(): PostMetadata[] {
                 height: imgSize?.height ? imgSize.height : 0,
             },
             desc: matterResult.data.desc,
+            banner: banner,
         };
     });
 
