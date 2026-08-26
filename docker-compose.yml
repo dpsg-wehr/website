@@ -2,7 +2,7 @@ name: dpsg-wehr
 
 services:
     website:
-        image: ghcr.io/linus-f/website-dpsg-wehr:latest
+        image: dpsg-wehr:latest
         restart: unless-stopped
         deploy:
             mode: replicated
@@ -33,7 +33,7 @@ services:
             - 'traefik.http.services.dpsg-website.loadbalancer.server.port=80'
 
     website-dev:
-        image: ghcr.io/linus-f/website-dpsg-wehr:dev
+        image: dpsg-wehr:dev
         restart: unless-stopped
         deploy:
             mode: replicated
@@ -64,21 +64,6 @@ services:
             - 'traefik.http.routers.dpsg-website-dev-secure.middlewares=${AUTHENTIK_MIDDLEWARE:-authentik@docker}'
             # Service Port
             - 'traefik.http.services.dpsg-website-dev.loadbalancer.server.port=80'
-
-    webhook:
-        build:
-            context: .
-            dockerfile: scripts/Dockerfile.webhook
-        container_name: webhook
-        command: -hooks=/etc/webhook/hooks.json -verbose
-        volumes:
-            - ./scripts/hooks.json:/etc/webhook/hooks.json
-            - ./scripts/vps-deploy.sh:/var/scripts/vps-deploy.sh
-            - /var/run/docker.sock:/var/run/docker.sock
-            - .:/app
-        ports:
-            - '9000:9000'
-        restart: unless-stopped
 
 networks:
     proxy:

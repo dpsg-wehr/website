@@ -44,8 +44,12 @@ This is the source code for the "DPSG Wehr" website, built with **Next.js 16** (
 
 ## Release & Deployment Workflow
 
-1. **Release Workflow (`release.yml`):** Triggered on push to `main`, bumps version and creates a tag via Semantic Release, then back-merges into `dev`.
-2. **Docker Build Workflow (`docker.yml`):**
-    - **Production (main release):** Triggered on release, builds static website, optimizes images, packages into `nginx:alpine` image with semver & `latest` tags, pushes to GHCR, and calls the webhook for `website`.
-    - **Dev / Staging (push to dev):** Triggered on push to `dev`, builds static website, packages image with `dev` tags, pushes to GHCR, and calls the webhook for `website-dev`.
-3. **VPS Deployment (`vps-deploy.sh`):** Triggered via webhook, pulls the latest production or dev image and updates the respective container (`website` or `website-dev`). `website-dev` is routed via Traefik behind Authentik forward-auth middleware.
+1. **CI/CD with Forgejo Actions (`.forgejo/workflows/deploy.yaml`):**
+    - Triggered on push to `main` or `dev`.
+    - Builds static website and optimizes images with `next-image-export-optimizer`.
+    - Packages into lightweight `nginx:alpine` image (`Dockerfile.static`).
+    - Streams Docker image directly to the VPS over Tailscale SSH (`docker save | ssh docker load`) and runs `docker compose up -d` with rolling updates.
+2. **VPS Minimal Deployment:**
+    - VPS only maintains `docker-compose.yml`, `.env`, and `public/generated`.
+    - `website` serves production (`dpsg-wehr.de`).
+    - `website-dev` serves dev preview (`dev.dpsg-wehr.de`) routed via Traefik behind Authentik forward-auth middleware.
