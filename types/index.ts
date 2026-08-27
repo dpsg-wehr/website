@@ -7,7 +7,7 @@ export interface BannerConfig {
     link: string;
     until: string;
     badge?: string;
-    variant?: 'amber' | 'blue' | 'green' | 'red' | string;
+    variant?: 'amber' | 'blue' | 'green' | 'red' | (string & {});
     dismissible?: boolean;
 }
 
@@ -29,12 +29,12 @@ export interface PostMetadata {
         text?: string;
         badge?: string;
         link?: string;
-        variant?: 'amber' | 'blue' | 'green' | 'red' | string;
+        variant?: 'amber' | 'blue' | 'green' | 'red' | (string & {});
         dismissible?: boolean;
     };
 }
 
-export interface ArcostData {
+export interface AcrostichonData {
     left: string;
     middle: string;
     right: string;

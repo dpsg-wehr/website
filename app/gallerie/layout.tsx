@@ -1,13 +1,13 @@
-import { getPhotos } from '@/lib/photos';
-import PhotoAlbumWrapper from '@/components/PhotoAlbumWrapper';
-import Img from '@/components/Img';
+import { getPhotos } from '@/lib/content/photos';
+import PhotoAlbumWrapper from '@/components/gallery/PhotoAlbumWrapper';
+import Img from '@/components/mdx/Img';
 import InstagramProfile from '@/public/media/images/profilbild_insta.jpg';
 
 import { IoLogoInstagram as Instagram } from 'react-icons/io5';
 import Link from 'next/link';
 
-export default async function GalleryLayout({ children }: { children: React.ReactNode }) {
-    const photos = await getPhotos();
+export default function GalleryLayout({ children }: { children: React.ReactNode }) {
+    const photos = getPhotos();
 
     return (
         <>

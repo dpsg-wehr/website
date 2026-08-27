@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import LayoutBody from '@/components/LayoutBody';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import Providers from '@/components/Providers';
-import SVGSymbols from '@/components/SVGSymbols';
-import Banner from '@/components/Banner';
-import { getActiveBanner } from '@/lib/banner';
+import LayoutBody from '@/components/layout/LayoutBody';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
+import Providers from '@/components/providers/Providers';
+import Banner from '@/components/layout/Banner';
+import { getActiveBanner } from '@/lib/content/banner';
 
 export const viewport: Viewport = {
     themeColor: [
@@ -52,7 +51,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <html lang="de" suppressHydrationWarning>
             <head></head>
             <body className={`antialiased prose-headings:break-words prose-headings:hyphens-auto`}>
-                <SVGSymbols />
                 <Providers>
                     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-700">
                         <Navbar />

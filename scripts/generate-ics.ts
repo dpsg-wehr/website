@@ -1,8 +1,8 @@
 import * as ics from 'ics';
 import * as fs from 'fs';
 import * as path from 'path';
-import { publicEvents } from '../lib/events.public';
-import { internalEvents } from '../lib/events.internal.example'; // We use example here as we don't have the real one
+import publicEvents from '../content/events/public.json';
+import internalEvents from '../content/events/internal.example.json'; // We use example here as we don't have the real one
 import { AppEvent } from '../types';
 
 // This script generates ICS files from the events defined in the codebase.
@@ -109,7 +109,7 @@ function generateIcs(events: AppEvent[], filename: string) {
     }
 }
 
-export function generateAll() {
+export async function generateAll() {
     // Ensure the directory exists
     const publicDir = path.join(process.cwd(), 'public');
     if (!fs.existsSync(publicDir)) {
@@ -126,18 +126,26 @@ export function generateAll() {
         : 'internal-events.ics';
 
     // Try to generate internal events if the file exists
-    const internalEventsPath = path.join(process.cwd(), 'lib/events.internal.ts');
-    if (fs.existsSync(internalEventsPath)) {
-        console.log('Found internal events file.');
-        // Use a dynamic import with a variable to prevent Vite from trying to resolve it at build time
+    const internalJsonPath = path.join(process.cwd(), 'content/events/internal.json');
+    const legacyInternalEventsPath = path.join(process.cwd(), 'lib/events.internal.ts');
+    if (fs.existsSync(internalJsonPath)) {
+        console.log('Found internal events JSON file.');
+        try {
+            const raw = fs.readFileSync(internalJsonPath, 'utf8');
+            const data = JSON.parse(raw);
+            generateIcs(data, internalFilename);
+        } catch (err) {
+            console.error('Error loading internal events JSON:', err);
+        }
+    } else if (fs.existsSync(legacyInternalEventsPath)) {
+        console.log('Found internal events TS file.');
         const modulePath = '../lib/events.internal';
-        import(modulePath)
-            .then((m) => {
-                generateIcs(m.internalEvents, internalFilename);
-            })
-            .catch((err) => {
-                console.error('Error loading internal events:', err);
-            });
+        try {
+            const m = await import(modulePath);
+            generateIcs(m.internalEvents, internalFilename);
+        } catch (err) {
+            console.error('Error loading internal events:', err);
+        }
     } else {
         console.log('No internal events file found, using example.');
         generateIcs(internalEvents, internalFilename);
@@ -147,5 +155,5 @@ export function generateAll() {
 // Only run if the script is executed directly
 const isMain = process.argv[1]?.endsWith('generate-ics.ts');
 if (isMain) {
-    generateAll();
+    generateAll().catch((err) => console.error(err));
 }

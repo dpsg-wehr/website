@@ -1,8 +1,0 @@
-# Use Alpine as base to ensure we have a shell and package manager
-FROM alpine:latest
-
-# Install webhook, docker-cli, docker-cli-compose, and git
-RUN apk add --no-cache webhook docker-cli docker-cli-compose git
-
-# The webhook binary in Alpine is located at /usr/bin/webhook
-ENTRYPOINT ["/usr/bin/webhook"]

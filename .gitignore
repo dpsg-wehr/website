@@ -40,7 +40,7 @@ next-env.d.ts
 
 # next image optimizer
 **/nextImageExportOptimizer/
-/public/images/next-image-export-optimizer-hashes.json
+/public/media/images/next-image-export-optimizer-hashes.json
 
 .idea
 
@@ -51,7 +51,4 @@ public/internal-events.ics
 # internal events
 lib/events.internal.ts
 public/search-index.json
-node_modules
 .env
-.htpasswd
-

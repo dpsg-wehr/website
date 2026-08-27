@@ -1,11 +1,11 @@
 import type { MDXComponents } from 'mdx/types';
-import MDXImage from './components/MDXImage';
-import Img from './components/Img';
-import Acrostichon from './components/Acrostichon';
-import GroupOverview from './components/GroupOverview';
-import Calendar from './components/DynamicCalendar';
-import Download from './components/Download';
-import RecentPosts from './components/RecentPosts';
+import MDXImage from '@/components/mdx/MDXImage';
+import Img from '@/components/mdx/Img';
+import Acrostichon from '@/components/mdx/Acrostichon';
+import GroupOverview from '@/components/mdx/GroupOverview';
+import Calendar from '@/components/mdx/DynamicCalendar';
+import Download from '@/components/mdx/Download';
+import RecentPosts from '@/components/posts/RecentPosts';
 
 export const mdxComponents: MDXComponents = {
     img: (props) => <MDXImage {...props} />,

@@ -1,9 +1,8 @@
 # Website der DPSG Wehr
 
-[![Tests](https://github.com/Linus-f/website-dpsg-wehr/actions/workflows/tests.yml/badge.svg)](https://github.com/Linus-f/website-dpsg-wehr/actions/workflows/tests.yml)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
 
-Hier findet ihr den Quellcode zu unserer Homepage. Die Website wurde mit [Next.js](https://nextjs.org) entwickelt und wird komplett statisch generiert. Die fertig generierte Website liegt in einem anderen [Repository](https://github.com/Linus-f/website-dpsg-wehr-static).
+Hier findet ihr den Quellcode zu unserer Homepage. Die Website wurde mit [Next.js](https://nextjs.org) entwickelt und wird komplett statisch generiert.
 
 ## Entwicklung
 

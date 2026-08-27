@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { publicEvents } from '../lib/events.public';
+import publicEvents from '../content/events/public.json';
 
 test.describe('Calendar', () => {
     test.use({
