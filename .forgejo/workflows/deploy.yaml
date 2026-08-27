@@ -16,18 +16,31 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: 🟢 Setup Node.js 22
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 22
-
             - name: 📦 Setup pnpm
               uses: pnpm/action-setup@v4
               with:
                   version: 10
 
+            - name: 🟢 Setup Node.js 22
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'pnpm'
+
             - name: 🧩 Install Dependencies
               run: pnpm install --frozen-lockfile
+
+            - name: ⚡ Cache Next.js & Image Optimizer
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      .next/cache
+                      public/media/images/nextImageExportOptimizer
+                      public/media/images/next-image-export-optimizer-hashes.json
+                  key: ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**') }}-
+                      ${{ runner.os }}-build-cache-
 
             - name: 🏗️ Build Static Site & Optimize
               env:
