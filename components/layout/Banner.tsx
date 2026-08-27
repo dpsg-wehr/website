@@ -93,6 +93,7 @@ export default function Banner({ banner }: { banner: BannerConfig | null }) {
 
     return (
         <aside
+            data-nosnippet
             aria-label="Aktueller Hinweis"
             className={`relative z-40 transition-colors ${styles.aside}`}
         >

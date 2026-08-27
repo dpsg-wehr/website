@@ -84,7 +84,10 @@ export default function Navbar() {
     });
 
     return (
-        <header className="h-[72px] px-4 shadow-md sticky top-0 z-50 dark:bg-gray-700 bg-gray-50">
+        <header
+            data-nosnippet
+            className="h-[72px] px-4 shadow-md sticky top-0 z-50 dark:bg-gray-700 bg-gray-50"
+        >
             <div className="h-full flex justify-between items-center max-w-6xl mx-auto">
                 <div className="flex items-center gap-2 md:gap-4">
                     <NavbarClient />

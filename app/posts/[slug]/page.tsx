@@ -26,7 +26,7 @@ export async function generateMetadata({
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const { data, content } = matter(fileContents);
 
-    const description = getExcerpt(content);
+    const description = (data.desc || data.description || getExcerpt(content)) as string;
     const postMetadata = getPostMetadata();
     const metadata = postMetadata.find((post) => post.slug === slug);
 

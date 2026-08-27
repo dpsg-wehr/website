@@ -187,7 +187,7 @@ export default function Footer() {
     }
 
     return (
-        <footer className="bg-gray-800 pb-2 mt-14">
+        <footer data-nosnippet className="bg-gray-800 pb-2 mt-14">
             <div className="max-w-sm sm:max-w-4xl px-3 flex flex-col justify-center mx-auto my-0">
                 <FooterMain columns={columns} />
                 <SocialMedia facebook={social.facebook} instagram={social.instagram} />

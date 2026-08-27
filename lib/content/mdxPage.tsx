@@ -28,7 +28,7 @@ export async function getMdxPageMetadata(
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const { data, content } = matter(fileContents);
 
-    const description = getExcerpt(content);
+    const description = (data.description || data.desc || getExcerpt(content)) as string;
 
     return {
         title: `${data.title} - DPSG Wehr`,
