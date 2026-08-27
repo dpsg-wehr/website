@@ -54,3 +54,8 @@ declare module '@/content/global/index.json' {
     const value: GlobalData;
     export default value;
 }
+
+declare module '@/public/*' {
+    const content: import('next/image').StaticImageData;
+    export default content;
+}
