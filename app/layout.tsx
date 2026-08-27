@@ -47,9 +47,40 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     const banner = getActiveBanner();
 
+    const organizationJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'NGO',
+        name: 'DPSG Stamm St. Bernhard Wehr',
+        alternateName: ['Pfadfinder Wehr', 'DPSG Wehr', 'DPSG Stamm Wehr'],
+        url: 'https://dpsg-wehr.de',
+        logo: 'https://dpsg-wehr.de/media/images/logo.png',
+        sameAs: [
+            'https://de-de.facebook.com/dpsgwehr/',
+            'https://www.instagram.com/pfadfinder_wehr/',
+            'https://github.com/Linus-f/website-dpsg-wehr',
+        ],
+        address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'Kirchplatz 1',
+            addressLocality: 'Wehr',
+            postalCode: '79664',
+            addressCountry: 'DE',
+        },
+        parentOrganization: {
+            '@type': 'NGO',
+            name: 'Deutsche Pfadfinderschaft Sankt Georg (DPSG)',
+            url: 'https://dpsg.de',
+        },
+    };
+
     return (
         <html lang="de" suppressHydrationWarning>
-            <head></head>
+            <head>
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+                />
+            </head>
             <body className={`antialiased prose-headings:break-words prose-headings:hyphens-auto`}>
                 <Providers>
                     <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-700">

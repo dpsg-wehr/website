@@ -82,20 +82,72 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     const postMetadata = getPostMetadata();
     const filePath = path.join(process.cwd(), 'content/posts', `${slug}.mdx`);
     const fileContents = fs.readFileSync(filePath, 'utf8');
-    const { content } = matter(fileContents);
+    const { data, content } = matter(fileContents);
+
+    const eventJsonLd = data.event
+        ? {
+              '@context': 'https://schema.org',
+              '@type': 'Event',
+              name: data.event.name || data.title,
+              description: (data.desc || data.description || getExcerpt(content)) as string,
+              startDate: data.event.startDate,
+              endDate: data.event.endDate,
+              eventAttendanceMode:
+                  data.event.eventAttendanceMode || 'https://schema.org/OfflineEventAttendanceMode',
+              eventStatus: data.event.eventStatus || 'https://schema.org/EventScheduled',
+              location: data.event.location
+                  ? {
+                        '@type': 'Place',
+                        name: data.event.location.name,
+                        description: data.event.location.description,
+                        hasMap: data.event.location.hasMap,
+                        geo: data.event.location.geo
+                            ? {
+                                  '@type': 'GeoCoordinates',
+                                  latitude: data.event.location.geo.latitude,
+                                  longitude: data.event.location.geo.longitude,
+                              }
+                            : undefined,
+                        address: data.event.location.address
+                            ? {
+                                  '@type': 'PostalAddress',
+                                  ...data.event.location.address,
+                              }
+                            : undefined,
+                    }
+                  : undefined,
+              image: data.image
+                  ? [`https://dpsg-wehr.de${data.image}`]
+                  : ['https://dpsg-wehr.de/media/images/logo.png'],
+              isAccessibleForFree: data.event.isAccessibleForFree ?? true,
+              organizer: {
+                  '@type': 'NGO',
+                  name: 'DPSG Stamm St. Bernhard Wehr',
+                  url: 'https://dpsg-wehr.de',
+              },
+          }
+        : null;
 
     return (
-        <Post postMetadata={postMetadata} slug={slug}>
-            <MDXRemote
-                source={content}
-                components={mdxComponents}
-                options={{
-                    blockJS: false,
-                    mdxOptions: {
-                        rehypePlugins: [[rehypeImgSize as never, { dir: 'public' }]],
-                    },
-                }}
-            />
-        </Post>
+        <>
+            {eventJsonLd && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
+                />
+            )}
+            <Post postMetadata={postMetadata} slug={slug}>
+                <MDXRemote
+                    source={content}
+                    components={mdxComponents}
+                    options={{
+                        blockJS: false,
+                        mdxOptions: {
+                            rehypePlugins: [[rehypeImgSize as never, { dir: 'public' }]],
+                        },
+                    }}
+                />
+            </Post>
+        </>
     );
 }
