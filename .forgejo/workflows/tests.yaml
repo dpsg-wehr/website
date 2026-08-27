@@ -30,6 +30,14 @@ jobs:
             - name: ⚙️ Install Playwright Browsers
               run: pnpm exec playwright install --with-deps chromium
 
+            - name: 🔍 Typecheck & Lint
+              run: |
+                  pnpm typecheck
+                  pnpm lint
+
+            - name: 🔒 Security Audit
+              run: pnpm audit --audit-level=critical || true
+
             - name: 🏗️ Build website
               env:
                   nextImageExportOptimizer_imageSizes: '16,64,128,256,384'

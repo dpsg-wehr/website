@@ -1,0 +1,33 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": ["config:recommended"],
+    "baseBranches": ["dev"],
+    "labels": ["dependencies", "automated"],
+    "packageRules": [
+        {
+            "description": "Group non-critical dev and minor/patch updates into a single weekly PR on Mondays",
+            "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+            "matchDepTypes": ["devDependencies"],
+            "groupName": "Weekly non-critical dependencies",
+            "schedule": ["before 6:00am on Monday"],
+            "automerge": false
+        },
+        {
+            "description": "Separate PRs immediately for high-impact core packages",
+            "matchPackageNames": [
+                "next",
+                "react",
+                "react-dom",
+                "tailwindcss",
+                "@tailwindcss/*",
+                "sharp"
+            ],
+            "schedule": ["at any time"]
+        },
+        {
+            "description": "Security vulnerability fixes at any time",
+            "matchIsVersionPrerelease": false,
+            "schedule": ["at any time"]
+        }
+    ]
+}
