@@ -41,7 +41,7 @@ export default function GalleryLayout({ children }: { children: React.ReactNode 
                     <Link
                         href="https://www.instagram.com/pfadfinder_wehr/"
                         target="_blank"
-                        className="bg-blue-500 hover:bg-blue-400 text-white m-4 p-2 rounded-md flex flex-row items-center place-content-between"
+                        className="bg-blue-600 hover:bg-blue-500 text-white m-4 p-2 rounded-md flex flex-row items-center place-content-between"
                     >
                         <p className="ml-2">Instagram</p>
                         <div className="text-2xl">

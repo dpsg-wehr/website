@@ -36,7 +36,9 @@ function SubscribeContent() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 text-center">
                 <div className="w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mb-4"></div>
-                <p className="text-gray-500 animate-pulse text-lg">Kalender wird verifiziert...</p>
+                <p className="text-gray-700 dark:text-gray-300 animate-pulse text-lg">
+                    Kalender wird verifiziert...
+                </p>
             </div>
         );
     }
