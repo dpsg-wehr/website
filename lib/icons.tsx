@@ -1,4 +1,15 @@
-import Lilie from '@/components/Lilie';
+import Lilie from '@/components/mdx/Lilie';
+import {
+    IoNewspaper,
+    IoPeople,
+    IoImage,
+    IoCalendarOutline,
+    IoHelpCircle,
+    IoHome,
+    IoSearchOutline,
+    IoEllipsisHorizontal,
+    IoDocumentOutline,
+} from 'react-icons/io5';
 
 export type Icons =
     | 'Lilie'
@@ -13,132 +24,28 @@ export type Icons =
     | 'More'
     | 'File';
 
-export const getIconFromname = (iconsName: Icons, color?: string): React.JSX.Element | null => {
+export const getIconFromName = (iconsName: Icons, color?: string): React.JSX.Element | null => {
     switch (iconsName) {
         case 'Lilie':
             return <Lilie color={color} />;
-
         case 'File':
-            return (
-                <svg
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="32"
-                    viewBox="0 0 512 512"
-                    height="1em"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <use href="#icon-file" />
-                </svg>
-            );
-
+            return <IoDocumentOutline />;
         case 'More':
-            return (
-                <svg
-                    fill="currentColor"
-                    viewBox="0 0 512 512"
-                    height="1em"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <use href="#icon-more" />
-                </svg>
-            );
-
+            return <IoEllipsisHorizontal />;
         case 'Search':
-            return (
-                <svg
-                    fill="currentColor"
-                    viewBox="0 0 512 512"
-                    height="1em"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <use href="#icon-search" />
-                </svg>
-            );
-
+            return <IoSearchOutline />;
         case 'News':
-            return (
-                <svg
-                    fill="currentColor"
-                    viewBox="0 0 512 512"
-                    height="1em"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <use href="#icon-news" />
-                </svg>
-            );
-
+            return <IoNewspaper />;
         case 'People':
-            return (
-                <svg
-                    fill="currentColor"
-                    viewBox="0 0 512 512"
-                    height="1em"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <use href="#icon-people" />
-                </svg>
-            );
-
+            return <IoPeople />;
         case 'Image':
-            return (
-                <svg
-                    fill="currentColor"
-                    viewBox="0 0 512 512"
-                    height="1em"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <use href="#icon-image" />
-                </svg>
-            );
-
+            return <IoImage />;
         case 'Calendar':
-            return (
-                <svg
-                    stroke="currentColor"
-                    fill="none"
-                    strokeWidth="32"
-                    viewBox="0 0 512 512"
-                    height="1em"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <use href="#icon-calendar" />
-                </svg>
-            );
-
+            return <IoCalendarOutline />;
         case 'Help':
-            return (
-                <svg
-                    fill="currentColor"
-                    viewBox="0 0 512 512"
-                    height="1em"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <use href="#icon-help" />
-                </svg>
-            );
-
+            return <IoHelpCircle />;
         case 'House':
-            return (
-                <svg
-                    fill="currentColor"
-                    viewBox="0 0 576 512"
-                    height="1em"
-                    width="1em"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <use href="#icon-house" />
-                </svg>
-            );
-
+            return <IoHome />;
         default:
             return null;
     }

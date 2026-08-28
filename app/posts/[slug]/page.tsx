@@ -3,11 +3,11 @@ import path from 'path';
 import matter from 'gray-matter';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { Metadata } from 'next';
-import getPostMetadata from '@/lib/PostMetadata';
+import getPostMetadata from '@/lib/content/posts';
 import { mdxComponents } from '@/mdx-components';
-import Post from '@/components/Post';
+import Post from '@/components/posts/Post';
 import rehypeImgSize from 'rehype-img-size';
-import { getExcerpt, getOptimizedImageMetadata } from '@/lib/metadata';
+import { getExcerpt, getOptimizedImageMetadata } from '@/lib/utils/metadata';
 
 export async function generateStaticParams() {
     const posts = getPostMetadata();
@@ -26,7 +26,7 @@ export async function generateMetadata({
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const { data, content } = matter(fileContents);
 
-    const description = getExcerpt(content);
+    const description = (data.desc || data.description || getExcerpt(content)) as string;
     const postMetadata = getPostMetadata();
     const metadata = postMetadata.find((post) => post.slug === slug);
 

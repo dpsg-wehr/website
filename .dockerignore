@@ -9,3 +9,8 @@ coverage
 README.md
 PLAN.md
 GEMINI.md
+test-results/
+playwright-report/
+.forgejo/
+docs/
+e2e/

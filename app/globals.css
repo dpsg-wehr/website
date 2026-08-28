@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 
-@source "../tailwind.config.js";
 @plugin "@tailwindcss/typography";
 
 @variant dark (&:where(.dark, .dark *));
@@ -56,13 +55,4 @@
 
 .unblur {
     animation: unblur 0.5s linear;
-}
-
-@keyframes unblur {
-    from {
-        filter: blur(5px);
-    }
-    to {
-        filter: blur(0px);
-    }
 }

@@ -20,17 +20,15 @@ graph TD
         Traefik -->|HTTP| NginxDev[Nginx Container: website-dev]
     end
 
-    subgraph "CI/CD (GitHub Actions)"
+    subgraph "CI/CD (Forgejo Actions)"
         PR[Pull Request] --> Tests[Tests & Build Check]
         PushDev[Push to dev] --> DockerBuildDev[Build & Tag :dev]
-        DockerBuildDev --> GHCR[GitHub Container Registry]
-        DockerBuildDev -->|Trigger Webhook (dev)| Webhook[VPS Webhook Service]
+        DockerBuildDev -->|SSH Stream & Load| VPS[VPS Docker Host]
         PushMain[Push to main] --> Release[Semantic Release]
         Release --> DockerBuild[Build Next.js SSG + Optimize Images]
-        DockerBuild --> GHCR
-        DockerBuild -->|Trigger Webhook (prod)| Webhook
-        Webhook -->|docker compose pull & up| Nginx
-        Webhook -->|docker compose pull & up| NginxDev
+        DockerBuild -->|SSH Stream & Load| VPS
+        VPS -->|docker compose up -d| Nginx
+        VPS -->|docker compose up -d| NginxDev
     end
 ```
 
@@ -45,7 +43,7 @@ Content is managed directly in Markdown/MDX within the `content/` directory:
 
 ## Build Pipeline
 
-When running `pnpm build` or in GitHub Actions:
+When running `pnpm build` or in Forgejo Actions:
 
 1. **ICS Generation:** Generates public (and optional internal) `.ics` calendar files via `scripts/generate-ics.ts`.
 2. **Search Indexing:** Generates Fuse.js search index via `scripts/generate-search-index.ts`.
@@ -57,25 +55,23 @@ When running `pnpm build` or in GitHub Actions:
 
 ### 1. Production Deployment (`main` branch)
 
-1. **Code Change:** Commit and push to `main` (or merge PR into `main`).
-2. **Release Workflow:** Semantic Release bumps version and creates release tag.
-3. **Docker Build Workflow:**
-    - Builds static export in GitHub Actions runner.
-    - Packages `out/` into lightweight `nginx:alpine` image.
-    - Pushes image to GHCR with semver & `latest` tags.
-    - Calls the VPS webhook endpoint (`ref: main`).
-4. **VPS Deploy:** The VPS pulls the latest image and performs a zero-downtime rolling update (`docker compose up -d website`).
+1.  **Code Change:** Commit and push to `main` (or merge PR into `main`).
+2.  **Release Workflow:** Semantic Release bumps version and creates release tag.
+3.  **Docker Build Workflow:**
+    - Builds static export in Forgejo Actions runner.
+    - Packages `out/` into lightweight `nginx:alpine` image using `Dockerfile.static`.
+    - Streams Docker image directly to the VPS over SSH (`docker save | ssh docker load`).
+4.  **VPS Deploy:** The VPS updates the container (`docker compose up -d website`).
 
 ### 2. Test / Dev Deployment (`dev` branch)
 
-1. **Code Change:** Commit and push to `dev`.
-2. **Docker Build Workflow:**
-    - Builds static export in GitHub Actions runner.
-    - Packages `out/` into `nginx:alpine` image.
-    - Pushes image to GHCR with `dev` and `dev-<sha>` tags.
-    - Calls the VPS webhook endpoint (`ref: dev`).
-3. **VPS Deploy:** The VPS pulls the `:dev` image and updates the dev container (`docker compose up -d website-dev`).
-4. **Authentication & Routing:** Traefik routes the test subdomain (`DEV_DOMAIN`, e.g. `dev.dpsg-wehr.de`) through the configured Authentik forward-auth middleware (`AUTHENTIK_MIDDLEWARE`, e.g. `authentik@docker`), restricting access to authenticated users.
+1.  **Code Change:** Commit and push to `dev`.
+2.  **Docker Build Workflow:**
+    - Builds static export in Forgejo Actions runner.
+    - Packages `out/` into lightweight `nginx:alpine` image using `Dockerfile.static`.
+    - Streams Docker image directly to the VPS over SSH (`docker save | ssh docker load`).
+3.  **VPS Deploy:** The VPS updates the dev container (`docker compose up -d website-dev`).
+4.  **Authentication & Routing:** Traefik routes the test subdomain (`DEV_DOMAIN`, e.g. `dev.dpsg-wehr.de`) through the configured Authentik forward-auth middleware (`AUTHENTIK_MIDDLEWARE`, e.g. `authentik@docker`), restricting access to authenticated users.
 
 ## Developer Setup
 
@@ -92,5 +88,5 @@ When running `pnpm build` or in GitHub Actions:
 ### VPS Setup
 
 1. Clone repo.
-2. Run `./scripts/setup-vps.sh` to initialize `.env` and `scripts/hooks.json`.
+2. Run `./scripts/setup-vps.sh` to initialize `.env`.
 3. Start stack: `docker compose up -d`.

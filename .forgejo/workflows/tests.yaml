@@ -1,43 +1,66 @@
 name: Tests & Checks
 
 on:
-  push:
-    branches:
-      - dev
-  pull_request:
-    branches:
-      - main
-      - dev
+    push:
+        branches:
+            - dev
+    pull_request:
+        branches:
+            - main
+            - dev
 
 jobs:
-  test:
-    name: 🧪 Run Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    test:
+        name: 🧪 Run Tests
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
+            - name: 📦 Setup pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
+            - name: 🟢 Setup Node.js 22
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'pnpm'
 
-      - name: 🧩 Install dependencies
-        run: pnpm install --frozen-lockfile
+            - name: 🧩 Install dependencies
+              run: pnpm install --frozen-lockfile
 
-      - name: ⚙️ Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps chromium
+            - name: ⚡ Cache Next.js & Image Optimizer
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      .next/cache
+                      public/media/images/nextImageExportOptimizer
+                      public/media/images/next-image-export-optimizer-hashes.json
+                  key: ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**') }}-
+                      ${{ runner.os }}-build-cache-
 
-      - name: 🏗️ Build website
-        env:
-          nextImageExportOptimizer_imageSizes: '16,64,128,256,384'
-          nextImageExportOptimizer_deviceSizes: '640,1080,1920'
-        run: |
-          pnpm build
-          pnpm next-image-export-optimizer
-          node scripts/inline-css.mjs
+            - name: ⚙️ Install Playwright Browsers
+              run: pnpm exec playwright install --with-deps chromium
 
-      - name: 🚦 Run tests
-        run: pnpm test:all
+            - name: 🔍 Typecheck & Lint
+              run: |
+                  pnpm typecheck
+                  pnpm lint
+
+            - name: 🔒 Security Audit
+              run: pnpm audit --audit-level=critical || true
+
+            - name: 🏗️ Build website
+              env:
+                  nextImageExportOptimizer_imageSizes: '16,64,128,256,384'
+                  nextImageExportOptimizer_deviceSizes: '640,1080,1920'
+              run: |
+                  pnpm build
+                  pnpm next-image-export-optimizer
+                  node scripts/inline-css.mjs
+
+            - name: 🚦 Run tests
+              run: pnpm test:all

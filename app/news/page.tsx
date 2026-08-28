@@ -1,6 +1,6 @@
-import getPostMetadata from '@/lib/PostMetadata';
-import PostPreview from '@/components/PostPreview';
-import { formatPostDate } from '@/lib/date';
+import getPostMetadata from '@/lib/content/posts';
+import PostPreview from '@/components/posts/PostPreview';
+import { formatPostDate } from '@/lib/utils/date';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
 export default function Aktuelles() {
     const postMetadata = getPostMetadata();
     const postPreviews = postMetadata.map((data) => {
-        data.date = formatPostDate(data.date);
+        const formattedData = { ...data, date: formatPostDate(data.date) };
 
-        return <PostPreview key={data.slug} {...data} />;
+        return <PostPreview key={formattedData.slug} {...formattedData} />;
     });
 
     return (
@@ -43,7 +43,7 @@ export default function Aktuelles() {
                 {postPreviews}
             </div>
 
-            {postPreviews.length == 0 && (
+            {postPreviews.length === 0 && (
                 <div className="text-center mt-8">
                     <p className="text-xl font-bold">Hier gibt&apos;s noch nichts zu sehen.</p>
                 </div>

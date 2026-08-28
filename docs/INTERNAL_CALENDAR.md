@@ -64,7 +64,7 @@ Trigger a rebuild on the server so the new ICS file is generated.
 
 ```bash
 # On the VPS
-docker compose up -d --build website
+docker compose up -d website
 # OR trigger your deployment webhook
 ```
 

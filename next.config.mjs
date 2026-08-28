@@ -1,13 +1,3 @@
-import nextMDX from '@next/mdx';
-
-const withMDX = nextMDX({
-    extension: /\.mdx?$/,
-    options: {
-        remarkPlugins: ['remark-frontmatter', 'remark-gfm'],
-        rehypePlugins: [['rehype-img-size', { dir: 'public' }]],
-    },
-});
-
 /** @type {import('next').NextConfig}*/
 const nextConfig = {
     // Configure `pageExtensions` to include MDX files
@@ -32,4 +22,4 @@ const nextConfig = {
     },
 };
 
-export default withMDX(nextConfig);
+export default nextConfig;

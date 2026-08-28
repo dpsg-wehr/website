@@ -1,13 +1,13 @@
-import { getPhotos } from '@/lib/photos';
-import PhotoAlbumWrapper from '@/components/PhotoAlbumWrapper';
-import Img from '@/components/Img';
+import { getPhotos } from '@/lib/content/photos';
+import PhotoAlbumWrapper from '@/components/gallery/PhotoAlbumWrapper';
+import Img from '@/components/mdx/Img';
 import InstagramProfile from '@/public/media/images/profilbild_insta.jpg';
 
 import { IoLogoInstagram as Instagram } from 'react-icons/io5';
 import Link from 'next/link';
 
-export default async function GalleryLayout({ children }: { children: React.ReactNode }) {
-    const photos = await getPhotos();
+export default function GalleryLayout({ children }: { children: React.ReactNode }) {
+    const photos = getPhotos();
 
     return (
         <>
@@ -41,7 +41,7 @@ export default async function GalleryLayout({ children }: { children: React.Reac
                     <Link
                         href="https://www.instagram.com/pfadfinder_wehr/"
                         target="_blank"
-                        className="bg-blue-500 hover:bg-blue-400 text-white m-4 p-2 rounded-md flex flex-row items-center place-content-between"
+                        className="bg-blue-600 hover:bg-blue-500 text-white m-4 p-2 rounded-md flex flex-row items-center place-content-between"
                     >
                         <p className="ml-2">Instagram</p>
                         <div className="text-2xl">

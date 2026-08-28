@@ -16,8 +16,6 @@ export default [
             'coverage/**',
             'test-results/**',
             'playwright-report/**',
-            'postcss.config.js',
-            'tailwind.config.js',
         ],
     },
     js.configs.recommended,
