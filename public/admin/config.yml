@@ -1,0 +1,222 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+
+backend:
+    name: gitea
+    repo: linus/website-dpsg-wehr
+    branch: dev
+    api_root: https://git.linus-fischer.de/api/v1
+    app_id: 70806204-b459-4533-a732-cd0e285982cb
+
+media_folder: public/media/images
+public_folder: /media/images
+
+site_url: https://dev.dpsg-wehr.de
+display_url: https://dev.dpsg-wehr.de
+locale: de
+
+collections:
+    - name: posts
+      label: Beiträge
+      label_singular: Beitrag
+      folder: content/posts
+      format: frontmatter
+      extension: mdx
+      create: true
+      slug: '{{slug}}'
+      summary: "{{title}} ({{date | date('YYYY-MM-DD')}})"
+      sortable_fields: ['date', 'title']
+      default_sort: { field: 'date', direction: 'Descending' }
+      fields:
+          - { label: Titel, name: title, widget: string }
+          - { label: Autor, name: author, widget: string, default: 'Linus Fischer' }
+          - {
+                label: Datum,
+                name: date,
+                widget: datetime,
+                format: 'YYYY-MM-DDTHH:mm:ss.SSS[Z]',
+                time_format: true,
+            }
+          - {
+                label: Slug (URL-Pfad),
+                name: slug,
+                widget: string,
+                hint: 'Eindeutiger Bezeichner für die URL (z.B. christbaumaktion26)',
+            }
+          - { label: Beitragsbild, name: image, widget: image, required: false }
+          - {
+                label: Kurzbeschreibung,
+                name: desc,
+                widget: text,
+                hint: 'Wird für die Vorschau und SEO OpenGraph verwendet',
+            }
+          - { label: Inhalt (Markdown/MDX), name: body, widget: richtext }
+
+    - name: gruppen
+      label: Gruppen
+      label_singular: Gruppe
+      folder: content/gruppen
+      format: frontmatter
+      extension: mdx
+      create: false
+      delete: false
+      fields:
+          - { label: Titel, name: title, widget: string }
+          - { label: Beschreibung, name: description, widget: text }
+          - { label: Autor, name: author, widget: string, required: false }
+          - {
+                label: Datum,
+                name: date,
+                widget: datetime,
+                format: 'YYYY-MM-DD',
+                time_format: false,
+                required: false,
+            }
+          - { label: Inhalt (Markdown/MDX), name: body, widget: richtext }
+
+    - name: pages
+      label: Seiten
+      label_singular: Seite
+      folder: content/pages
+      format: frontmatter
+      extension: mdx
+      create: false
+      delete: false
+      fields:
+          - { label: Titel, name: title, widget: string }
+          - { label: Beschreibung, name: description, widget: text }
+          - { label: Autor, name: author, widget: string, required: false }
+          - {
+                label: Datum,
+                name: date,
+                widget: datetime,
+                format: 'YYYY-MM-DD',
+                time_format: false,
+                required: false,
+            }
+          - { label: Inhalt (Markdown/MDX), name: body, widget: richtext }
+
+    - name: events
+      label: Termine
+      files:
+          - name: public_events
+            label: Öffentliche Termine
+            file: content/events/public.json
+            format: json
+            fields:
+                - label: Terminliste
+                  name: events
+                  widget: list
+                  root: true
+                  summary: '{{fields.title}} ({{fields.start}})'
+                  fields:
+                      - { label: Titel, name: title, widget: string }
+                      - {
+                            label: Startdatum,
+                            name: start,
+                            widget: datetime,
+                            format: 'YYYY-MM-DD',
+                            date_format: 'YYYY-MM-DD',
+                            time_format: false,
+                        }
+                      - {
+                            label: Enddatum (optional),
+                            name: end,
+                            widget: datetime,
+                            format: 'YYYY-MM-DD',
+                            date_format: 'YYYY-MM-DD',
+                            time_format: false,
+                            required: false,
+                        }
+
+    - name: photos
+      label: Fotogalerie
+      files:
+          - name: photo_gallery
+            label: Bilderliste
+            file: content/photos.json
+            format: json
+            fields:
+                - label: Bilder
+                  name: photos
+                  widget: list
+                  root: true
+                  summary: '{{fields.alt}} ({{fields.src}})'
+                  fields:
+                      - { label: Bild, name: src, widget: image }
+                      - { label: Bildbeschreibung (Alt-Text), name: alt, widget: string }
+                      - label: Tags / Kategorien
+                        name: tags
+                        widget: list
+                        field: { label: Tag, name: tag, widget: string }
+
+    - name: global_config
+      label: Globale Einstellungen
+      files:
+          - name: global_settings
+            label: Navigation & Footer
+            file: content/global/index.json
+            format: json
+            fields:
+                - label: Header Navigation
+                  name: header
+                  widget: object
+                  fields:
+                      - label: Navigationseinträge
+                        name: nav
+                        widget: list
+                        fields:
+                            - { label: Bezeichnung, name: label, widget: string }
+                            - { label: Link, name: link, widget: string, required: false }
+                            - { label: Icon, name: icon, widget: string }
+                            - label: Unterpunkte (Drop-Down)
+                              name: links
+                              widget: list
+                              required: false
+                              fields:
+                                  - { label: Bezeichnung, name: label, widget: string }
+                                  - { label: Link, name: link, widget: string }
+                                  - { label: Icon, name: icon, widget: string }
+                                  - {
+                                        label: Farbe (optional,
+                                        z.B. Stufenfarbe),
+                                        name: color,
+                                        widget: string,
+                                        required: false,
+                                    }
+                - label: Footer
+                  name: footer
+                  widget: object
+                  fields:
+                      - label: Social Media
+                        name: social
+                        widget: object
+                        fields:
+                            - {
+                                  label: Facebook URL,
+                                  name: facebook,
+                                  widget: string,
+                                  required: false,
+                              }
+                            - {
+                                  label: Instagram URL,
+                                  name: instagram,
+                                  widget: string,
+                                  required: false,
+                              }
+                      - label: Spalten
+                        name: columns
+                        widget: list
+                        fields:
+                            - { label: Spaltentitel, name: title, widget: string }
+                            - label: Links
+                              name: links
+                              widget: list
+                              fields:
+                                  - { label: Text, name: text, widget: string }
+                                  - { label: URL, name: url, widget: string }
+                                  - {
+                                        label: Externer Link?,
+                                        name: external,
+                                        widget: boolean,
+                                        default: false,
+                                    }

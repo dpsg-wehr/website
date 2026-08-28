@@ -7,7 +7,8 @@ on:
 
 jobs:
   triage:
-    if: github.event.pull_request.user.login == 'renovate-bot' || github.actor == 'linus'
+    if: github.event.pull_request.user.login == 'renovate-bot' || github.actor ==
+      'linus'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -16,7 +17,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: '3.14'
 
       - name: Install Dependencies
         run: |
@@ -24,10 +25,10 @@ jobs:
 
       - name: Run Local Ollama Triage with Web Search
         env:
-          OLLAMA_URL: "http://192.168.178.53:11434/api/generate"
-          OLLAMA_MODEL: "qwen2.5-coder:7b"
-          SEARXNG_URL: "https://search.linus-fischer.de"
-          FORGEJO_API: "https://git.linus-fischer.de/api/v1"
+          OLLAMA_URL: 'http://192.168.178.53:11434/api/generate'
+          OLLAMA_MODEL: 'qwen2.5-coder:7b'
+          SEARXNG_URL: 'https://search.linus-fischer.de'
+          FORGEJO_API: 'https://git.linus-fischer.de/api/v1'
           FORGEJO_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
