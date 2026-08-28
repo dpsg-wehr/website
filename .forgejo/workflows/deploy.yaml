@@ -35,11 +35,11 @@ jobs:
               with:
                   path: |
                       .next/cache
-                      public/media/images/nextImageExportOptimizer
+                      public/**/nextImageExportOptimizer
                       public/media/images/next-image-export-optimizer-hashes.json
-                  key: ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+                  key: ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**', '!public/**/nextImageExportOptimizer/**', '!public/media/images/next-image-export-optimizer-hashes.json') }}-${{ hashFiles('pnpm-lock.yaml') }}
                   restore-keys: |
-                      ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**') }}-
+                      ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**', '!public/**/nextImageExportOptimizer/**', '!public/media/images/next-image-export-optimizer-hashes.json') }}-
                       ${{ runner.os }}-build-cache-
 
             - name: 🏗️ Build Static Site & Optimize
