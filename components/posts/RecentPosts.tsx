@@ -10,8 +10,13 @@ export default function RecentPosts() {
 
     return (
         <div className="not-prose grid grid-cols-1 md:grid-cols-2 justify-items-center gap-4 mx-auto sm:ml-0 no-underline">
-            {recentPosts.map((post) => (
-                <PostPreview key={post.slug} {...post} date={formatPostDate(post.date)} />
+            {recentPosts.map((post, index) => (
+                <PostPreview
+                    key={post.slug}
+                    {...post}
+                    priority={index === 0}
+                    date={formatPostDate(post.date)}
+                />
             ))}
         </div>
     );

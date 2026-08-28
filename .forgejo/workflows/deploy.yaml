@@ -72,6 +72,66 @@ jobs:
             - name: 🚦 Run tests
               run: pnpm test:all
 
+            - name: 📝 Generate Test Summary
+              if: ${{ !cancelled() }}
+              run: |
+                  if [ -n "$GITHUB_STEP_SUMMARY" ]; then
+                    echo "### 🧪 Test Suite Results" >> "$GITHUB_STEP_SUMMARY"
+                    echo "" >> "$GITHUB_STEP_SUMMARY"
+                    if [ -f "test-results/e2e/index.json" ]; then
+                      node -e '
+                        const fs = require("fs");
+                        try {
+                          const data = JSON.parse(fs.readFileSync("test-results/e2e/index.json", "utf8"));
+                          const rows = data.rows || [];
+                          let passed = 0, failed = 0, flakies = 0, skipped = 0;
+                          const countCases = (item) => {
+                            if (item.type === "case") {
+                              if (item.status === "passed") passed++;
+                              else if (item.status === "failed") failed++;
+                              else if (item.status === "skipped") skipped++;
+                              if (item.retry > 0) flakies++;
+                            }
+                            if (item.subs) item.subs.forEach(countCases);
+                          };
+                          rows.forEach(countCases);
+                          const total = passed + failed + skipped;
+                          const duration = data.durationH || (data.duration ? (data.duration/1000).toFixed(1) + "s" : "-");
+
+                          let md = "#### 🎭 Playwright E2E Tests\n\n";
+                          md += "| Total | Passed | Failed | Flaky | Skipped | Duration |\n";
+                          md += "| :---: | :----: | :----: | :---: | :-----: | :------: |\n";
+                          md += `| **${total}** | ✅ ${passed} | ${failed > 0 ? "❌ " + failed : "0"} | ${flakies > 0 ? "⚠️ " + flakies : "0"} | ${skipped} | ⏱️ ${duration} |\n\n`;
+
+                          if (failed > 0) {
+                            md += "<details><summary>❌ Failed Tests</summary>\n\n";
+                            const findFailed = (item) => {
+                              if (item.type === "case" && item.status === "failed") {
+                                md += `- **${item.title}** (\`${item.location || ""}\`)\n`;
+                              }
+                              if (item.subs) item.subs.forEach(findFailed);
+                            };
+                            rows.forEach(findFailed);
+                            md += "\n</details>\n\n";
+                          }
+
+                          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md);
+                        } catch (e) {
+                          console.error(e);
+                        }
+                      '
+                    fi
+                    echo "📁 Download the full HTML reports (Vitest & Playwright) from the **Artifacts** section of this run." >> "$GITHUB_STEP_SUMMARY"
+                  fi
+
+            - name: 📊 Upload Test Reports
+              uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                  name: test-results
+                  path: test-results/
+                  retention-days: 14
+
     build-and-deploy:
         name: 🚀 Build & Deploy
         needs: test

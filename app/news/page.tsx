@@ -23,10 +23,10 @@ export const metadata: Metadata = {
 
 export default function Aktuelles() {
     const postMetadata = getPostMetadata();
-    const postPreviews = postMetadata.map((data) => {
+    const postPreviews = postMetadata.map((data, index) => {
         const formattedData = { ...data, date: formatPostDate(data.date) };
 
-        return <PostPreview key={formattedData.slug} {...formattedData} />;
+        return <PostPreview key={formattedData.slug} {...formattedData} priority={index < 2} />;
     });
 
     return (
