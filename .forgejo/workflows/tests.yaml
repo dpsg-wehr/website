@@ -13,11 +13,15 @@ jobs:
     test:
         name: 🧪 Run Tests
         runs-on: ubuntu-latest
+        container:
+            image: mcr.microsoft.com/playwright:v1.62.1-noble
         steps:
             - uses: actions/checkout@v4
 
             - name: 📦 Setup pnpm
               uses: pnpm/action-setup@v4
+              with:
+                  version: 10
 
             - name: 🟢 Setup Node.js 22
               uses: actions/setup-node@v4
@@ -35,25 +39,6 @@ jobs:
                   key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
                   restore-keys: |
                       ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
-
-            - name: ⚙️ Get Playwright Version
-              id: playwright-version
-              run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
-
-            - name: ⚡ Cache Playwright Browsers
-              id: playwright-cache
-              uses: actions/cache@v4
-              with:
-                  path: ~/.cache/ms-playwright
-                  key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
-
-            - name: ⚙️ Install Playwright Browsers
-              if: steps.playwright-cache.outputs.cache-hit != 'true'
-              run: pnpm exec playwright install --with-deps chromium
-
-            - name: ⚙️ Install Playwright OS Dependencies
-              if: steps.playwright-cache.outputs.cache-hit == 'true'
-              run: pnpm exec playwright install-deps chromium
 
             - name: 🔍 Typecheck & Lint
               run: |
