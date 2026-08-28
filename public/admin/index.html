@@ -241,20 +241,6 @@
                             required: false,
                         },
                         {
-                            name: 'width',
-                            label: 'Breite (px)',
-                            widget: 'number',
-                            required: false,
-                            value_type: 'int',
-                        },
-                        {
-                            name: 'height',
-                            label: 'Höhe (px)',
-                            widget: 'number',
-                            required: false,
-                            value_type: 'int',
-                        },
-                        {
                             name: 'priority',
                             label: 'Priorität beim Laden (LCP)',
                             widget: 'boolean',
@@ -268,16 +254,12 @@
                         return {
                             src: get('src') || '',
                             alt: get('alt') || '',
-                            width: get('width') ? parseInt(get('width'), 10) : undefined,
-                            height: get('height') ? parseInt(get('height'), 10) : undefined,
                             priority: get('priority') === 'true',
                         };
                     },
                     toBlock: (data) => {
                         let props = `src="${data.src || ''}"`;
                         if (data.alt) props += ` alt="${data.alt}"`;
-                        if (data.width) props += ` width={${data.width}}`;
-                        if (data.height) props += ` height={${data.height}}`;
                         if (data.priority) props += ` priority={true}`;
                         return `<MDXImage ${props} />`;
                     },
