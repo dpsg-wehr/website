@@ -2,15 +2,12 @@ import Link from 'next/link';
 import { PostMetadata } from '@/types';
 import ExportedImage from 'next-image-export-optimizer';
 
-export default function PostPreview(props: PostMetadata) {
+interface PostPreviewProps extends PostMetadata {
+    priority?: boolean;
+}
+
+export default function PostPreview(props: PostPreviewProps) {
     return (
-        /*<div className='border border-slate-200 dark:border-slate-800 p-4 rounded-md shadow-md dark:bg-gray-700'>
-            <Link href={`/posts/${props.slug}`}>
-                <Image fill src={props.image} alt="" sizes="100vw"/>
-                <h2 className='font-bold hover:underline'>{props.title}</h2>
-                <p className="text-sm text-slate-400">{props.date}</p>
-            </Link>
-        </div>*/
         <article
             className="mt-4 border shadow-sm hover:shadow-lg rounded-md dark:border-gray-600 max-w-md"
             key={props.slug}
@@ -28,6 +25,8 @@ export default function PostPreview(props: PostMetadata) {
                                 fill
                                 className="object-cover blur-md opacity-50 scale-105"
                                 sizes="(max-width: 768px) 50vw, 200px"
+                                priority={props.priority}
+                                aria-hidden="true"
                             />
                             <ExportedImage
                                 src={props.image.src}
@@ -35,6 +34,7 @@ export default function PostPreview(props: PostMetadata) {
                                 fill
                                 className="object-contain z-10"
                                 sizes="(max-width: 768px) 100vw, 448px"
+                                priority={props.priority}
                             />
                         </>
                     ) : (
