@@ -4,6 +4,7 @@ backend:
     name: gitea
     repo: linus/website-dpsg-wehr
     branch: dev
+    base_url: https://git.linus-fischer.de
     api_root: https://git.linus-fischer.de/api/v1
     app_id: 70806204-b459-4533-a732-cd0e285982cb
 

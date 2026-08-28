@@ -1,32 +1,32 @@
 name: Renovate
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 */2 * * *'
-  push:
-    branches:
-      - main
-      - dev
-    paths:
-      - 'renovate.json'
-      - '.forgejo/workflows/renovate.yaml'
+    workflow_dispatch:
+    schedule:
+        - cron: '0 */2 * * *'
+    push:
+        branches:
+            - main
+            - dev
+        paths:
+            - 'renovate.json'
+            - '.forgejo/workflows/renovate.yaml'
 
 jobs:
-  renovate:
-    runs-on: ubuntu-latest
-    container: ghcr.io/renovatebot/renovate:latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
+    renovate:
+        runs-on: ubuntu-latest
+        container: ghcr.io/renovatebot/renovate:latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v7
 
-      - name: Run Renovate
-        run: renovate
-        env:
-          RENOVATE_PLATFORM: 'forgejo'
-          RENOVATE_ENDPOINT: 'https://git.linus-fischer.de/api/v1'
-          RENOVATE_REPOSITORIES: ${{ github.repository }}
-          RENOVATE_GIT_AUTHOR: 'Renovate Bot <renovate-bot@fischernet.eu>'
-          LOG_LEVEL: 'info'
-          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
-          GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_GITHUB_TOKEN }}
+            - name: Run Renovate
+              run: renovate
+              env:
+                  RENOVATE_PLATFORM: 'forgejo'
+                  RENOVATE_ENDPOINT: 'https://git.linus-fischer.de/api/v1'
+                  RENOVATE_REPOSITORIES: ${{ github.repository }}
+                  RENOVATE_GIT_AUTHOR: 'Renovate Bot <renovate-bot@fischernet.eu>'
+                  LOG_LEVEL: 'info'
+                  RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+                  GITHUB_COM_TOKEN: ${{ secrets.RENOVATE_GITHUB_TOKEN }}
