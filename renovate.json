@@ -1,10 +1,12 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "onboarding": false,
-    "requireConfig": "optional",
     "extends": ["config:recommended"],
     "baseBranches": ["dev"],
     "labels": ["dependencies", "automated"],
+    "vulnerabilityAlerts": {
+        "labels": ["security", "dependencies"],
+        "schedule": ["at any time"]
+    },
     "packageRules": [
         {
             "description": "Group non-critical dev and minor/patch updates into a single weekly PR on Mondays",
@@ -24,11 +26,6 @@
                 "@tailwindcss/*",
                 "sharp"
             ],
-            "schedule": ["at any time"]
-        },
-        {
-            "description": "Security vulnerability fixes at any time",
-            "matchIsVersionPrerelease": false,
             "schedule": ["at any time"]
         }
     ]
