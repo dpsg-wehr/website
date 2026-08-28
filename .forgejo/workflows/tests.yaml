@@ -30,17 +30,13 @@ jobs:
             - name: 🧩 Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: ⚡ Cache Next.js & Image Optimizer
+            - name: ⚡ Cache Next.js Build
               uses: actions/cache@v4
               with:
-                  path: |
-                      .next/cache
-                      public/media/images/nextImageExportOptimizer
-                      public/media/images/next-image-export-optimizer-hashes.json
-                  key: ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**') }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+                  path: .next/cache
+                  key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
                   restore-keys: |
-                      ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**') }}-
-                      ${{ runner.os }}-build-cache-
+                      ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
 
             - name: ⚙️ Get Playwright Version
               id: playwright-version
@@ -70,13 +66,7 @@ jobs:
               run: pnpm audit --audit-level=critical || true
 
             - name: 🏗️ Build website
-              env:
-                  nextImageExportOptimizer_imageSizes: '16,64,128,256,384'
-                  nextImageExportOptimizer_deviceSizes: '640,1080,1920'
-              run: |
-                  pnpm build
-                  pnpm next-image-export-optimizer
-                  node scripts/inline-css.mjs
+              run: pnpm build
 
             - name: 🚦 Run tests
               run: pnpm test:all
