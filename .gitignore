@@ -52,3 +52,8 @@ public/internal-events.ics
 lib/events.internal.ts
 public/search-index.json
 .env
+
+# python
+__pycache__/
+*.py[cod]
+

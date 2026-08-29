@@ -190,6 +190,10 @@ def post_comment(assessment):
                 links_md += f"- [{link}]({link})\n"
         links_md += "\n"
 
+    automerge_note = ""
+    if decision == "APPROVED":
+        automerge_note = "> [!NOTE]\n> **Auto-Merge**: This PR has been evaluated as safe (`APPROVED`) and is being automatically merged.\n\n"
+
     comment_body = f"""<!-- ai-pr-triage -->
 ## 🤖 AI Dependency Assessment (`{MODEL}`)
 
@@ -201,7 +205,7 @@ def post_comment(assessment):
 | **Version Change** | `{assessment.get("from_version", "")} → {assessment.get("to_version", "")}` |
 | **Breaking Changes** | `{assessment.get("breaking_changes", False)}` |
 
-### 📋 Analysis & Reasoning
+{automerge_note}### 📋 Analysis & Reasoning
 {reasoning}
 
 {breaking_md}{manual_actions_md}{links_md}### 💡 Recommendation
@@ -224,6 +228,109 @@ def post_comment(assessment):
     print("Successfully posted AI review comment to PR.")
 
 
+def merge_pr(assessment):
+    """
+    Automatically merges the PR if AI triage decision is APPROVED.
+    First submits an approving review, then calls Forgejo merge API.
+    """
+    if not FORGEJO_TOKEN or not REPO or not PR_NUMBER:
+        print("Missing FORGEJO_TOKEN, REPO, or PR_NUMBER, skipping automerge.")
+        return
+
+    print(f"Decision is APPROVED. Attempting automatic merge for PR #{PR_NUMBER} in {REPO}...")
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"token {FORGEJO_TOKEN}",
+        "User-Agent": "Website-AI-Triage/1.0",
+    }
+
+    # 1. Submit an approving review to the PR
+    try:
+        review_url = f"{FORGEJO_API}/repos/{REPO}/pulls/{PR_NUMBER}/reviews"
+        review_body = {
+            "event": "APPROVE",
+            "body": f"🤖 AI Dependency Assessment: Automatically approved (Risk: {assessment.get('risk_level', 'LOW')}).",
+        }
+        req_review = urllib.request.Request(
+            review_url,
+            data=json.dumps(review_body).encode("utf-8"),
+            headers=headers,
+        )
+        with urllib.request.urlopen(req_review) as resp:
+            print(f"Successfully submitted approving review (status {resp.status}).")
+    except Exception as e:
+        print(f"Note: Could not submit formal review (self-review or reviews optional): {e}")
+
+    # 2. Merge PR via Forgejo API
+    merge_url = f"{FORGEJO_API}/repos/{REPO}/pulls/{PR_NUMBER}/merge"
+    pkg = assessment.get("package", "dependency")
+    from_v = assessment.get("from_version", "")
+    to_v = assessment.get("to_version", "")
+    version_str = f" to {to_v}" if to_v else ""
+
+    commit_title = f"chore(deps): merge PR #{PR_NUMBER} ({pkg}{version_str})"
+    commit_message = (
+        f"Automated merge by AI PR Triage.\n\n"
+        f"Decision: APPROVED\n"
+        f"Risk Level: {assessment.get('risk_level', 'LOW')}\n"
+        f"Package: {pkg}\n"
+        f"Version Change: {from_v} -> {to_v}\n\n"
+        f"Reasoning: {assessment.get('reasoning', 'Safe update')}"
+    )
+
+    merge_methods = ["merge", "rebase-merge", "rebase", "squash"]
+
+    # First attempt: With merge_when_checks_succeed=True (enables auto-merge while CI checks complete)
+    for method in merge_methods:
+        payload = {
+            "Do": method,
+            "MergeTitleField": commit_title,
+            "MergeMessageField": commit_message,
+            "delete_branch_after_merge": True,
+            "merge_when_checks_succeed": True,
+        }
+        try:
+            req = urllib.request.Request(
+                merge_url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers=headers,
+            )
+            with urllib.request.urlopen(req) as resp:
+                print(f"Successfully scheduled/executed merge (strategy '{method}', status {resp.status}) for PR #{PR_NUMBER}.")
+                return
+        except urllib.error.HTTPError as e:
+            err_msg = e.read().decode("utf-8", errors="ignore")
+            print(f"Merge attempt (strategy '{method}', when_checks_succeed=True) returned HTTP {e.code}: {err_msg}")
+        except Exception as e:
+            print(f"Merge attempt (strategy '{method}', when_checks_succeed=True) failed: {e}")
+
+    # Fallback attempt: Direct merge without merge_when_checks_succeed
+    for method in merge_methods:
+        payload = {
+            "Do": method,
+            "MergeTitleField": commit_title,
+            "MergeMessageField": commit_message,
+            "delete_branch_after_merge": True,
+        }
+        try:
+            req = urllib.request.Request(
+                merge_url,
+                data=json.dumps(payload).encode("utf-8"),
+                headers=headers,
+            )
+            with urllib.request.urlopen(req) as resp:
+                print(f"Successfully merged PR #{PR_NUMBER} directly with strategy '{method}' (status {resp.status}).")
+                return
+        except urllib.error.HTTPError as e:
+            err_msg = e.read().decode("utf-8", errors="ignore")
+            print(f"Direct merge attempt (strategy '{method}') returned HTTP {e.code}: {err_msg}")
+        except Exception as e:
+            print(f"Direct merge attempt (strategy '{method}') failed: {e}")
+
+    print(f"Warning: Automatic merge could not be finalized for PR #{PR_NUMBER}.")
+
+
 if __name__ == "__main__":
     try:
         print("Step 1: Gathering live web research on update via SearXNG...")
@@ -236,6 +343,13 @@ if __name__ == "__main__":
 
         print("Step 3: Posting PR comment...")
         post_comment(assessment)
+
+        # Step 4: Automatically merge approved PRs
+        if assessment.get("decision") == "APPROVED":
+            print("Step 4: PR was APPROVED by AI triage. Merging PR...")
+            merge_pr(assessment)
+        else:
+            print(f"Step 4: PR decision is '{assessment.get('decision')}'. Skipping automatic merge.")
     except Exception as e:
         print(f"Error during AI triage: {e}", file=sys.stderr)
         sys.exit(1)

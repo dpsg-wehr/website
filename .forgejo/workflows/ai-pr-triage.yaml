@@ -7,8 +7,11 @@ on:
 
 jobs:
     triage:
-        if: github.event.pull_request.user.login == 'renovate-bot' || github.actor ==
-            'linus'
+        if: >-
+            github.event_name == 'workflow_dispatch' ||
+            github.event.pull_request.user.login == 'renovate-bot' ||
+            endsWith(github.event.pull_request.user.login, '[bot]') ||
+            github.event.pull_request.user.type == 'Bot'
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
