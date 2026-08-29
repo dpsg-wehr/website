@@ -31,10 +31,10 @@
         "*.{js,jsx,ts,tsx}": "eslint --fix --no-warn-ignored"
     },
     "dependencies": {
-        "@fullcalendar/core": "^6.1.21",
+        "@fullcalendar/core": "^7.0.0",
         "@fullcalendar/daygrid": "^6.1.21",
         "@fullcalendar/list": "^6.1.21",
-        "@fullcalendar/react": "^6.1.21",
+        "@fullcalendar/react": "^7.0.0",
         "@fullcalendar/timegrid": "^6.1.21",
         "fuse.js": "^7.5.0",
         "gray-matter": "^4.0.3",
