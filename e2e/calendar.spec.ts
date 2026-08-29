@@ -27,11 +27,13 @@ test.describe('Calendar', () => {
         await page.goto('/pages/termine');
 
         // 1. Wait for calendar to be visible
-        const calendar = page.locator('.fc');
-        await expect(calendar).toBeVisible();
+        await expect(page.getByRole('grid')).toBeVisible();
 
         // 2. Switch to list view
-        await page.getByRole('button', { name: 'Liste' }).click();
+        await page
+            .getByRole('tab', { name: 'Liste' })
+            .or(page.getByRole('button', { name: 'Liste' }))
+            .click();
 
         // 3. Verify that an event from the list is rendered
         if (publicEvents.length > 0) {
