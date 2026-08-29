@@ -132,6 +132,35 @@ jobs:
                   path: test-results/
                   retention-days: 14
 
+    automerge:
+        name: 🤖 Auto-Merge Verified Bot PR
+        needs: test
+        if: >-
+            github.event_name == 'pull_request' && (
+                github.event.pull_request.user.login == 'renovate-bot' ||
+                endsWith(github.event.pull_request.user.login, '[bot]') ||
+                github.event.pull_request.user.type == 'Bot'
+            )
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v7
+
+            - name: Setup Python
+              uses: actions/setup-python@v7
+              with:
+                  python-version: '3.14'
+
+            - name: Check AI Approval & Auto-Merge
+              env:
+                  FORGEJO_API: 'https://git.linus-fischer.de/api/v1'
+                  FORGEJO_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+                  GITHUB_REPOSITORY: ${{ github.repository }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+                  PR_TITLE: ${{ github.event.pull_request.title }}
+              run: |
+                  python3 scripts/automerge_pr.py
+
     build-and-deploy:
         name: 🚀 Build & Deploy
         needs: test
