@@ -20,6 +20,49 @@ PR_TITLE = os.getenv("PR_TITLE", "")
 PR_BODY = os.getenv("PR_BODY", "")
 
 
+def load_pr_info():
+    """
+    Loads PR title and body safely from $GITHUB_EVENT_PATH or the Forgejo API
+    to avoid passing large strings directly into environment variables.
+    """
+    global PR_TITLE, PR_BODY
+
+    # 1. Try reading from GITHUB_EVENT_PATH event json file
+    event_path = os.getenv("GITHUB_EVENT_PATH")
+    if event_path and os.path.isfile(event_path):
+        try:
+            with open(event_path, "r", encoding="utf-8") as f:
+                event_data = json.load(f)
+                pr = event_data.get("pull_request", {})
+                if pr:
+                    if not PR_TITLE:
+                        PR_TITLE = pr.get("title", "")
+                    if not PR_BODY:
+                        PR_BODY = pr.get("body", "") or ""
+                    print(f"Loaded PR info from {event_path}: '{PR_TITLE}' ({len(PR_BODY)} chars)")
+                    return
+        except Exception as e:
+            print(f"Warning: Could not read GITHUB_EVENT_PATH ({e})", file=sys.stderr)
+
+    # 2. Fallback: Fetch directly from Forgejo API
+    if FORGEJO_API and REPO and PR_NUMBER:
+        try:
+            headers = {"User-Agent": "Website-AI-Triage/1.0"}
+            if FORGEJO_TOKEN:
+                headers["Authorization"] = f"token {FORGEJO_TOKEN}"
+            url = f"{FORGEJO_API}/repos/{REPO}/pulls/{PR_NUMBER}"
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                if not PR_TITLE:
+                    PR_TITLE = data.get("title", "")
+                if not PR_BODY:
+                    PR_BODY = data.get("body", "") or ""
+                print(f"Loaded PR info from Forgejo API: '{PR_TITLE}' ({len(PR_BODY)} chars)")
+        except Exception as e:
+            print(f"Warning: Could not fetch PR info from API ({e})", file=sys.stderr)
+
+
 def perform_web_search(query, max_results=4):
     """
     Performs web search prioritizing self-hosted SearXNG instance,
@@ -333,7 +376,10 @@ def merge_pr(assessment):
 
 if __name__ == "__main__":
     try:
-        print("Step 1: Gathering live web research on update via SearXNG...")
+        print("Step 0: Loading PR details safely...")
+        load_pr_info()
+
+        print(f"Step 1: Gathering live web research on '{PR_TITLE}' via SearXNG...")
         web_context = extract_search_context()
 
         print("Step 2: Running AI analysis via local Ollama...")

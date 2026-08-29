@@ -35,7 +35,5 @@ jobs:
                   FORGEJO_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
                   GITHUB_REPOSITORY: ${{ github.repository }}
                   PR_NUMBER: ${{ github.event.pull_request.number }}
-                  PR_TITLE: ${{ github.event.pull_request.title }}
-                  PR_BODY: ${{ github.event.pull_request.body }}
               run: |
                   python3 scripts/triage_pr.py
