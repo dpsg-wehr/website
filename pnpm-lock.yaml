@@ -136,7 +136,7 @@ importers:
         version: 16.3.4(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(@types/node@26.4.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-image-export-optimizer:
         specifier: ^1.20.1
-        version: 1.20.1(@types/node@26.4.0)(next@16.3.4(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(@types/node@26.4.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+        version: 1.21.1(@types/node@26.4.0)(next@16.3.4(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(@types/node@26.4.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       next-mdx-remote:
         specifier: ^6.0.0
         version: 6.0.0(@types/react@19.2.18)(react@19.2.8)(supports-color@7.2.0)
@@ -3886,9 +3886,9 @@ packages:
   nerf-dart@1.0.0:
     resolution: {integrity: sha512-EZSPZB70jiVsivaBLYDCyntd5eH8NTSMOn3rB+HxwdmKThGELLdYv8qVIMWvZEFy9w8ZZpW9h9OB32l1rGtj7g==}
 
-  next-image-export-optimizer@1.20.1:
-    resolution: {integrity: sha512-hSQkEBqyjQP+YMVSs+TJiI+keVjgylkxvvOiFNiTfGW57dlPptzctMtMYC6Xx1zcLV4VX8B129y3O2vLFBE/6w==}
-    engines: {node: '>=16.0.0'}
+  next-image-export-optimizer@1.21.1:
+    resolution: {integrity: sha512-Ayt9OJErVqhDyIVxstNzSF9piZiPaJoHW+EvXnl2Ai0TXWS7g2oc29LNyFItnRLqpj32/m4wfUieIIoOP/ZBNg==}
+    engines: {node: '>=20.9.0'}
     hasBin: true
     peerDependencies:
       next: ^14.2.18 || ^15.0.3 || ^16.0.0
@@ -9390,7 +9390,7 @@ snapshots:
 
   nerf-dart@1.0.0: {}
 
-  next-image-export-optimizer@1.20.1(@types/node@26.4.0)(next@16.3.4(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(@types/node@26.4.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8):
+  next-image-export-optimizer@1.21.1(@types/node@26.4.0)(next@16.3.4(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(@types/node@26.4.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8):
     dependencies:
       next: 16.3.4(@babel/core@7.29.7(supports-color@7.2.0))(@playwright/test@1.62.1)(@types/node@26.4.0)(babel-plugin-macros@3.1.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react: 19.2.8
