@@ -1,7 +1,7 @@
 {
     "name": "website-dpsg-wehr",
     "version": "1.19.0",
-    "packageManager": "pnpm@12.4.1",
+    "packageManager": "pnpm@12.4.2",
     "private": true,
     "browserslist": [
         "defaults and supports es6-module",
