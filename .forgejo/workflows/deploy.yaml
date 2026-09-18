@@ -47,6 +47,36 @@ jobs:
                   node-version: 24.21.0
                   cache: 'pnpm'
 
+            - name: 🔑 Fetch Secrets from Infisical
+              env:
+                  INFISICAL_API_URL: ${{ secrets.INFISICAL_API_URL }}
+                  INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+                  INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+                  INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
+              run: |
+                  if [ -z "$INFISICAL_CLIENT_ID" ]; then
+                    echo "Notice: INFISICAL_CLIENT_ID not set, skipping Infisical secrets fetch."
+                    exit 0
+                  fi
+
+                  curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | bash
+                  apt-get update -qy && apt-get install -qy infisical
+
+                  export INFISICAL_TOKEN=$(infisical login \
+                    --domain="${INFISICAL_API_URL}" \
+                    --method=universal-auth \
+                    --client-id="${INFISICAL_CLIENT_ID}" \
+                    --client-secret="${INFISICAL_CLIENT_SECRET}" \
+                    --silent \
+                    --plain)
+
+                  infisical export \
+                    --domain="${INFISICAL_API_URL}" \
+                    --projectId="${INFISICAL_PROJECT_ID}" \
+                    --env="prod" \
+                    --path="/apps/website-dpsg-wehr" \
+                    --format=dotenv >> "$GITHUB_ENV"
+
             - name: 🧩 Install dependencies
               run: pnpm install --frozen-lockfile
 
@@ -77,6 +107,86 @@ jobs:
 
             - name: ⚡ Audit with Lighthouse CI
               run: pnpm audit:lighthouse
+
+            - name: 📤 Upload Test Reports to Dufs
+              if: ${{ !cancelled() }}
+              run: |
+                  if [ -z "$REPORTS_SERVER_URL" ] || [ -z "$REPORTS_CI_PASSWORD" ]; then
+                    echo "Notice: REPORTS_SERVER_URL or REPORTS_CI_PASSWORD not set, skipping Dufs upload."
+                    exit 0
+                  fi
+
+                  apt-get update -qy && apt-get install -qy rclone
+
+                  OBSCURED_PASS=$(rclone obscure "$REPORTS_CI_PASSWORD")
+                  TARGET_PATH="${{ github.event.repository.name }}/${{ github.run_number }}"
+                  LATEST_PATH="${{ github.event.repository.name }}/latest"
+
+                  # Upload run-specific reports
+                  rclone copy ./test-results :webdav:"$TARGET_PATH" \
+                    --webdav-url "$REPORTS_SERVER_URL" \
+                    --webdav-user ci \
+                    --webdav-pass "$OBSCURED_PASS" \
+                    --webdav-vendor other
+
+                  # Update 'latest' pointer
+                  rclone copy ./test-results :webdav:"$LATEST_PATH" \
+                    --webdav-url "$REPORTS_SERVER_URL" \
+                    --webdav-user ci \
+                    --webdav-pass "$OBSCURED_PASS" \
+                    --webdav-vendor other
+
+            - name: 💬 Post Reports Comment on PR
+              if: github.event_name == 'pull_request' && !cancelled()
+              env:
+                  FORGEJO_API: 'https://git.linus-fischer.de/api/v1'
+                  FORGEJO_TOKEN: ${{ secrets.RENOVATE_TOKEN || secrets.GITHUB_TOKEN }}
+                  REPO: ${{ github.repository }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+              run: |
+                  python3 - << 'EOF'
+                  import os, json, urllib.request
+
+                  api = os.getenv("FORGEJO_API")
+                  token = os.getenv("FORGEJO_TOKEN")
+                  repo = os.getenv("REPO")
+                  pr = os.getenv("PR_NUMBER")
+                  reports_url = os.getenv("REPORTS_SERVER_URL", "").rstrip("/")
+                  lhci_url = os.getenv("LHCI_SERVER_BASE_URL", "").rstrip("/")
+                  run_num = os.getenv("GITHUB_RUN_NUMBER", "latest")
+                  repo_name = repo.split("/")[-1] if "/" in repo else repo
+
+                  if not token or not repo or not pr:
+                      print("Notice: Missing token, repo, or PR number. Skipping comment.")
+                      exit(0)
+
+                  links = []
+                  if reports_url:
+                      links.append(f"- 🎭 **Playwright E2E Report**: [Interactive Report & Traces]({reports_url}/{repo_name}/{run_num}/e2e/index.html)")
+                  if lhci_url:
+                      links.append(f"- ⚡ **Lighthouse Performance**: [LHCI Dashboard & History]({lhci_url}/app/projects/{repo_name})")
+
+                  if not links:
+                      print("Notice: Neither reports_url nor lhci_url is set. Skipping comment.")
+                      exit(0)
+
+                  body = f"### 🧪 Test & Audit Results (Run #{run_num})\n\n" + "\n".join(links)
+
+                  req = urllib.request.Request(
+                      f"{api}/repos/{repo}/issues/{pr}/comments",
+                      data=json.dumps({"body": body}).encode("utf-8"),
+                      headers={
+                          "Authorization": f"token {token}",
+                          "Content-Type": "application/json",
+                          "User-Agent": "Forgejo-CI-Reports/1.0"
+                      }
+                  )
+                  try:
+                      with urllib.request.urlopen(req) as resp:
+                          print("Successfully posted PR reports comment.")
+                  except Exception as e:
+                      print(f"Notice: Could not post PR comment ({e})")
+                  EOF
 
             - name: 📊 Upload Test Reports
               uses: actions/upload-artifact@v3.2.2
