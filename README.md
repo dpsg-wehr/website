@@ -1,36 +1,36 @@
 # Website der DPSG Wehr
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
+![Astro](https://img.shields.io/badge/Astro-7-orange?logo=astro&logoColor=white)
 
-Hier findet ihr den Quellcode zu unserer Homepage. Die Website wurde mit [Next.js](https://nextjs.org) entwickelt und wird komplett statisch generiert.
+Hier findet ihr den Quellcode zu unserer Homepage. Die Website wurde mit [Astro](https://astro.build) (v7) entwickelt und wird komplett statisch generiert.
 
 ## Entwicklung
 
 ### Tools verwalten mit mise
 
-Dieses Projekt verwendet [mise](https://mise.jdx.sh/) zur Verwaltung von Entwicklungs-Tools (Node.js, pnpm). Wenn mise installiert ist, werden die richtigen Versionen automatisch beim Öffnen des Verzeichnisses aktiviert (oder können mise `mise install` installiert werden).
+Dieses Projekt verwendet [mise](https://mise.jdx.sh/) zur Verwaltung von Entwicklungs-Tools (Node.js, pnpm). Wenn mise installiert ist, werden die richtigen Versionen automatisch beim Öffnen des Verzeichnisses aktiviert (oder können mit `mise install` installiert werden).
 
 Die Nutzung von mise muss ggf. mit `mise trust` erlaubt werden.
 
 ## Generieren der Website
 
-Zum generieren der Website werden [git](https://git-scm.com/) und [pnpm](https://pnpm.io/installation) benötigt. Sie kann mit den folgenden Befehlen erstellt werden.
+Zum Generieren der Website werden [git](https://git-scm.com/) und [pnpm](https://pnpm.io/installation) benötigt. Sie kann mit den folgenden Befehlen erstellt werden:
 
 ```bash
 # Repository klonen
 git clone https://github.com/Linus-f/website-dpsg-wehr.git
 
-# In Ordnder wechseln
+# In Ordner wechseln
 cd website-dpsg-wehr
 
 # Abhängigkeiten installieren
 pnpm install
 
-# Website generieren
+# Website generieren und optimieren
 pnpm export
 ```
 
-Die generierte Website wird im Ordner `out` gespeichert. Zur Entwicklung kann ein lokaler server gestartet werden:
+Die generierte Website wird im Ordner `out` gespeichert. Zur Entwicklung kann ein lokaler Server gestartet werden:
 
 ```bash
 pnpm dev

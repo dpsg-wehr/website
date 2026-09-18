@@ -1,0 +1,20 @@
+---
+---
+
+<div id="calendar-root">
+    <div class="h-[670px] w-full bg-gray-100 dark:bg-gray-800 animate-pulse rounded-lg flex items-center justify-center text-gray-500">
+        Kalender wird geladen...
+    </div>
+</div>
+
+<script>
+    import React from 'react';
+    import { createRoot } from 'react-dom/client';
+    import Calendar from '@/components/mdx/Calendar';
+
+    const el = document.getElementById('calendar-root');
+    if (el) {
+        const root = createRoot(el);
+        root.render(React.createElement(Calendar));
+    }
+</script>

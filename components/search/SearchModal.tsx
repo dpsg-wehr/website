@@ -1,7 +1,4 @@
-'use client';
-
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import Fuse, { FuseResultMatch } from 'fuse.js';
 import { IoSearch, IoClose } from 'react-icons/io5';
 import { getIconFromName } from '@/lib/icons';
@@ -23,7 +20,6 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
     const [results, setResults] = useState<SearchResult[]>([]);
     const [searchIndex, setSearchIndex] = useState<SearchItem[]>([]);
     const [activeIndex, setActiveIndex] = useState(0);
-    const router = useRouter();
     const inputRef = useRef<HTMLInputElement>(null);
 
     const getIcon = (type: string, slug: string): React.ReactNode => {
@@ -209,11 +205,11 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
             if (item.type === 'file') {
                 window.open(item.slug, '_blank');
             } else {
-                router.push(item.slug);
+                window.location.href = item.slug;
             }
             handleClose();
         },
-        [router, handleClose]
+        [handleClose]
     );
 
     useEffect(() => {

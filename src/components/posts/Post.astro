@@ -1,0 +1,42 @@
+---
+import type { PostMetadata } from '@/types';
+import FloatingImage from './FloatingImage.astro';
+import { formatPostDate } from '@/lib/utils/date';
+
+interface Props {
+    postMetadata: PostMetadata[];
+    slug?: string;
+    overrideMetadata?: Partial<PostMetadata>;
+}
+
+const { postMetadata, slug, overrideMetadata } = Astro.props;
+
+const foundMetadata = postMetadata.find((post) => post.slug === slug);
+const metadata = overrideMetadata
+    ? ({ ...foundMetadata, ...overrideMetadata } as PostMetadata)
+    : foundMetadata;
+---
+
+{!metadata ? (
+    <article class="prose sm:prose-lg dark:prose-invert max-w-none"><slot /></article>
+) : (
+    <div>
+        {metadata.image?.src && (
+            <FloatingImage
+                src={metadata.image.src}
+                alt={metadata.title ?? ''}
+                width={metadata.image.width ?? 0}
+                height={metadata.image.height ?? 0}
+            />
+        )}
+        <div class="mb-8">
+            <h1 class="text-center text-4xl font-bold">{metadata.title}</h1>
+            <h2 class="text-center text-xl font-light">{metadata.subtitle}</h2>
+        </div>
+        <p class="text-center font-light text-gray-800 dark:text-gray-200">
+            {metadata.date && formatPostDate(metadata.date)}
+        </p>
+        <hr class="mt-3 mb-12" />
+        <article class="prose sm:prose-lg dark:prose-invert max-w-none"><slot /></article>
+    </div>
+)}

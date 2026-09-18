@@ -1,0 +1,69 @@
+---
+import { Image } from 'astro:assets';
+import { resolveImage } from '@/lib/assets/images';
+
+interface Props {
+    src: string;
+    alt: string;
+    width?: number;
+    height?: number;
+}
+
+const { src, alt, width, height } = Astro.props;
+const imageMeta = resolveImage(src);
+const targetWidth = imageMeta ? Math.min(imageMeta.width, 1200) : (width || 1200);
+---
+
+<div class="relative w-screen md:w-full -mt-8 md:mt-0 mb-8 -mx-2 sm:-mx-4 md:mx-0 overflow-hidden md:rounded-2xl shadow-none md:shadow-md md:shadow-black bg-gray-200 dark:bg-gray-800 flex justify-center items-center">
+    {imageMeta ? (
+        <>
+            <Image
+                src={imageMeta}
+                alt=""
+                width={targetWidth}
+                class="absolute inset-0 w-full h-full object-cover blur-xl opacity-50 scale-105 text-transparent"
+                loading="eager"
+                aria-hidden="true"
+            />
+            <Image
+                src={imageMeta}
+                alt={alt}
+                width={targetWidth}
+                class="relative block w-full h-auto max-h-[35rem] object-contain z-10 text-transparent"
+                loading="eager"
+                data-lightbox="true"
+                data-src={imageMeta.src}
+                data-alt={alt}
+                data-width={imageMeta.width}
+                data-height={imageMeta.height}
+            />
+        </>
+    ) : (
+        <>
+            <img
+                src={src}
+                alt=""
+                width={targetWidth}
+                height={height || 800}
+                class="absolute inset-0 w-full h-full object-cover blur-xl opacity-50 scale-105 text-transparent"
+                loading="eager"
+                data-image-component="true"
+                aria-hidden="true"
+            />
+            <img
+                src={src}
+                alt={alt}
+                width={targetWidth}
+                height={height || 800}
+                class="relative block w-full h-auto max-h-[35rem] object-contain z-10 text-transparent"
+                loading="eager"
+                data-image-component="true"
+                data-lightbox="true"
+                data-src={src}
+                data-alt={alt}
+                data-width={targetWidth}
+                data-height={height || 800}
+            />
+        </>
+    )}
+</div>

@@ -1,4 +1,4 @@
-@reference "../../app/globals.css";
+@reference "../../src/styles/globals.css";
 
 .my-react-select-container {
     @apply flex-1;

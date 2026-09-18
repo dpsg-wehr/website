@@ -1,0 +1,28 @@
+---
+import RootLayout from '@/src/layouts/RootLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { mdxComponents } from '@/src/mdx-components';
+import { getExcerpt } from '@/lib/utils/metadata';
+
+export async function getStaticPaths() {
+    const pages = await getCollection('pages');
+    const excluded = ['startseite', 'gallerie'];
+    return pages
+        .filter((page) => !excluded.includes(page.id.replace(/\.mdx$/, '')))
+        .map((page) => ({
+            params: { slug: page.id.replace(/\.mdx$/, '') },
+            props: { page },
+        }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+const description = page.data.description || page.data.desc || getExcerpt(page.body || '');
+const title = page.data.title || page.id.replace(/\.mdx$/, '');
+---
+
+<RootLayout title={title} description={description}>
+    <article class="prose sm:prose-lg dark:prose-invert max-w-none">
+        <Content components={mdxComponents} />
+    </article>
+</RootLayout>

@@ -6,3 +6,6 @@ allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+
+minimumReleaseAgeExclude:
+  - eslint-plugin-astro@3.2.1

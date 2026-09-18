@@ -1,0 +1,41 @@
+---
+import RootLayout from '@/src/layouts/RootLayout.astro';
+import getPostMetadata from '@/lib/content/posts';
+import PostPreview from '@/src/components/posts/PostPreview.astro';
+import { formatPostDate } from '@/lib/utils/date';
+
+const posts = getPostMetadata();
+---
+
+<RootLayout
+    title="Aktuelles"
+    description="Neuigkeiten und Berichte von unseren Aktionen, Zeltlagern und Gruppenstunden."
+>
+    <div class="prose dark:prose-invert mb-8 max-w-none">
+        <h1>Aktuelles</h1>
+        <p>
+            Hier findet ihr aktuelle Berichte und Informationen über unsere Aktivitäten. Ob
+            Zeltlager, Stammesaktionen oder Neuigkeiten aus den Gruppen - bleibt auf dem
+            Laufenden!
+        </p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto sm:max-w-max">
+        {
+            posts.map((post, index) => (
+                <PostPreview
+                    {...post}
+                    date={formatPostDate(post.date)}
+                    priority={index < 4}
+                />
+            ))
+        }
+    </div>
+
+    {
+        posts.length === 0 && (
+            <div class="text-center mt-8">
+                <p class="text-xl font-bold">Hier gibt's noch nichts zu sehen.</p>
+            </div>
+        )
+    }
+</RootLayout>

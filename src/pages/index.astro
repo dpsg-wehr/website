@@ -1,0 +1,19 @@
+---
+import RootLayout from '@/src/layouts/RootLayout.astro';
+import { getEntry, render } from 'astro:content';
+import { mdxComponents } from '@/src/mdx-components';
+
+const entry = await getEntry('pages', 'startseite');
+if (!entry) {
+    throw new Error('Could not find content/pages/startseite.mdx');
+}
+const { Content } = await render(entry);
+---
+
+<RootLayout title="DPSG Wehr" description="Website der DPSG Wehr">
+    <div class="dark:text-white">
+        <div class="landing-content prose sm:prose-lg dark:prose-invert max-w-none">
+            <Content components={mdxComponents} />
+        </div>
+    </div>
+</RootLayout>

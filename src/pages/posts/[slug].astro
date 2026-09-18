@@ -1,0 +1,99 @@
+---
+import RootLayout from '@/src/layouts/RootLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { mdxComponents } from '@/src/mdx-components';
+import Post from '@/src/components/posts/Post.astro';
+import getPostMetadata from '@/lib/content/posts';
+import { getExcerpt } from '@/lib/utils/metadata';
+import { resolveImage } from '@/lib/assets/images';
+import { getImage } from 'astro:assets';
+
+export async function getStaticPaths() {
+    const posts = await getCollection('posts');
+    return posts.map((post) => ({
+        params: { slug: post.data.slug || post.id.replace(/\.mdx$/, '') },
+        props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const allPostMetadata = getPostMetadata();
+const slug = post.data.slug || post.id.replace(/\.mdx$/, '');
+const metadata = allPostMetadata.find((p) => p.slug === slug);
+
+const description = post.data.desc || post.data.description || getExcerpt(post.body || '');
+let imageUrl = '/media/images/logo.png';
+let imageWidth = 800;
+let imageHeight = 800;
+
+const imageMeta = resolveImage(metadata?.image?.src || post.data.image);
+if (imageMeta) {
+    const optimized = await getImage({ src: imageMeta, width: 1200, format: 'webp' });
+    imageUrl = optimized.src;
+    imageWidth = optimized.attributes.width;
+    imageHeight = optimized.attributes.height;
+}
+
+const eventJsonLd = post.data.event
+    ? {
+          '@context': 'https://schema.org',
+          '@type': 'Event',
+          name: post.data.event.name || post.data.title,
+          description: description,
+          startDate: post.data.event.startDate,
+          endDate: post.data.event.endDate,
+          eventAttendanceMode:
+              post.data.event.eventAttendanceMode || 'https://schema.org/OfflineEventAttendanceMode',
+          eventStatus: post.data.event.eventStatus || 'https://schema.org/EventScheduled',
+          location: post.data.event.location
+              ? {
+                    '@type': 'Place',
+                    name: post.data.event.location.name,
+                    description: post.data.event.location.description,
+                    hasMap: post.data.event.location.hasMap,
+                    geo: post.data.event.location.geo
+                        ? {
+                              '@type': 'GeoCoordinates',
+                              latitude: post.data.event.location.geo.latitude,
+                              longitude: post.data.event.location.geo.longitude,
+                          }
+                        : undefined,
+                    address: post.data.event.location.address
+                        ? {
+                              '@type': 'PostalAddress',
+                              ...post.data.event.location.address,
+                          }
+                        : undefined,
+                }
+              : undefined,
+          image: post.data.image
+              ? [`https://dpsg-wehr.de${post.data.image}`]
+              : ['https://dpsg-wehr.de/media/images/logo.png'],
+          isAccessibleForFree: post.data.event.isAccessibleForFree ?? true,
+          organizer: {
+              '@type': 'NGO',
+              name: 'DPSG Stamm St. Bernhard Wehr',
+              url: 'https://dpsg-wehr.de',
+          },
+      }
+    : null;
+---
+
+<RootLayout
+    title={post.data.title}
+    description={description}
+    image={imageUrl}
+    imageWidth={imageWidth}
+    imageHeight={imageHeight}
+    type="article"
+    publishedTime={typeof post.data.date === 'string' ? post.data.date : post.data.date.toISOString()}
+    author={post.data.author}
+>
+    {eventJsonLd && (
+        <script type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />
+    )}
+    <Post postMetadata={allPostMetadata} slug={slug}>
+        <Content components={mdxComponents} />
+    </Post>
+</RootLayout>

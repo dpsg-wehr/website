@@ -3,8 +3,10 @@ import Img from '@/components/mdx/Img';
 
 export default function NextPhotoRenderer(
     { alt, title, sizes, className, style }: RenderImageProps,
-    { photo }: RenderImageContext
+    { photo, index }: RenderImageContext
 ) {
+    const isPriority = index < 4;
+
     return (
         <Img
             src={photo.src}
@@ -15,6 +17,9 @@ export default function NextPhotoRenderer(
             className={className}
             width={photo.width}
             height={photo.height}
+            priority={isPriority}
+            loading={isPriority ? 'eager' : 'lazy'}
+            fetchPriority={isPriority ? 'high' : undefined}
             style={{ ...style, cursor: 'pointer' }}
             // Lightbox attributes
             data-lightbox="true"

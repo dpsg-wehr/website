@@ -1,9 +1,14 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# Website DPSG Wehr - AI Agent Rules & Architecture Guidelines
 
-# This is NOT the Next.js you know
+This repository is built with **Astro 7** (Static Site Generation with React islands where needed) and **Tailwind CSS v4**.
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+## Key Guidelines
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
+- **Architecture:** Astro is used for SSG (`output: "static"` in `astro.config.mjs`, output dir `out/`).
+- **Pages & Routing:** Astro pages are located in `src/pages/`. Layouts are in `src/layouts/`.
+- **Content:** MDX content is in `content/` and loaded statically. Decap CMS admin is configured in `public/admin/`.
+- **Testing:**
+    - Vitest runs unit and component tests: `pnpm test` or `pnpm test --run`.
+    - Playwright runs E2E tests: `pnpm test:e2e`.
+    - Run all tests: `pnpm test:all`.
+- **Verification:** Always ensure `pnpm lint`, `pnpm typecheck`, `pnpm test:all`, and `pnpm build` pass with 0 errors.

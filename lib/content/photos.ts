@@ -1,38 +1,28 @@
 import type { PhotoPlus } from '@/types';
-import sizeOf from 'image-size';
-import { getOptimizedUrl, getSrcSet } from '@/lib/utils/photoSrc';
-import fs from 'fs';
-
-function getImageDimensions(src: string) {
-    try {
-        const buffer = fs.readFileSync(`public/${src}`);
-        const dimensions = sizeOf(buffer);
-        return dimensions;
-    } catch {
-        return null;
-    }
-}
-
+import { resolveImage } from '@/lib/assets/images';
 import photoInfo from '@/content/photos.json';
 
 export function getPhotos(): PhotoPlus[] {
     const photos = photoInfo
         .map<PhotoPlus | undefined>((info) => {
-            const dimensions = getImageDimensions(info.src);
-            if (
-                dimensions === null ||
-                dimensions.width === undefined ||
-                dimensions.height === undefined
-            )
+            const imageMeta = resolveImage(info.src);
+            if (!imageMeta) {
                 return undefined;
+            }
 
             return {
-                src: info.src,
-                optimizedSrc: getOptimizedUrl(info.src, dimensions.width),
-                width: dimensions.width,
-                height: dimensions.height,
+                src: imageMeta.src,
+                optimizedSrc: imageMeta.src,
+                width: imageMeta.width,
+                height: imageMeta.height,
                 alt: info.alt,
-                srcSet: getSrcSet(info.src, dimensions.width, dimensions.height),
+                srcSet: [
+                    {
+                        src: imageMeta.src,
+                        width: imageMeta.width,
+                        height: imageMeta.height,
+                    },
+                ],
                 tags: info.tags,
             };
         })

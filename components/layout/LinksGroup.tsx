@@ -1,10 +1,6 @@
-'use client';
-
 import { useState } from 'react';
 import { navigationLinks } from '@/lib/config';
 import { NavigationLinkGroup } from '@/types';
-
-import Link from 'next/link';
 import { getIconFromName } from '@/lib/icons';
 import { IoChevronDown } from 'react-icons/io5';
 
@@ -21,7 +17,7 @@ export function LinksGroup({
     const items = (hasLinks ? links : []).map((link) => {
         const isThemed = !link.color;
         return (
-            <Link
+            <a
                 className="font-medium flex flex-row items-center px-4 py-3 ml-4 border-l border-solid border-gray-200 dark:border-gray-500 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
                 href={link.link}
                 key={link.label}
@@ -33,7 +29,7 @@ export function LinksGroup({
                     {getIconFromName(link.Icon, link.color)}
                 </div>
                 {link.label}
-            </Link>
+            </a>
         );
     });
 
@@ -79,9 +75,9 @@ export function LinksGroup({
                     {innerContent}
                 </button>
             ) : (
-                <Link href={link} onClick={onGroupClick}>
+                <a href={link} onClick={onGroupClick}>
                     {innerContent}
-                </Link>
+                </a>
             )}
             {hasLinks ? (
                 <div
@@ -104,11 +100,6 @@ export function NavbarLinksGroup({ toggleSidebar }: { toggleSidebar: () => void 
                     label: link.label,
                     link: link.link,
                     Icon: link.Icon,
-                    // Preserve color if needed via a custom way or relying on the loop inside LinksGroup handling 'undefined' links
-                    // But LinksGroup expects NavigationLinkGroup.
-                    // The 'link' from 'links' is NavigationLink (label, link, Icon, color)
-                    // We can cast or restructure.
-                    // LinksGroup handles children logic. Here we are creating items WITHOUT children.
                 });
             });
         } else {

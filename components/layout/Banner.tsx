@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useSyncExternalStore } from 'react';
-import Link from 'next/link';
 import { BannerConfig } from '@/types';
 import { HiX, HiArrowRight } from 'react-icons/hi';
 
@@ -98,7 +97,7 @@ export default function Banner({ banner }: { banner: BannerConfig | null }) {
             className={`relative z-40 transition-colors ${styles.aside}`}
         >
             <div className="max-w-6xl mx-auto px-4 py-2 sm:py-2.5 flex items-center justify-between gap-3 text-xs sm:text-sm">
-                <Link
+                <a
                     href={banner.link}
                     className={`flex-1 flex items-center justify-center flex-wrap gap-x-2 gap-y-1 text-center group no-underline transition-colors py-0.5 ${styles.link}`}
                 >
@@ -116,7 +115,7 @@ export default function Banner({ banner }: { banner: BannerConfig | null }) {
                             <HiArrowRight className="inline-block w-3.5 h-3.5 align-middle -mt-0.5 transition-transform duration-200 group-hover:translate-x-0.5" />
                         </span>
                     </span>
-                </Link>
+                </a>
 
                 {banner.dismissible !== false && (
                     <button

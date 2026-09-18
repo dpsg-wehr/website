@@ -46,34 +46,3 @@ export function getExcerpt(content: string, length = 160): string {
 
     return truncated.trim() + '...';
 }
-
-export function getOptimizedImageMetadata(
-    src: string,
-    originalWidth: number,
-    originalHeight: number
-) {
-    if (!src || src.startsWith('http') || !src.includes('/media/images/')) return null;
-
-    // For this project, optimized images are in a subfolder named 'nextImageExportOptimizer'
-    // e.g. /media/images/test.png -> /media/images/nextImageExportOptimizer/test-opt-1080.WEBP
-
-    const targetWidth = 1080;
-    const aspectRatio = originalWidth / originalHeight;
-    if (!aspectRatio) return null;
-    const targetHeight = Math.round(targetWidth / aspectRatio);
-
-    const lastSlashIndex = src.lastIndexOf('/');
-    const dir = src.substring(0, lastSlashIndex);
-    const filenameWithExt = src.substring(lastSlashIndex + 1);
-    const lastDotIndex = filenameWithExt.lastIndexOf('.');
-    if (lastDotIndex === -1) return null;
-    const filename = filenameWithExt.substring(0, lastDotIndex);
-
-    const optimizedSrc = `${dir}/nextImageExportOptimizer/${filename}-opt-${targetWidth}.WEBP`;
-
-    return {
-        url: optimizedSrc,
-        width: targetWidth,
-        height: targetHeight,
-    };
-}

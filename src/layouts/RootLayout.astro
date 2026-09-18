@@ -1,0 +1,175 @@
+---
+import '@/src/styles/globals.css';
+import Navbar from '@/components/layout/Navbar';
+import Banner from '@/components/layout/Banner';
+import Footer from '@/components/layout/Footer';
+import GlobalLightbox from '@/components/gallery/GlobalLightbox';
+import { getActiveBanner } from '@/lib/content/banner';
+
+interface Props {
+    title?: string;
+    description?: string;
+    image?: string;
+    imageWidth?: number;
+    imageHeight?: number;
+    type?: string;
+    publishedTime?: string;
+    author?: string;
+}
+
+const {
+    title = 'DPSG Wehr',
+    description = 'Website der DPSG Wehr',
+    image = '/media/images/logo.png',
+    imageWidth,
+    imageHeight,
+    type = 'website',
+    publishedTime,
+    author,
+} = Astro.props;
+
+const banner = getActiveBanner();
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://dpsg-wehr.de');
+const formattedTitle = title.includes('DPSG Wehr') ? title : `${title} - DPSG Wehr`;
+const imageUrl = image.startsWith('http') ? image : new URL(image, Astro.site || 'https://dpsg-wehr.de').href;
+
+const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NGO',
+    name: 'DPSG Stamm St. Bernhard Wehr',
+    alternateName: ['Pfadfinder Wehr', 'DPSG Wehr', 'DPSG Stamm Wehr'],
+    url: 'https://dpsg-wehr.de',
+    logo: 'https://dpsg-wehr.de/media/images/logo.png',
+    sameAs: [
+        'https://de-de.facebook.com/dpsgwehr/',
+        'https://www.instagram.com/pfadfinder_wehr/',
+        'https://github.com/Linus-f/website-dpsg-wehr',
+    ],
+    address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Kirchplatz 1',
+        addressLocality: 'Wehr',
+        postalCode: '79664',
+        addressCountry: 'DE',
+    },
+    parentOrganization: {
+        '@type': 'NGO',
+        name: 'Deutsche Pfadfinderschaft Sankt Georg (DPSG)',
+        url: 'https://dpsg.de',
+    },
+};
+---
+
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href={canonicalURL} />
+        <title>{formattedTitle}</title>
+        <meta name="description" content={description} />
+        <meta name="darkreader-lock" content="true" />
+        <meta name="theme-color" content="#f9fafb" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#374151" media="(prefers-color-scheme: dark)" />
+
+        <!-- OpenGraph -->
+        <meta property="og:title" content={formattedTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:type" content={type} />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:site_name" content="DPSG Wehr" />
+        <meta property="og:locale" content="de_DE" />
+        <meta property="og:image" content={imageUrl} />
+        {imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
+        {imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
+        {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+        {author && <meta property="article:author" content={author} />}
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={formattedTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={imageUrl} />
+
+        <!-- Structured Data -->
+        <script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} />
+
+        <!-- Flash-Free Dark Mode Script -->
+        <script is:inline>
+            const theme = (() => {
+                if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+                    return localStorage.getItem('theme');
+                }
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            })();
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.documentElement.setAttribute('data-color-scheme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.setAttribute('data-color-scheme', 'light');
+            }
+        </script>
+
+        <!-- Progressive Enhancement for Mobile Navigation -->
+        <script is:inline>
+            (() => {
+                document.addEventListener('click', (e) => {
+                    if (window.__NAVBAR_HYDRATED__) return;
+                    const btn = e.target.closest('button[aria-label="Toggle navigation"]');
+                    const sb = document.querySelector('[data-testid="mobile-sidebar"]');
+                    if (!sb) return;
+
+                    function toggleSidebar(open) {
+                        if (open) {
+                            sb.classList.remove('-translate-x-full');
+                            sb.classList.add('translate-x-0');
+                            sb.removeAttribute('aria-hidden');
+                            sb.removeAttribute('inert');
+                        } else {
+                            sb.classList.remove('translate-x-0');
+                            sb.classList.add('-translate-x-full');
+                            sb.setAttribute('aria-hidden', 'true');
+                            sb.setAttribute('inert', '');
+                        }
+                        const b = document.querySelector('button[aria-label="Toggle navigation"]');
+                        if (b) {
+                            const spans = b.querySelectorAll('span');
+                            if (spans.length === 3) {
+                                if (open) {
+                                    spans[0].classList.add('rotate-45', 'translate-y-1.5');
+                                    spans[1].classList.add('opacity-0');
+                                    spans[2].classList.add('-rotate-45', '-translate-y-1.5');
+                                } else {
+                                    spans[0].classList.remove('rotate-45', 'translate-y-1.5');
+                                    spans[1].classList.remove('opacity-0');
+                                    spans[2].classList.remove('-rotate-45', '-translate-y-1.5');
+                                }
+                            }
+                        }
+                    }
+
+                    if (btn) {
+                        const isOpen = sb.classList.contains('translate-x-0');
+                        toggleSidebar(!isOpen);
+                    } else if (e.target === sb || e.target.closest('[data-testid="mobile-sidebar"] a')) {
+                        toggleSidebar(false);
+                    }
+                });
+            })();
+        </script>
+    </head>
+    <body class="antialiased prose-headings:break-words prose-headings:hyphens-auto">
+        <div class="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-700 text-black dark:text-white">
+            <Navbar client:load />
+            {banner && <Banner banner={banner} client:only="react" />}
+            <div class="flex-1 flex flex-col relative">
+                <main class="max-w-4xl w-full mx-auto px-2 sm:px-4 my-12 md:my-20 flex-1">
+                    <slot />
+                </main>
+            </div>
+            <Footer />
+            <GlobalLightbox client:only="react" />
+        </div>
+    </body>
+</html>

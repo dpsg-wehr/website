@@ -12,7 +12,10 @@
 /allure-report
 /playwright-report
 
-# next.js
+# astro
+/.astro/
+
+# next.js (legacy)
 /.next/
 /out/
 
@@ -38,9 +41,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# next image optimizer
-**/nextImageExportOptimizer/
-/public/media/images/next-image-export-optimizer-hashes.json
 
 .idea
 

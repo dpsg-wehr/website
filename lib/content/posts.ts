@@ -3,6 +3,7 @@ import matter from 'gray-matter';
 import { PostMetadata } from '@/types';
 import imageSize from 'image-size';
 import { normalizeBannerUntil } from '@/lib/utils/date';
+import { resolveImage } from '@/lib/assets/images';
 
 export default function getPostMetadata(): PostMetadata[] {
     const folder = 'content/posts/';
@@ -13,16 +14,21 @@ export default function getPostMetadata(): PostMetadata[] {
         const slug = filename.replace('.mdx', '');
         const fileContents = fs.readFileSync(`content/posts/${filename}`, 'utf8');
         const matterResult = matter(fileContents);
-        let imgSize = undefined;
+        let imgSize: { width?: number; height?: number } | undefined = undefined;
         if (matterResult.data.image) {
-            try {
-                const imagePath = matterResult.data.image.startsWith('/')
-                    ? matterResult.data.image.slice(1)
-                    : matterResult.data.image;
-                const buffer = fs.readFileSync(`public/${imagePath}`);
-                imgSize = imageSize(buffer);
-            } catch {
-                // Ignore error if image not found
+            const meta = resolveImage(matterResult.data.image);
+            if (meta) {
+                imgSize = { width: meta.width, height: meta.height };
+            } else {
+                try {
+                    const imagePath = matterResult.data.image.startsWith('/')
+                        ? matterResult.data.image.slice(1)
+                        : matterResult.data.image;
+                    const buffer = fs.readFileSync(`public/${imagePath}`);
+                    imgSize = imageSize(buffer);
+                } catch {
+                    // Ignore error if image not found
+                }
             }
         }
 

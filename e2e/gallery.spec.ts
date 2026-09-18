@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Photo Gallery', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/gallerie');
+        await expect(page.locator('.react-photo-album')).toBeVisible({ timeout: 15000 });
     });
 
     test('should load the gallery with images', async ({ page }) => {

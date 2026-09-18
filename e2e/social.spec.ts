@@ -55,11 +55,11 @@ test.describe('Social Metadata', () => {
 
         await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
             'content',
-            /.*nextImageExportOptimizer\/sfHeader-opt-1080\.WEBP/
+            /(?:_astro\/.*\.webp|_image\?.*f=webp)/
         );
         await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute(
             'content',
-            '1080'
+            '1200'
         );
     });
 });

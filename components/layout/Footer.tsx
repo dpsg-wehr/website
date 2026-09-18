@@ -1,9 +1,5 @@
-import ExportedImage from 'next-image-export-optimizer';
-import Link from 'next/link';
 import globalData from '@/content/global/index.json';
 import { IoLogoFacebook, IoLogoInstagram } from 'react-icons/io5';
-
-import dpsgLogo from '@/public/dpsg.svg';
 import pkg from '@/package.json';
 
 function SocialLink({
@@ -19,9 +15,9 @@ function SocialLink({
 }) {
     if (!url) return null;
     return (
-        <Link href={url} target="_blank" aria-label={label}>
+        <a href={url} target="_blank" rel="noopener noreferrer" aria-label={label}>
             <div className={`text-white ${hoverColor} text-2xl ml-4`}>{children}</div>
-        </Link>
+        </a>
     );
 }
 
@@ -66,13 +62,14 @@ function FooterLink({
 }) {
     if (!url || !text) return null;
     return (
-        <Link
+        <a
             href={url}
-            target={external ? '_blank' : ''}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noopener noreferrer' : undefined}
             className="text-green-50 hover:underline text-sm mb-1"
         >
             {text}
-        </Link>
+        </a>
     );
 }
 
@@ -84,7 +81,7 @@ function FooterLinkColumn({
     links: { text: string; url: string; external: boolean }[];
 }) {
     return (
-        <div className={`flex flex-col w-auto m-4 mb-0 sm:flex-1`}>
+        <div className="flex flex-col w-auto m-4 mb-0 sm:flex-1">
             <h1 className="font-semibold text-lg mb-2">{title}</h1>
             {links.map((link, i) => (
                 <FooterLink key={i} {...link} />
@@ -97,15 +94,17 @@ function FooterDPSG() {
     return (
         <div className="md:flex-shrink-0 m-4 mb-0">
             <h1 className="font-semibold text-lg mb-2">DPSG</h1>
-            <Link href="https://www.dpsg.de" target="_blank">
-                <ExportedImage
-                    src={dpsgLogo}
+            <a href="https://www.dpsg.de" target="_blank" rel="noopener noreferrer">
+                <img
+                    src="/dpsg.svg"
                     alt="DPSG Logo"
                     width="224"
                     height="108"
                     className="bg-white w-full sm:w-56"
+                    loading="lazy"
+                    data-image-component="true"
                 />
-            </Link>
+            </a>
         </div>
     );
 }
@@ -116,7 +115,7 @@ function FooterMain({
     columns: { title: string; links: { text: string; url: string; external: boolean }[] }[];
 }) {
     return (
-        <div className="flex flex-col sm:flex-row flex-wrap gap-4 text-white ">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-4 text-white">
             <div className="flex-1 flex flex-row place-content-between">
                 {columns.map((col, i) => (
                     <FooterLinkColumn key={i} title={col.title} links={col.links} />

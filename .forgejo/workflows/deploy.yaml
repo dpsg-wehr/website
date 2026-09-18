@@ -50,13 +50,13 @@ jobs:
             - name: 🧩 Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: ⚡ Cache Next.js Build
+            - name: ⚡ Cache Astro Build
               uses: actions/cache@v6.1.0
               with:
-                  path: .next/cache
-                  key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+                  path: .astro/cache
+                  key: ${{ runner.os }}-astro-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
                   restore-keys: |
-                      ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
+                      ${{ runner.os }}-astro-${{ hashFiles('pnpm-lock.yaml') }}-
 
             - name: 🔍 Typecheck & Lint
               run: |
@@ -187,34 +187,18 @@ jobs:
             - name: 🧩 Install Dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: ⚡ Cache Next.js & Image Optimizer
+            - name: ⚡ Cache Astro Build
               uses: actions/cache@v6.1.0
               with:
-                  path: |
-                      .next/cache
-                      public/**/nextImageExportOptimizer
-                      public/media/images/next-image-export-optimizer-hashes.json
-                  key: ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**', '!public/**/nextImageExportOptimizer/**', '!public/media/images/next-image-export-optimizer-hashes.json') }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  path: .astro/cache
+                  key: ${{ runner.os }}-astro-build-cache-${{ hashFiles('src/assets/images/**', 'pnpm-lock.yaml') }}
                   restore-keys: |
-                      ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**', '!public/**/nextImageExportOptimizer/**', '!public/media/images/next-image-export-optimizer-hashes.json') }}-
-                      ${{ runner.os }}-build-cache-
+                      ${{ runner.os }}-astro-build-cache-
 
-            - name: 🏗️ Build Static Site & Optimize
+            - name: 🏗️ Build Static Site
               env:
-                  NEXT_TELEMETRY_DISABLED: 1
                   INTERNAL_ICS_TOKEN: ${{ secrets.INTERNAL_ICS_TOKEN }}
-                  nextImageExportOptimizer_imageFolderPath: 'public/media/images'
-                  nextImageExportOptimizer_exportFolderPath: 'out'
-                  nextImageExportOptimizer_exportFolderName: 'nextImageExportOptimizer'
-                  nextImageExportOptimizer_quality: '60'
-                  nextImageExportOptimizer_storePicturesInWEBP: 'true'
-                  nextImageExportOptimizer_generateAndUseBlurImages: 'true'
-                  nextImageExportOptimizer_imageSizes: '16,64,128,256,384'
-                  nextImageExportOptimizer_deviceSizes: '640,1080,1920'
-              run: |
-                  pnpm build
-                  pnpm next-image-export-optimizer
-                  node scripts/inline-css.mjs
+              run: pnpm build
 
             - name: 🛠️ Ensure Docker & SSH Tools Installed
               run: |

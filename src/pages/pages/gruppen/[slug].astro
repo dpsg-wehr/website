@@ -1,0 +1,25 @@
+---
+import RootLayout from '@/src/layouts/RootLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { mdxComponents } from '@/src/mdx-components';
+import { getExcerpt } from '@/lib/utils/metadata';
+
+export async function getStaticPaths() {
+    const gruppen = await getCollection('gruppen');
+    return gruppen.map((entry) => ({
+        params: { slug: entry.id.replace(/\.mdx$/, '') },
+        props: { entry },
+    }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const description = entry.data.description || entry.data.desc || getExcerpt(entry.body || '');
+const title = entry.data.title || entry.id.replace(/\.mdx$/, '');
+---
+
+<RootLayout title={title} description={description}>
+    <article class="prose sm:prose-lg dark:prose-invert max-w-none">
+        <Content components={mdxComponents} />
+    </article>
+</RootLayout>

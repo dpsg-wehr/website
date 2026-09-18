@@ -6,6 +6,7 @@ import deLocale from '@fullcalendar/react/locales/de';
 import dayGridPlugin from '@fullcalendar/react/daygrid';
 import timeGridPlugin from '@fullcalendar/react/timegrid';
 import listPlugin from '@fullcalendar/react/list';
+import classicThemePlugin from '@fullcalendar/react/themes/classic';
 
 import '@fullcalendar/react/skeleton.css';
 import '@fullcalendar/react/themes/classic/theme.css';
@@ -20,7 +21,7 @@ export default function Calendar() {
             <FullCalendar
                 height={670}
                 aspectRatio={1}
-                plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
+                plugins={[dayGridPlugin, timeGridPlugin, listPlugin, classicThemePlugin]}
                 initialView="dayGridMonth"
                 locales={[deLocale]}
                 locale="de"
