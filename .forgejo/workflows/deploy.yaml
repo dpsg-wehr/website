@@ -75,6 +75,9 @@ jobs:
             - name: 🚦 Run tests
               run: pnpm test:all
 
+            - name: ⚡ Audit with Lighthouse CI
+              run: pnpm audit:lighthouse
+
             - name: 📝 Generate Test Summary
               if: ${{ !cancelled() }}
               run: |
@@ -124,7 +127,39 @@ jobs:
                         }
                       '
                     fi
-                    echo "📁 Download the full HTML reports (Vitest & Playwright) from the **Artifacts** section of this run." >> "$GITHUB_STEP_SUMMARY"
+                    if [ -f "test-results/lighthouse/manifest.json" ]; then
+                      node -e '
+                        const fs = require("fs");
+                        try {
+                          const runs = JSON.parse(fs.readFileSync("test-results/lighthouse/manifest.json", "utf8"));
+                          const repRuns = runs.filter((r) => r.isRepresentativeRun);
+                          if (repRuns.length > 0) {
+                            let md = "#### ⚡ Lighthouse Audit\n\n";
+                            md += "| Page | Performance | Accessibility | Best Practices | SEO |\n";
+                            md += "| :--- | :---------: | :-----------: | :------------: | :-: |\n";
+                            const formatScore = (val) => {
+                              const s = Math.round((val || 0) * 100);
+                              const icon = s >= 90 ? "🟢" : s >= 80 ? "🟡" : "🔴";
+                              return `${icon} ${s}`;
+                            };
+                            repRuns.forEach((r) => {
+                              const u = new URL(r.url);
+                              const path = u.pathname.replace("/index.html", "/") || "/";
+                              const perf = formatScore(r.summary.performance);
+                              const a11y = formatScore(r.summary.accessibility);
+                              const bp = formatScore(r.summary["best-practices"]);
+                              const seo = formatScore(r.summary.seo);
+                              md += `| \`${path}\` | ${perf} | ${a11y} | ${bp} | ${seo} |\n`;
+                            });
+                            md += "\n";
+                            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md);
+                          }
+                        } catch (e) {
+                          console.error(e);
+                        }
+                      '
+                    fi
+                    echo "📁 Download the full HTML reports (Vitest, Playwright & Lighthouse) from the **Artifacts** section of this run." >> "$GITHUB_STEP_SUMMARY"
                   fi
 
             - name: 📊 Upload Test Reports

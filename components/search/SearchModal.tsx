@@ -15,6 +15,29 @@ interface SearchResult extends SearchItem {
     matches?: readonly FuseResultMatch[];
 }
 
+let cachedIndex: SearchItem[] | null = null;
+let fetchPromise: Promise<SearchItem[]> | null = null;
+
+export function fetchSearchIndex(): Promise<SearchItem[]> {
+    if (cachedIndex) return Promise.resolve(cachedIndex);
+    if (!fetchPromise) {
+        fetchPromise = fetch('/search-index.json')
+            .then((res) => {
+                if (!res.ok) throw new Error('Failed to load search index');
+                return res.json();
+            })
+            .then((data: SearchItem[]) => {
+                cachedIndex = data;
+                return data;
+            })
+            .catch((err) => {
+                fetchPromise = null;
+                throw err;
+            });
+    }
+    return fetchPromise;
+}
+
 export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
@@ -48,10 +71,15 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
     };
 
     useEffect(() => {
-        fetch('/search-index.json')
-            .then((res) => res.json())
-            .then((data) => setSearchIndex(data))
+        let isMounted = true;
+        fetchSearchIndex()
+            .then((data) => {
+                if (isMounted) setSearchIndex(data);
+            })
             .catch(() => {});
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     useEffect(() => {

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useSyncExternalStore } from 'react';
+import { useState, useEffect, useSyncExternalStore, lazy, Suspense } from 'react';
 import { IoSearch } from 'react-icons/io5';
-import SearchModal from './SearchModal';
+
+const SearchModal = lazy(() => import('./SearchModal'));
 
 const emptySubscribe = () => () => {};
 
@@ -20,6 +21,10 @@ export default function SearchButton() {
                 /mac/i.test(navigator.platform)),
         () => false
     );
+
+    const preloadSearch = () => {
+        import('./SearchModal').then((mod) => mod.fetchSearchIndex?.()).catch(() => {});
+    };
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -45,6 +50,8 @@ export default function SearchButton() {
         <>
             <button
                 onClick={onOpenSearch}
+                onMouseEnter={preloadSearch}
+                onFocus={preloadSearch}
                 aria-label="Suche öffnen"
                 className="group cursor-pointer bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-100 py-1.5 px-2 lg:px-3 rounded-lg flex items-center gap-2 w-auto min-[500px]:w-36 lg:w-44 text-left"
             >
@@ -56,7 +63,11 @@ export default function SearchButton() {
                     {isMac ? '⌘' : 'Ctrl'} K
                 </kbd>
             </button>
-            <SearchModal isOpen={isOpen} onClose={onCloseSearch} />
+            {isOpen && (
+                <Suspense fallback={null}>
+                    <SearchModal isOpen={isOpen} onClose={onCloseSearch} />
+                </Suspense>
+            )}
         </>
     );
 }

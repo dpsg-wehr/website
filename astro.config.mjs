@@ -20,6 +20,21 @@ export default defineConfig({
             filter: (page) => !page.includes('/admin/'),
         }),
     ],
+    image: {
+        service: {
+            entrypoint: 'astro/assets/services/sharp',
+            config: {
+                webp: {
+                    effort: 6,
+                    quality: 80,
+                },
+                avif: {
+                    effort: 6,
+                    quality: 75,
+                },
+            },
+        },
+    },
     vite: {
         plugins: [tailwindcss()],
         optimizeDeps: {

@@ -24,15 +24,18 @@ const imageMeta = resolveImage(props.image?.src);
                     <Image
                         src={imageMeta}
                         alt=""
-                        width={600}
+                        width={32}
+                        quality={30}
                         class="absolute inset-0 w-full h-full object-cover blur-md opacity-50 scale-105 text-transparent"
-                        loading={props.priority ? 'eager' : 'lazy'}
+                        loading="lazy"
                         aria-hidden="true"
                     />
                     <Image
                         src={imageMeta}
                         alt={props.title}
-                        width={600}
+                        width={400}
+                        widths={[320, 400, 600].filter((w) => w <= imageMeta.width)}
+                        sizes="(max-width: 768px) 100vw, 400px"
                         class="absolute inset-0 w-full h-full object-contain z-10 text-transparent"
                         loading={props.priority ? 'eager' : 'lazy'}
                     />
@@ -42,14 +45,16 @@ const imageMeta = resolveImage(props.image?.src);
                     <img
                         src={props.image.src}
                         alt=""
+                        width={32}
                         class="absolute inset-0 w-full h-full object-cover blur-md opacity-50 scale-105 text-transparent"
-                        loading={props.priority ? 'eager' : 'lazy'}
+                        loading="lazy"
                         data-image-component="true"
                         aria-hidden="true"
                     />
                     <img
                         src={props.image.src}
                         alt={props.title}
+                        width={400}
                         class="absolute inset-0 w-full h-full object-contain z-10 text-transparent"
                         loading={props.priority ? 'eager' : 'lazy'}
                         data-image-component="true"

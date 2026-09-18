@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { SlideImage } from 'yet-another-react-lightbox';
-import LightboxWrapper from './LightboxWrapper';
+import { useState, useEffect, lazy, Suspense } from 'react';
+import type { SlideImage } from 'yet-another-react-lightbox';
+
+const LightboxWrapper = lazy(() => import('./LightboxWrapper'));
 
 export default function GlobalLightbox() {
     const [slides, setSlides] = useState<SlideImage[]>([]);
@@ -56,11 +57,13 @@ export default function GlobalLightbox() {
     if (!lightBoxOpen) return null;
 
     return (
-        <LightboxWrapper
-            open={lightBoxOpen}
-            setOpen={setLightboxOpen}
-            slides={slides}
-            index={index}
-        />
+        <Suspense fallback={null}>
+            <LightboxWrapper
+                open={lightBoxOpen}
+                setOpen={setLightboxOpen}
+                slides={slides}
+                index={index}
+            />
+        </Suspense>
     );
 }

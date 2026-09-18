@@ -11,6 +11,7 @@
 /allure-results
 /allure-report
 /playwright-report
+/.lighthouseci/
 
 # astro
 /.astro/

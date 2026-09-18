@@ -12,7 +12,7 @@ const recentPosts = postMetadata.slice(0, 2);
         {recentPosts.map((post) => (
             <PostPreview
                 {...post}
-                priority={true}
+                priority={false}
                 date={formatPostDate(post.date)}
             />
         ))}

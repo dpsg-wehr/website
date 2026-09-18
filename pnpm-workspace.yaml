@@ -1,11 +1,11 @@
 overrides:
-  esbuild: '0.28.2'
-  sharp: '0.35.4'
+    esbuild: '0.28.2'
+    sharp: '0.35.4'
 
 allowBuilds:
-  esbuild: true
-  sharp: true
-  unrs-resolver: true
+    esbuild: true
+    sharp: true
+    unrs-resolver: true
 
 minimumReleaseAgeExclude:
-  - eslint-plugin-astro@3.2.1
+    - eslint-plugin-astro@3.2.1

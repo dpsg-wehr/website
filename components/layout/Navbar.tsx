@@ -135,13 +135,20 @@ export default function Navbar() {
                         </button>
                         <a href="/">
                             <div className="flex flex-row items-center">
-                                <img
-                                    width={60}
-                                    height={60}
-                                    src="/media/images/logo.png"
-                                    alt="Logo"
-                                    loading="eager"
-                                />
+                                <picture>
+                                    <source
+                                        srcSet="/media/images/logo-120.webp 2x, /media/images/logo.webp 1x"
+                                        type="image/webp"
+                                    />
+                                    <img
+                                        width={60}
+                                        height={60}
+                                        src="/media/images/logo.png"
+                                        alt="Logo"
+                                        loading="eager"
+                                        decoding="async"
+                                    />
+                                </picture>
                                 <h1 className="font-bold text-lg ml-2 hidden min-[400px]:block overflow-auto">
                                     Pfadfinder Wehr
                                 </h1>
