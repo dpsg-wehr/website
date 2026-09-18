@@ -36,22 +36,22 @@ jobs:
         container:
             image: mcr.microsoft.com/playwright:v1.62.1-noble
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@v7.0.1
 
             - name: 📦 Setup pnpm
-              uses: pnpm/action-setup@v6
+              uses: pnpm/action-setup@v6.1.0
 
             - name: 🟢 Setup Node.js 24
-              uses: actions/setup-node@v7
+              uses: actions/setup-node@v7.0.0
               with:
-                  node-version: 24
+                  node-version: 24.21.0
                   cache: 'pnpm'
 
             - name: 🧩 Install dependencies
               run: pnpm install --frozen-lockfile
 
             - name: ⚡ Cache Next.js Build
-              uses: actions/cache@v6
+              uses: actions/cache@v6.1.0
               with:
                   path: .next/cache
                   key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
@@ -125,7 +125,7 @@ jobs:
                   fi
 
             - name: 📊 Upload Test Reports
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v3.2.2
               if: ${{ !cancelled() }}
               with:
                   name: test-results
@@ -144,12 +144,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v7
+              uses: actions/checkout@v7.0.1
 
             - name: Setup Python
-              uses: actions/setup-python@v7
+              uses: actions/setup-python@v7.0.0
               with:
-                  python-version: '3.14'
+                  python-version: '3.14.7'
 
             - name: Check AI Approval & Auto-Merge
               env:
@@ -168,24 +168,24 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: 📥 Checkout Code
-              uses: actions/checkout@v7
+              uses: actions/checkout@v7.0.1
               with:
                   fetch-depth: 0
 
             - name: 📦 Setup pnpm
-              uses: pnpm/action-setup@v6
+              uses: pnpm/action-setup@v6.1.0
 
             - name: 🟢 Setup Node.js 24
-              uses: actions/setup-node@v7
+              uses: actions/setup-node@v7.0.0
               with:
-                  node-version: 24
+                  node-version: 24.21.0
                   cache: 'pnpm'
 
             - name: 🧩 Install Dependencies
               run: pnpm install --frozen-lockfile
 
             - name: ⚡ Cache Next.js & Image Optimizer
-              uses: actions/cache@v6
+              uses: actions/cache@v6.1.0
               with:
                   path: |
                       .next/cache
