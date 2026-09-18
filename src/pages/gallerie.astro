@@ -10,7 +10,7 @@ import instaImg from '@/src/assets/images/profilbild_insta.jpg';
 
 const entry = await getEntry('pages', 'gallerie');
 const Content = entry ? (await render(entry)).Content : null;
-const photos = getPhotos();
+const photos = await getPhotos();
 ---
 
 <RootLayout

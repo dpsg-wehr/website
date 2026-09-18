@@ -54,9 +54,9 @@ jobs:
               uses: actions/cache@v6.1.0
               with:
                   path: .astro/cache
-                  key: ${{ runner.os }}-astro-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+                  key: ${{ runner.os }}-astro-build-cache-${{ hashFiles('src/assets/images/**', 'content/photos.json', 'pnpm-lock.yaml') }}
                   restore-keys: |
-                      ${{ runner.os }}-astro-${{ hashFiles('pnpm-lock.yaml') }}-
+                      ${{ runner.os }}-astro-build-cache-
 
             - name: 🔍 Typecheck & Lint
               run: |
@@ -191,7 +191,7 @@ jobs:
               uses: actions/cache@v6.1.0
               with:
                   path: .astro/cache
-                  key: ${{ runner.os }}-astro-build-cache-${{ hashFiles('src/assets/images/**', 'pnpm-lock.yaml') }}
+                  key: ${{ runner.os }}-astro-build-cache-${{ hashFiles('src/assets/images/**', 'content/photos.json', 'pnpm-lock.yaml') }}
                   restore-keys: |
                       ${{ runner.os }}-astro-build-cache-
 

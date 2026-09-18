@@ -42,7 +42,7 @@ export interface AcrostichonData {
 
 export interface PhotoPlus extends Photo {
     tags?: string[];
-    optimizedSrc?: string;
+    lightboxSrc?: string;
 }
 
 export interface TagGroup {

@@ -8,6 +8,7 @@ export default defineConfig({
     site: 'https://dpsg-wehr.de',
     output: 'static',
     outDir: 'out',
+    cacheDir: './.astro/cache',
     trailingSlash: 'ignore',
     server: {
         port: 3000,

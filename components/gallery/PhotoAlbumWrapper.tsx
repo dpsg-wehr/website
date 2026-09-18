@@ -1,11 +1,9 @@
-'use client';
-
 import PhotoAlbum from 'react-photo-album';
 import 'react-photo-album/styles.css';
 import { PhotoPlus, TagGroup } from '@/types';
 import { useState, useMemo } from 'react';
 import GalleryHeader from './GalleryHeader';
-import NextPhotoRenderer from './NextPhotoRenderer';
+import PhotoRenderer from './PhotoRenderer';
 
 const tagsInit: TagGroup[] = [
     {
@@ -45,7 +43,7 @@ export default function PhotoAlbumWrapper({ photos }: { photos: PhotoPlus[] }) {
             <PhotoAlbum
                 photos={filteredPhotos}
                 layout="rows"
-                render={{ image: NextPhotoRenderer }}
+                render={{ image: PhotoRenderer }}
                 sizes={{
                     size: '896px',
                     sizes: [

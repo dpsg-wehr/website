@@ -1,5 +1,3 @@
-'use client';
-
 import { TagGroup } from '@/types';
 import { useId } from 'react';
 import Select, { OnChangeValue } from 'react-select';
