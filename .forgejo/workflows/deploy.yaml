@@ -78,10 +78,6 @@ jobs:
             - name: ⚡ Audit with Lighthouse CI
               run: pnpm audit:lighthouse
 
-            - name: 📝 Generate Test Summary
-              if: ${{ !cancelled() }}
-              run: npx tsx scripts/generate-ci-summary.ts
-
             - name: 📊 Upload Test Reports
               uses: actions/upload-artifact@v3.2.2
               if: ${{ !cancelled() }}
