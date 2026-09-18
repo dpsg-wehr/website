@@ -81,6 +81,8 @@ jobs:
             - name: 📝 Generate Test Summary
               if: ${{ !cancelled() }}
               run: |
+                  # Ensure dashboard is generated if test results exist
+                  npx tsx scripts/generate-test-dashboard.ts || true
                   if [ -n "$GITHUB_STEP_SUMMARY" ]; then
                     echo "### 🧪 Test Suite Results" >> "$GITHUB_STEP_SUMMARY"
                     echo "" >> "$GITHUB_STEP_SUMMARY"
@@ -159,7 +161,7 @@ jobs:
                         }
                       '
                     fi
-                    echo "📁 Download the full HTML reports (Vitest, Playwright & Lighthouse) from the **Artifacts** section of this run." >> "$GITHUB_STEP_SUMMARY"
+                    echo "📁 Download the **test-results** artifact: open \`index.html\` in the root of the unzipped folder for the unified interactive dashboard (Playwright, Vitest & Lighthouse)!" >> "$GITHUB_STEP_SUMMARY"
                   fi
 
             - name: 📊 Upload Test Reports
