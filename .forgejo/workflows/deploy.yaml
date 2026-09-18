@@ -69,6 +69,9 @@ jobs:
             - name: 🏗️ Build website
               run: pnpm build
 
+            - name: 🎭 Ensure Playwright browsers are installed
+              run: pnpm exec playwright install chromium
+
             - name: 🚦 Run tests
               run: pnpm test:all
 

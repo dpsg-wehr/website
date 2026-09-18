@@ -30,6 +30,12 @@
                 "sharp"
             ],
             "schedule": ["at any time"]
+        },
+        {
+            "description": "Group Playwright npm package and Docker image together",
+            "matchPackageNames": ["@playwright/test", "playwright", "mcr.microsoft.com/playwright"],
+            "groupName": "Playwright",
+            "schedule": ["at any time"]
         }
     ]
 }
