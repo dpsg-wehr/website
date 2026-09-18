@@ -10,7 +10,7 @@
             ],
             "numberOfRuns": 2,
             "settings": {
-                "chromeFlags": "--no-sandbox --headless --disable-gpu"
+                "chromeFlags": "--no-sandbox --disable-dev-shm-usage --disable-gpu --disable-software-rasterizer"
             }
         },
         "assert": {
