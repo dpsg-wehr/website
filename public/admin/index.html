@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="noindex, nofollow" />
+        <title>DPSG Wehr Content Management System</title>
+        <style>
+            /* Preview pane styling for custom MDX components */
+            .preview-mdx-image {
+                margin: 1.5rem 0;
+                text-align: center;
+            }
+            .preview-mdx-image img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                display: inline-block;
+            }
+            .preview-mdx-image figcaption {
+                font-size: 0.875rem;
+                color: #6b7280;
+                margin-top: 0.5rem;
+                font-style: italic;
+            }
+            .preview-group-overview {
+                background: #f3f4f6;
+                border-left: 4px solid #08833c;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                margin: 1.5rem 0;
+                color: #1f2937;
+            }
+            .preview-download-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                background: #08833c;
+                color: white !important;
+                padding: 0.5rem 1rem;
+                border-radius: 0.375rem;
+                font-weight: 500;
+                text-decoration: none !important;
+                margin: 0.5rem 0;
+            }
+            .preview-recent-posts {
+                padding: 1.5rem;
+                border: 2px dashed #9ca3af;
+                border-radius: 0.5rem;
+                text-align: center;
+                color: #6b7280;
+                margin: 1.5rem 0;
+            }
+        </style>
+        <!-- Load DOMPurify early so we can hook and whitelist custom JSX/MDX tags before Sveltia sanitizes them -->
+        <script src="https://unpkg.com/dompurify@3.2.4/dist/purify.min.js"></script>
+        <script>
+            // Configure DOMPurify to allow MDX elements and transform them for the preview
+            if (window.DOMPurify) {
+                DOMPurify.setConfig({
+                    ADD_TAGS: ['mdximage', 'groupoverview', 'download', 'recentposts'],
+                    ADD_ATTR: [
+                        'src',
+                        'alt',
+                        'width',
+                        'height',
+                        'priority',
+                        'name',
+                        'time',
+                        'age',
+                        'href',
+                        'title',
+                    ],
+                });
+
+                DOMPurify.addHook('afterSanitizeElements', function (node) {
+                    if (!node.tagName) return;
+                    const tag = node.tagName.toLowerCase();
+
+                    if (tag === 'mdximage') {
+                        const src = node.getAttribute('src') || '';
+                        const alt = node.getAttribute('alt') || '';
+                        const div = document.createElement('div');
+                        div.className = 'preview-mdx-image';
+                        div.innerHTML =
+                            `<img src="${src}" alt="${alt}" style="max-width: 100%; border-radius: 0.5rem; display: inline-block;" />` +
+                            (alt
+                                ? `<figcaption style="font-size: 0.875rem; color: #6b7280; margin-top: 0.35rem; font-style: italic;">${alt}</figcaption>`
+                                : '');
+                        node.replaceWith(div);
+                    } else if (tag === 'groupoverview') {
+                        const name = node.getAttribute('name') || 'Gruppe';
+                        const time = node.getAttribute('time') || '-';
+                        const age = node.getAttribute('age') || '-';
+                        const div = document.createElement('div');
+                        div.className = 'preview-group-overview';
+                        div.innerHTML =
+                            `<div style="font-weight: bold; font-size: 1.125rem; margin-bottom: 0.5rem;">⚜️ ${name}</div>` +
+                            `<div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Alter:</strong> ${age}</div>` +
+                            `<div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Gruppenstunde:</strong> ${time}</div>`;
+                        node.replaceWith(div);
+                    } else if (tag === 'download') {
+                        const href = node.getAttribute('href') || '#';
+                        const title = node.getAttribute('title') || 'Datei herunterladen';
+                        const div = document.createElement('div');
+                        div.style.margin = '0.75rem 0';
+                        div.innerHTML = `<a href="${href}" class="preview-download-btn" target="_blank">📥 ${title}</a>`;
+                        node.replaceWith(div);
+                    } else if (tag === 'recentposts') {
+                        const div = document.createElement('div');
+                        div.className = 'preview-recent-posts';
+                        div.innerHTML = `📰 <strong>[Aktuelle Beiträge werden hier auf der Website automatisch generiert]</strong>`;
+                        node.replaceWith(div);
+                    }
+                });
+            }
+        </script>
+    </head>
+    <body>
+        <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+        <script>
+            window.addEventListener('DOMContentLoaded', () => {
+                // ==========================================
+                // 1. GERMAN SPELL CHECK OBSERVER
+                // ==========================================
+                const ensureGermanSpellcheck = () => {
+                    document.documentElement.lang = 'de';
+                    const editables = document.querySelectorAll(
+                        'input, textarea, [contenteditable="true"], .editor-input'
+                    );
+                    editables.forEach((el) => {
+                        if (el.getAttribute('lang') !== 'de') {
+                            el.setAttribute('lang', 'de');
+                            el.setAttribute('spellcheck', 'true');
+                            el.setAttribute('autocorrect', 'on');
+                        }
+                    });
+                };
+
+                const domObserver = new MutationObserver(() => {
+                    ensureGermanSpellcheck();
+                    enhanceAnyCustomTags();
+                });
+                domObserver.observe(document.body, { childList: true, subtree: true });
+                document.addEventListener('focusin', ensureGermanSpellcheck);
+                document.addEventListener('input', ensureGermanSpellcheck);
+                setInterval(ensureGermanSpellcheck, 300);
+                ensureGermanSpellcheck();
+
+                // ==========================================
+                // 2. BACKUP DOM TRANSFORMER FOR PREVIEW PANES
+                // ==========================================
+                const parseProps = (attrs) => {
+                    const getAttr = (name) => {
+                        const m = attrs.match(
+                            new RegExp(`${name}=(?:"([^"]*)"|'([^']*)'|\\{([^}]*)\\})`)
+                        );
+                        if (!m) return undefined;
+                        return m[1] !== undefined ? m[1] : m[2] !== undefined ? m[2] : m[3];
+                    };
+                    return getAttr;
+                };
+
+                function enhanceAnyCustomTags() {
+                    const containers = [
+                        ...document.querySelectorAll(
+                            'main, [class*="preview"], [aria-label*="Preview"], [aria-label*="Vorschau"]'
+                        ),
+                    ];
+
+                    document.querySelectorAll('iframe').forEach((frame) => {
+                        try {
+                            if (frame.contentDocument && frame.contentDocument.body) {
+                                containers.push(frame.contentDocument.body);
+                            }
+                        } catch (e) {}
+                    });
+
+                    containers.forEach((container) => {
+                        // Transform any custom tag nodes that might be rendered directly as HTML elements
+                        container
+                            .querySelectorAll('mdximage, groupoverview, download, recentposts')
+                            .forEach((el) => {
+                                const tag = el.tagName.toLowerCase();
+                                if (tag === 'mdximage') {
+                                    const src = el.getAttribute('src') || '';
+                                    const alt = el.getAttribute('alt') || '';
+                                    const div = document.createElement('div');
+                                    div.className = 'preview-mdx-image';
+                                    div.innerHTML =
+                                        `<img src="${src}" alt="${alt}" style="max-width: 100%; border-radius: 0.5rem; display: inline-block;" />` +
+                                        (alt
+                                            ? `<figcaption style="font-size: 0.875rem; color: #6b7280; margin-top: 0.35rem; font-style: italic;">${alt}</figcaption>`
+                                            : '');
+                                    el.replaceWith(div);
+                                } else if (tag === 'groupoverview') {
+                                    const name = el.getAttribute('name') || 'Gruppe';
+                                    const time = el.getAttribute('time') || '-';
+                                    const age = el.getAttribute('age') || '-';
+                                    const div = document.createElement('div');
+                                    div.className = 'preview-group-overview';
+                                    div.innerHTML =
+                                        `<div style="font-weight: bold; font-size: 1.125rem; margin-bottom: 0.5rem;">⚜️ ${name}</div>` +
+                                        `<div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Alter:</strong> ${age}</div>` +
+                                        `<div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Gruppenstunde:</strong> ${time}</div>`;
+                                    el.replaceWith(div);
+                                } else if (tag === 'download') {
+                                    const href = el.getAttribute('href') || '#';
+                                    const title = el.getAttribute('title') || 'Datei herunterladen';
+                                    const div = document.createElement('div');
+                                    div.style.margin = '0.75rem 0';
+                                    div.innerHTML = `<a href="${href}" class="preview-download-btn" target="_blank">📥 ${title}</a>`;
+                                    el.replaceWith(div);
+                                } else if (tag === 'recentposts') {
+                                    const div = document.createElement('div');
+                                    div.className = 'preview-recent-posts';
+                                    div.innerHTML = `📰 <strong>[Aktuelle Beiträge werden hier auf der Website automatisch generiert]</strong>`;
+                                    el.replaceWith(div);
+                                }
+                            });
+                    });
+                }
+
+                // ==========================================
+                // 3. REGISTER CMS EDITOR COMPONENTS
+                // ==========================================
+                const CMS = window.CMS || window.SveltiaCMS;
+                if (!CMS || !CMS.registerEditorComponent) return;
+
+                // 1. MDXImage Component
+                CMS.registerEditorComponent({
+                    id: 'MDXImage',
+                    label: 'MDX Bild',
+                    fields: [
+                        { name: 'src', label: 'Bilddatei', widget: 'image' },
+                        {
+                            name: 'alt',
+                            label: 'Alt-Text / Bildunterschrift',
+                            widget: 'string',
+                            required: false,
+                        },
+                        {
+                            name: 'priority',
+                            label: 'Priorität beim Laden (LCP)',
+                            widget: 'boolean',
+                            default: false,
+                            required: false,
+                        },
+                    ],
+                    pattern: /^<MDXImage\s+([^>]+?)\s*\/>/s,
+                    fromBlock: (match) => {
+                        const get = parseProps(match[1]);
+                        return {
+                            src: get('src') || '',
+                            alt: get('alt') || '',
+                            priority: get('priority') === 'true',
+                        };
+                    },
+                    toBlock: (data) => {
+                        let props = `src="${data.src || ''}"`;
+                        if (data.alt) props += ` alt="${data.alt}"`;
+                        if (data.priority) props += ` priority={true}`;
+                        return `<MDXImage ${props} />`;
+                    },
+                    toPreview: (data) => {
+                        return `<div class="preview-mdx-image">
+                            <img src="${data.src || ''}" alt="${data.alt || ''}" />
+                            ${data.alt ? `<figcaption>${data.alt}</figcaption>` : ''}
+                        </div>`;
+                    },
+                });
+
+                // 2. GroupOverview Component
+                CMS.registerEditorComponent({
+                    id: 'GroupOverview',
+                    label: 'Gruppenübersicht Info-Box',
+                    fields: [
+                        { name: 'name', label: 'Stufenname', widget: 'string' },
+                        { name: 'time', label: 'Gruppenstunden-Zeit', widget: 'string' },
+                        { name: 'age', label: 'Alter', widget: 'string' },
+                    ],
+                    pattern: /^<GroupOverview\s+([^>]+?)\s*\/>/s,
+                    fromBlock: (match) => {
+                        const get = parseProps(match[1]);
+                        return {
+                            name: get('name') || '',
+                            time: get('time') || '',
+                            age: get('age') || '',
+                        };
+                    },
+                    toBlock: (data) => {
+                        return `<GroupOverview name="${data.name || ''}" time="${data.time || ''}" age="${data.age || ''}" />`;
+                    },
+                    toPreview: (data) => {
+                        return `<div class="preview-group-overview">
+                            <div style="font-weight: bold; font-size: 1.125rem; margin-bottom: 0.5rem;">⚜️ ${data.name || 'Gruppe'}</div>
+                            <div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Alter:</strong> ${data.age || '-'}</div>
+                            <div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Gruppenstunde:</strong> ${data.time || '-'}</div>
+                        </div>`;
+                    },
+                });
+
+                // 3. Download Component
+                CMS.registerEditorComponent({
+                    id: 'Download',
+                    label: 'Datei Download Button',
+                    fields: [
+                        { name: 'href', label: 'Dateipfad / URL', widget: 'string' },
+                        { name: 'title', label: 'Button-Beschriftung', widget: 'string' },
+                    ],
+                    pattern: /^<Download\s+([^>]+?)\s*\/>/s,
+                    fromBlock: (match) => {
+                        const get = parseProps(match[1]);
+                        return {
+                            href: get('href') || '',
+                            title: get('title') || '',
+                        };
+                    },
+                    toBlock: (data) => {
+                        return `<Download href="${data.href || ''}" title="${data.title || ''}" />`;
+                    },
+                    toPreview: (data) => {
+                        return `<div style="margin: 0.75rem 0;"><a href="${data.href || '#'}" class="preview-download-btn" target="_blank">📥 ${data.title || data.href || 'Datei herunterladen'}</a></div>`;
+                    },
+                });
+
+                // 4. RecentPosts Widget
+                CMS.registerEditorComponent({
+                    id: 'RecentPosts',
+                    label: 'Aktuelle Beiträge Widget',
+                    fields: [],
+                    pattern: /^<RecentPosts\s*\/>/s,
+                    fromBlock: () => ({}),
+                    toBlock: () => `<RecentPosts />`,
+                    toPreview: () => {
+                        return `<div class="preview-recent-posts">📰 <strong>[Aktuelle Beiträge werden hier auf der Website automatisch generiert]</strong></div>`;
+                    },
+                });
+            });
+        </script>
+    </body>
+</html>

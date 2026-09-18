@@ -16,6 +16,7 @@ test.describe('Accessibility (a11y) Audits', () => {
             page,
         }) => {
             await page.goto(pageInfo.path);
+            await page.locator('main').waitFor({ state: 'visible' });
 
             const accessibilityScanResults = await new AxeBuilder({ page })
                 .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])

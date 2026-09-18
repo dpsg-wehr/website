@@ -36,22 +36,22 @@ jobs:
         container:
             image: mcr.microsoft.com/playwright:v1.62.1-noble
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
 
             - name: 📦 Setup pnpm
-              uses: pnpm/action-setup@v4
+              uses: pnpm/action-setup@v6
 
-            - name: 🟢 Setup Node.js 22
-              uses: actions/setup-node@v4
+            - name: 🟢 Setup Node.js 24
+              uses: actions/setup-node@v7
               with:
-                  node-version: 22
+                  node-version: 24
                   cache: 'pnpm'
 
             - name: 🧩 Install dependencies
               run: pnpm install --frozen-lockfile
 
             - name: ⚡ Cache Next.js Build
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: .next/cache
                   key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
@@ -132,6 +132,35 @@ jobs:
                   path: test-results/
                   retention-days: 14
 
+    automerge:
+        name: 🤖 Auto-Merge Verified Bot PR
+        needs: test
+        if: >-
+            github.event_name == 'pull_request' && (
+                github.event.pull_request.user.login == 'renovate-bot' ||
+                endsWith(github.event.pull_request.user.login, '[bot]') ||
+                github.event.pull_request.user.type == 'Bot'
+            )
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v7
+
+            - name: Setup Python
+              uses: actions/setup-python@v7
+              with:
+                  python-version: '3.14'
+
+            - name: Check AI Approval & Auto-Merge
+              env:
+                  FORGEJO_API: 'https://git.linus-fischer.de/api/v1'
+                  FORGEJO_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+                  GITHUB_REPOSITORY: ${{ github.repository }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+                  PR_TITLE: ${{ github.event.pull_request.title }}
+              run: |
+                  python3 scripts/automerge_pr.py
+
     build-and-deploy:
         name: 🚀 Build & Deploy
         needs: test
@@ -139,24 +168,24 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: 📥 Checkout Code
-              uses: actions/checkout@v4
+              uses: actions/checkout@v7
               with:
                   fetch-depth: 0
 
             - name: 📦 Setup pnpm
-              uses: pnpm/action-setup@v4
+              uses: pnpm/action-setup@v6
 
-            - name: 🟢 Setup Node.js 22
-              uses: actions/setup-node@v4
+            - name: 🟢 Setup Node.js 24
+              uses: actions/setup-node@v7
               with:
-                  node-version: 22
+                  node-version: 24
                   cache: 'pnpm'
 
             - name: 🧩 Install Dependencies
               run: pnpm install --frozen-lockfile
 
             - name: ⚡ Cache Next.js & Image Optimizer
-              uses: actions/cache@v4
+              uses: actions/cache@v6
               with:
                   path: |
                       .next/cache

@@ -1,11 +1,16 @@
 'use client';
 
 import FullCalendar from '@fullcalendar/react';
-import deLocal from '@fullcalendar/core/locales/de';
+import deLocale from '@fullcalendar/react/locales/de';
 
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import listPlugin from '@fullcalendar/list';
+import dayGridPlugin from '@fullcalendar/react/daygrid';
+import timeGridPlugin from '@fullcalendar/react/timegrid';
+import listPlugin from '@fullcalendar/react/list';
+
+import '@fullcalendar/react/skeleton.css';
+import '@fullcalendar/react/themes/classic/theme.css';
+import '@fullcalendar/react/themes/classic/palette.css';
+
 import publicEvents from '@/content/events/public.json';
 import './Calendar.css';
 
@@ -17,7 +22,8 @@ export default function Calendar() {
                 aspectRatio={1}
                 plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
                 initialView="dayGridMonth"
-                locales={[deLocal]}
+                locales={[deLocale]}
+                locale="de"
                 weekNumbers={true}
                 headerToolbar={{
                     left: '',
@@ -29,12 +35,11 @@ export default function Calendar() {
                     center: '',
                     right: 'dayGridMonth,timeGridWeek,listYear',
                 }}
-                buttonText={{
-                    today: 'Heute',
-                    month: 'Monat',
-                    week: 'Woche',
-                    day: 'Tag',
-                    list: 'Liste',
+                buttons={{
+                    today: { text: 'Heute' },
+                    dayGridMonth: { text: 'Monat' },
+                    timeGridWeek: { text: 'Woche' },
+                    listYear: { text: 'Liste' },
                 }}
                 events={publicEvents}
                 eventContent={(event) => <div className="event-title">{event.event.title}</div>}

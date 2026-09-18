@@ -9,7 +9,7 @@ interface PostPreviewProps extends PostMetadata {
 export default function PostPreview(props: PostPreviewProps) {
     return (
         <article
-            className="mt-4 border shadow-sm hover:shadow-lg rounded-md dark:border-gray-600 max-w-md"
+            className="mt-4 border shadow-sm hover:shadow-lg rounded-md dark:border-gray-600 w-full max-w-md"
             key={props.slug}
         >
             <Link
