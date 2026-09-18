@@ -1,6 +1,6 @@
 overrides:
   esbuild: '0.28.2'
-  sharp: '^0.35.4'
+  sharp: '0.35.4'
 
 allowBuilds:
   esbuild: true
