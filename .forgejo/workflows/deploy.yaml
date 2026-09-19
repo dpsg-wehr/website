@@ -75,20 +75,7 @@ jobs:
                     --projectId="${INFISICAL_PROJECT_ID}" \
                     --env="prod" \
                     --path="/projects/website-dpsg-wehr" \
-                    --format=dotenv | python3 -c '
-import os, sys
-env_file = os.environ.get("GITHUB_ENV")
-if env_file:
-    with open(env_file, "a") as f:
-        for line in sys.stdin:
-            line = line.strip()
-            if not line or line.startswith("#") or "=" not in line:
-                continue
-            k, v = line.split("=", 1)
-            if (v.startswith("\"") and v.endswith("\"")) or (v.startswith("\x27") and v.endswith("\x27")):
-                v = v[1:-1]
-            f.write(f"{k}={v}\n")
-'
+                    --format=dotenv | sed -E "s/=(['\"])(.*)\1$/=\2/" >> "$GITHUB_ENV"
 
             - name: 🧩 Install dependencies
               run: pnpm install --frozen-lockfile
