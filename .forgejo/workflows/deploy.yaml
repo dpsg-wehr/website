@@ -74,7 +74,7 @@ jobs:
                     --domain="${INFISICAL_API_URL}" \
                     --projectId="${INFISICAL_PROJECT_ID}" \
                     --env="prod" \
-                    --path="/apps/website-dpsg-wehr" \
+                    --path="/projects/website-dpsg-wehr" \
                     --format=dotenv >> "$GITHUB_ENV"
 
             - name: 🧩 Install dependencies
