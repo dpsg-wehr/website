@@ -11,11 +11,14 @@ if (!process.env.CHROME_PATH) {
 }
 
 // Configure upload target based on LHCI_SERVER_BASE_URL presence
+const lhciServerUrl = process.env.LHCI_SERVER_BASE_URL?.replace(/^['"]|['"]$/g, '');
+const lhciToken = process.env.LHCI_TOKEN?.replace(/^['"]|['"]$/g, '');
+
 let extraFlags = '';
-if (process.env.LHCI_SERVER_BASE_URL) {
-    extraFlags += ` --upload.serverBaseUrl=${process.env.LHCI_SERVER_BASE_URL}`;
-    if (process.env.LHCI_TOKEN) {
-        extraFlags += ` --upload.token=${process.env.LHCI_TOKEN}`;
+if (lhciServerUrl) {
+    extraFlags += ` --upload.serverBaseUrl=${lhciServerUrl}`;
+    if (lhciToken) {
+        extraFlags += ` --upload.token=${lhciToken}`;
     }
 } else if (!process.argv.slice(2).some((a) => a.includes('upload.target'))) {
     extraFlags = ' --upload.target=filesystem --upload.outputDir=./test-results/lighthouse';
