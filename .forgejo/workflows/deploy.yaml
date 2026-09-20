@@ -134,13 +134,7 @@ jobs:
                   LATEST_PATH="${REPO_NAME}/latest"
 
                   mkdir -p ./test-results
-                  cat << 'EOF' > ./test-results/index.html
-<!DOCTYPE html>
-<html>
-<head><meta http-equiv="refresh" content="0; url=./e2e/index.html"></head>
-<body><a href="./e2e/index.html">Playwright E2E Report</a></body>
-</html>
-EOF
+                  printf '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=./e2e/index.html"></head><body><a href="./e2e/index.html">Playwright E2E Report</a></body></html>' > ./test-results/index.html
 
                   # Upload run-specific reports
                   rclone copy ./test-results :webdav:"$TARGET_PATH" \
