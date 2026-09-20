@@ -10,8 +10,11 @@ if (!process.env.CHROME_PATH) {
     }
 }
 
-// Configure upload target based on LHCI_SERVER_BASE_URL presence
-const lhciServerUrl = process.env.LHCI_SERVER_BASE_URL?.replace(/^['"]|['"]$/g, '');
+// Configure upload target based on LHCI_SERVER_BASE_URL (or LHCI_SERVER_URL) presence
+const lhciServerUrl = (process.env.LHCI_SERVER_BASE_URL || process.env.LHCI_SERVER_URL)?.replace(
+    /^['"]|['"]$/g,
+    ''
+);
 const lhciToken = process.env.LHCI_TOKEN?.replace(/^['"]|['"]$/g, '');
 
 let extraFlags = '';

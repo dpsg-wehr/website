@@ -102,7 +102,7 @@ jobs:
             - name: 🎭 Ensure Playwright browsers are installed
               run: pnpm exec playwright install chromium
 
-            - name: 🚦 Run tests
+            - name: 🚨 Run tests
               run: pnpm test:all
 
             - name: ⚡ Audit with Lighthouse CI
@@ -122,8 +122,25 @@ jobs:
                   apt-get update -qy && apt-get install -qy rclone
 
                   OBSCURED_PASS=$(rclone obscure "$REPORTS_CI_PASSWORD")
-                  TARGET_PATH="${{ github.event.repository.name }}/${{ github.run_number }}"
-                  LATEST_PATH="${{ github.event.repository.name }}/latest"
+                  REPO_NAME="${{ github.event.repository.name }}"
+                  if [ -z "$REPO_NAME" ]; then
+                    REPO_NAME="${GITHUB_REPOSITORY##*/}"
+                  fi
+                  RUN_NUM="${{ github.run_number }}"
+                  if [ -z "$RUN_NUM" ]; then
+                    RUN_NUM="${GITHUB_RUN_NUMBER:-latest}"
+                  fi
+                  TARGET_PATH="${REPO_NAME}/${RUN_NUM}"
+                  LATEST_PATH="${REPO_NAME}/latest"
+
+                  mkdir -p ./test-results
+                  cat << 'EOF' > ./test-results/index.html
+<!DOCTYPE html>
+<html>
+<head><meta http-equiv="refresh" content="0; url=./e2e/index.html"></head>
+<body><a href="./e2e/index.html">Playwright E2E Report</a></body>
+</html>
+EOF
 
                   # Upload run-specific reports
                   rclone copy ./test-results :webdav:"$TARGET_PATH" \
@@ -155,7 +172,7 @@ jobs:
                   repo = os.getenv("REPO")
                   pr = os.getenv("PR_NUMBER")
                   reports_url = os.getenv("REPORTS_SERVER_URL", "").rstrip("/")
-                  lhci_url = os.getenv("LHCI_SERVER_BASE_URL", "").rstrip("/")
+                  lhci_url = (os.getenv("LHCI_SERVER_BASE_URL") or os.getenv("LHCI_SERVER_URL") or "").rstrip("/")
                   run_num = os.getenv("GITHUB_RUN_NUMBER", "latest")
                   repo_name = repo.split("/")[-1] if "/" in repo else repo
 

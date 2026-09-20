@@ -4,6 +4,7 @@ This repository is built with **Astro 7** (Static Site Generation with React isl
 
 ## Key Guidelines
 
+- **Language:** Always communicate and respond in English.
 - **Architecture:** Astro is used for SSG (`output: "static"` in `astro.config.mjs`, output dir `out/`).
 - **Pages & Routing:** Astro pages are located in `src/pages/`. Layouts are in `src/layouts/`.
 - **Content:** MDX content is in `content/` and loaded statically. Decap CMS admin is configured in `public/admin/`.
