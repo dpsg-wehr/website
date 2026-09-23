@@ -110,6 +110,7 @@ jobs:
               run: pnpm test:all
 
             - name: ⚡ Audit with Lighthouse CI
+              if: github.ref_name == 'main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
               run: pnpm audit:lighthouse
 
             - name: 📤 Upload Test Reports to Dufs
@@ -181,14 +182,15 @@ jobs:
                   links = []
                   if reports_url:
                       links.append(f"- 🎭 **Playwright E2E Report**: [Interactive Report & Traces]({reports_url}/{repo_name}/{run_num}/e2e/index.html)")
-                  if lhci_url:
+                  if lhci_url and (os.path.exists(".lighthouseci") or os.path.exists("./test-results/lighthouse")):
                       links.append(f"- ⚡ **Lighthouse Performance**: [LHCI Dashboard & History]({lhci_url}/app/projects/{repo_name})")
 
                   if not links:
                       print("Notice: Neither reports_url nor lhci_url is set. Skipping comment.")
                       exit(0)
 
-                  body = f"### 🧪 Test & Audit Results (Run #{run_num})\n\n" + "\n".join(links)
+                  audit_label = "Test & Audit Results" if (os.path.exists(".lighthouseci") or os.path.exists("./test-results/lighthouse")) else "Test Results"
+                  body = f"### 🧪 {audit_label} (Run #{run_num})\n\n" + "\n".join(links)
 
                   req = urllib.request.Request(
                       f"{api}/repos/{repo}/issues/{pr}/comments",
