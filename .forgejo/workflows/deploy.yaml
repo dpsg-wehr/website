@@ -97,6 +97,10 @@ jobs:
               run: pnpm audit --audit-level=critical || true
 
             - name: 🏗️ Build website
+              env:
+                  PUBLIC_GIT_COMMIT: ${{ github.sha }}
+                  PUBLIC_GIT_REF: ${{ github.ref_name }}
+                  PUBLIC_APP_ENV: test
               run: pnpm build
 
             - name: 🎭 Ensure Playwright browsers are installed
@@ -273,6 +277,9 @@ jobs:
             - name: 🏗️ Build Static Site
               env:
                   INTERNAL_ICS_TOKEN: ${{ secrets.INTERNAL_ICS_TOKEN }}
+                  PUBLIC_GIT_COMMIT: ${{ github.sha }}
+                  PUBLIC_GIT_REF: ${{ github.ref_name }}
+                  PUBLIC_APP_ENV: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
               run: pnpm build
 
             - name: 🛠️ Ensure Docker & SSH Tools Installed
@@ -321,5 +328,31 @@ jobs:
 
                   echo "🔄 Restarting service $SVC in $VPS_PATH on VPS..."
                   ssh -p "$VPS_PORT" -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" "cd \"$VPS_PATH\" && docker compose up -d $SVC && docker image prune -f"
+
+                  echo "🔍 Verifying deployment via /version.json..."
+                  EXPECTED_SHA="${{ github.sha }}"
+                  VERIFIED=false
+                  for i in {1..12}; do
+                    CONTAINER_INFO=$(ssh -p "$VPS_PORT" -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" "cd \"$VPS_PATH\" && docker compose exec -T $SVC curl -fsS http://127.0.0.1/version.json" 2>/dev/null || true)
+                    DEPLOYED_SHA=$(echo "$CONTAINER_INFO" | python3 -c "import sys, json; print(json.load(sys.stdin).get('commit', ''))" 2>/dev/null || true)
+                    if [ "$DEPLOYED_SHA" = "$EXPECTED_SHA" ]; then
+                      echo "✅ Container is running expected commit: $DEPLOYED_SHA"
+                      VERIFIED=true
+                      break
+                    fi
+                    echo "Waiting for container update (attempt $i/12, current: ${DEPLOYED_SHA:-unknown})..."
+                    sleep 3
+                  done
+
+                  if [ "$VERIFIED" != "true" ]; then
+                    echo "⚠️ Notice: Container running commit does not match $EXPECTED_SHA or could not be verified."
+                  fi
+
+                  if [ "$SVC" = "website" ]; then
+                    echo "🌐 Checking public endpoint https://dpsg-wehr.de/version.json..."
+                    PUBLIC_INFO=$(curl -fsSL https://dpsg-wehr.de/version.json 2>/dev/null || true)
+                    PUBLIC_SHA=$(echo "$PUBLIC_INFO" | python3 -c "import sys, json; print(json.load(sys.stdin).get('commit', ''))" 2>/dev/null || true)
+                    echo "Public endpoint commit: ${PUBLIC_SHA:-unknown}"
+                  fi
 
                   echo "✅ Deployment completed successfully!"

@@ -1,6 +1,5 @@
 import globalData from '@/content/global/index.json';
 import { IoLogoFacebook, IoLogoInstagram } from 'react-icons/io5';
-import pkg from '@/package.json';
 
 function SocialLink({
     children,
@@ -41,7 +40,7 @@ function SocialMedia({ facebook, instagram }: { facebook: string; instagram: str
     return (
         <div className="w-full flex place-content-between content-center mt-10 mb-0">
             <p className="text-center text-white text-sm ml-4">
-                © {new Date().getFullYear()} DPSG St. Bernhard Wehr (v{pkg.version})
+                © {new Date().getFullYear()} DPSG St. Bernhard Wehr
             </p>
             <div className="flex place-content-end items-center mr-4">
                 {instagram && <InstagramLink url={instagram} />}
