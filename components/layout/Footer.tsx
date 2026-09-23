@@ -156,7 +156,7 @@ export default function Footer() {
                 { text: 'Datenschutz', url: '/pages/datenschutz', external: false },
                 {
                     text: 'Quellcode',
-                    url: 'https://github.com/Linus-f/website-dpsg-wehr',
+                    url: 'https://github.com/dpsg-wehr/website',
                     external: true,
                 },
             ],
