@@ -21,6 +21,7 @@ const { Content } = await render(post);
 const allPostMetadata = getPostMetadata();
 const slug = post.data.slug || post.id.replace(/\.mdx$/, '');
 const metadata = allPostMetadata.find((p) => p.slug === slug);
+const postEntryId = post.id.replace(/\.mdx$/, '');
 
 const description = post.data.desc || post.data.description || getExcerpt(post.body || '');
 let imageUrl = '/media/images/logo.png';
@@ -93,7 +94,12 @@ const eventJsonLd = post.data.event
     {eventJsonLd && (
         <script type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />
     )}
-    <Post postMetadata={allPostMetadata} slug={slug}>
+    <Post
+        postMetadata={allPostMetadata}
+        slug={slug}
+        collection="posts"
+        entryId={postEntryId}
+    >
         <Content components={mdxComponents} />
     </Post>
 </RootLayout>

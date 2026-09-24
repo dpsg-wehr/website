@@ -40,6 +40,14 @@ test.describe('News Page', () => {
                 'content',
                 'article'
             );
+
+            // Verify CMS edit button is present and links to the dev CMS URL
+            const editButton = page.getByTestId('cms-edit-button');
+            await expect(editButton).toBeVisible();
+            await expect(editButton).toHaveAttribute(
+                'href',
+                /https:\/\/dev\.dpsg-wehr\.de\/admin\/#\/collections\/posts\/entries\//
+            );
         } else {
             // If no posts, verify the empty state message
             await expect(page.getByText("Hier gibt's noch nichts zu sehen.")).toBeVisible();

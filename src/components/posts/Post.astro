@@ -2,14 +2,17 @@
 import type { PostMetadata } from '@/types';
 import FloatingImage from './FloatingImage.astro';
 import { formatPostDate } from '@/lib/utils/date';
+import CmsEditButton from '@/src/components/ui/CmsEditButton.astro';
 
 interface Props {
     postMetadata: PostMetadata[];
     slug?: string;
     overrideMetadata?: Partial<PostMetadata>;
+    collection?: string;
+    entryId?: string;
 }
 
-const { postMetadata, slug, overrideMetadata } = Astro.props;
+const { postMetadata, slug, overrideMetadata, collection, entryId } = Astro.props;
 
 const foundMetadata = postMetadata.find((post) => post.slug === slug);
 const metadata = overrideMetadata
@@ -18,7 +21,18 @@ const metadata = overrideMetadata
 ---
 
 {!metadata ? (
-    <article class="prose sm:prose-lg dark:prose-invert max-w-none"><slot /></article>
+    <div>
+        <article class="prose sm:prose-lg dark:prose-invert max-w-none"><slot /></article>
+        {collection && entryId && (
+            <div class="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                <CmsEditButton
+                    collection={collection}
+                    entryId={entryId}
+                    label="Beitrag im CMS bearbeiten"
+                />
+            </div>
+        )}
+    </div>
 ) : (
     <div>
         {metadata.image?.src && (
@@ -38,5 +52,14 @@ const metadata = overrideMetadata
         </p>
         <hr class="mt-3 mb-12" />
         <article class="prose sm:prose-lg dark:prose-invert max-w-none"><slot /></article>
+        {collection && entryId && (
+            <div class="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                <CmsEditButton
+                    collection={collection}
+                    entryId={entryId}
+                    label="Beitrag im CMS bearbeiten"
+                />
+            </div>
+        )}
     </div>
 )}
