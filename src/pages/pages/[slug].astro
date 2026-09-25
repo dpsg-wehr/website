@@ -3,6 +3,7 @@ import RootLayout from '@/src/layouts/RootLayout.astro';
 import { getCollection, render } from 'astro:content';
 import { mdxComponents } from '@/src/mdx-components';
 import { getExcerpt } from '@/lib/utils/metadata';
+import CmsEditButton from '@/src/components/ui/CmsEditButton.astro';
 
 export async function getStaticPaths() {
     const pages = await getCollection('pages');
@@ -19,10 +20,18 @@ const { page } = Astro.props;
 const { Content } = await render(page);
 const description = page.data.description || page.data.desc || getExcerpt(page.body || '');
 const title = page.data.title || page.id.replace(/\.mdx$/, '');
+const entryId = page.id.replace(/\.mdx$/, '');
 ---
 
 <RootLayout title={title} description={description}>
     <article class="prose sm:prose-lg dark:prose-invert max-w-none">
         <Content components={mdxComponents} />
     </article>
+    <div class="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+        <CmsEditButton
+            collection="pages"
+            entryId={entryId}
+            label="Seite im CMS bearbeiten"
+        />
+    </div>
 </RootLayout>

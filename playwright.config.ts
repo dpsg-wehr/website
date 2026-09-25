@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const PORT = process.env.PLAYWRIGHT_PORT || '3000';
+
 export default defineConfig({
     testDir: './e2e',
     fullyParallel: true,
@@ -17,7 +19,7 @@ export default defineConfig({
         ],
     ],
     use: {
-        baseURL: 'http://localhost:3000',
+        baseURL: `http://localhost:${PORT}`,
         trace: 'on-first-retry',
     },
     projects: [
@@ -28,8 +30,8 @@ export default defineConfig({
     ],
     // Run your local dev server before starting the tests
     webServer: {
-        command: 'pnpm dev',
-        url: 'http://localhost:3000',
-        reuseExistingServer: !process.env.CI,
+        command: `pnpm dev --port ${PORT}`,
+        url: `http://localhost:${PORT}`,
+        reuseExistingServer: !process.env.CI && !process.env.PLAYWRIGHT_PORT,
     },
 });
