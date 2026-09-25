@@ -1,21 +1,26 @@
+import { IoLogoInstagram, IoLogoFacebook } from 'react-icons/io5';
 import globalData from '@/content/global/index.json';
-import { IoLogoFacebook, IoLogoInstagram } from 'react-icons/io5';
 
 function SocialLink({
-    children,
     url,
     hoverColor,
     label,
+    children,
 }: {
-    children: React.ReactNode;
     url: string;
     hoverColor: string;
     label: string;
+    children: React.ReactNode;
 }) {
-    if (!url) return null;
     return (
-        <a href={url} target="_blank" rel="noopener noreferrer" aria-label={label}>
-            <div className={`text-white ${hoverColor} text-2xl ml-4`}>{children}</div>
+        <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={label}
+            className={`w-8 h-8 rounded-full border border-gray-600 flex items-center justify-center text-white ${hoverColor} transition-colors ml-4`}
+        >
+            {children}
         </a>
     );
 }
@@ -42,7 +47,7 @@ function SocialMedia({ facebook, instagram }: { facebook: string; instagram: str
             <p className="text-center text-white text-sm ml-4">
                 © {new Date().getFullYear()} DPSG St. Bernhard Wehr
                 <span className="mx-2 text-gray-400">•</span>
-                <a href="/intern" className="text-green-50 hover:underline">
+                <a href="/intern" className="text-green-50 underline hover:text-white">
                     Intern
                 </a>
             </p>
