@@ -1,0 +1,79 @@
+---
+interface Props {
+    slug?: string;
+    division?: string;
+    baseUrl?: string;
+    title?: string;
+    class?: string;
+    className?: string;
+    [key: string]: any;
+}
+
+const {
+    slug: propSlug,
+    division: propDivision,
+    baseUrl: propBaseUrl,
+    title = 'Campflow Anmeldeformular',
+    class: propClass = '',
+    className = '',
+} = Astro.props;
+
+const slug = propSlug || Astro.props['data-slug'] || '';
+const division = propDivision || Astro.props['data-division'];
+const baseUrl = propBaseUrl || Astro.props['data-baseurl'] || 'https://on.campflow.de/';
+
+// Unique frameId for postMessage handshake
+const randomStr = Math.random().toString(36).substring(2, 10);
+const frameId = `cf${randomStr}`;
+
+const normalizedBase = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+const normalizedSlug = slug.startsWith('/') ? slug.substring(1) : slug;
+const params = new URLSearchParams();
+params.set('frameId', frameId);
+params.set('embed', '1');
+if (division) {
+    params.set('division', division);
+}
+const iframeSrc = slug ? `${normalizedBase}${normalizedSlug}?${params.toString()}` : '';
+---
+
+{
+    iframeSrc && (
+        <div
+            class={`w-full my-6 bg-white rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 px-3 sm:px-6 md:px-8 py-4 sm:py-6 ${propClass || className}`}
+            data-campflow-wrapper
+        >
+            <iframe
+                id={frameId}
+                src={iframeSrc}
+                title={title}
+                width="100%"
+                style="border: none; overflow: hidden; height: 750px; min-height: 400px; background-color: #ffffff; display: block;"
+            />
+            <script is:inline define:vars={{ frameId }}>
+                (() => {
+                    const handleMessage = (e) => {
+                        if (!e || !e.data || e.data.frameId !== frameId) return;
+                        const iframe = document.getElementById(frameId);
+                        if (!iframe) return;
+
+                        if (e.data.type === undefined || e.data.type === 'resize') {
+                            if (typeof e.data.height === 'number' && e.data.height > 0) {
+                                iframe.style.height = `${e.data.height}px`;
+                            }
+                        } else if (e.data.type === 'scroll') {
+                            const rect = iframe.getBoundingClientRect();
+                            const top = Math.max(
+                                0,
+                                window.scrollY + rect.top + (Number(e.data.top) || 0) - 100
+                            );
+                            window.scrollTo({ top, behavior: 'smooth' });
+                        }
+                    };
+
+                    window.addEventListener('message', handleMessage);
+                })();
+            </script>
+        </div>
+    )
+}

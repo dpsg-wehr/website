@@ -4,6 +4,8 @@ import GroupOverview from '@/components/mdx/GroupOverview';
 import CalendarWrapper from '@/src/components/mdx/CalendarWrapper.astro';
 import Download from '@/components/mdx/Download';
 import RecentPosts from '@/src/components/posts/RecentPosts.astro';
+import CampflowForm from '@/src/components/mdx/CampflowForm.astro';
+import CampflowScript from '@/src/components/mdx/CampflowScript.astro';
 
 export const mdxComponents = {
     img: MDXImage,
@@ -14,4 +16,7 @@ export const mdxComponents = {
     Calendar: CalendarWrapper,
     Download: Download,
     RecentPosts: RecentPosts,
+    CampflowForm: CampflowForm,
+    Campflow: CampflowForm,
+    script: CampflowScript,
 };

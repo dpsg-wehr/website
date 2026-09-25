@@ -158,6 +158,30 @@ const organizationJsonLd = {
                 });
             })();
         </script>
+
+        <!-- Enhance Campflow embeds with padding card -->
+        <script is:inline>
+            (() => {
+                const wrapCampflowIframes = () => {
+                    document.querySelectorAll('iframe[src*="campflow.de"]').forEach((iframe) => {
+                        if (!iframe.closest('[data-campflow-wrapper]')) {
+                            const wrapper = document.createElement('div');
+                            wrapper.setAttribute('data-campflow-wrapper', '');
+                            wrapper.className = 'w-full my-6 bg-white rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 px-3 sm:px-6 md:px-8 py-4 sm:py-6';
+                            iframe.parentNode.insertBefore(wrapper, iframe);
+                            wrapper.appendChild(iframe);
+                        }
+                    });
+                };
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', wrapCampflowIframes);
+                } else {
+                    wrapCampflowIframes();
+                }
+                const observer = new MutationObserver(wrapCampflowIframes);
+                observer.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        </script>
     </head>
     <body class="antialiased prose-headings:break-words prose-headings:hyphens-auto">
         <div class="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-700 text-black dark:text-white">
