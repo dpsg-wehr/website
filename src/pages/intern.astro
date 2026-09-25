@@ -1,0 +1,177 @@
+---
+import RootLayout from '@/src/layouts/RootLayout.astro';
+
+interface InternalService {
+    name: string;
+    url: string;
+    displayUrl: string;
+    description: string;
+    icon: string;
+}
+
+const services: InternalService[] = [
+    {
+        name: 'Sveltia CMS',
+        url: 'https://dev.dpsg-wehr.de/admin/',
+        displayUrl: 'dev.dpsg-wehr.de/admin/',
+        description: 'Redaktionelles Pflegen von Beiträgen, Terminen und Gruppeninformationen.',
+        icon: '/icons/sveltia.svg',
+    },
+    {
+        name: 'Campflow',
+        url: 'https://my.campflow.de/dpsg-wehr',
+        displayUrl: 'my.campflow.de/dpsg-wehr',
+        description: 'Lager- und Veranstaltungsanmeldungen sowie Stammes-Mitgliederverwaltung.',
+        icon: '/icons/campflow.svg',
+    },
+    {
+        name: 'OpenCloud',
+        url: 'https://cloud.dpsg-wehr.de',
+        displayUrl: 'cloud.dpsg-wehr.de',
+        description: 'Gemeinsamer Dateispeicher, Dokumentenvorlagen, Sitzungsprotokolle und Listen.',
+        icon: '/icons/opencloud.svg',
+    },
+    {
+        name: 'Jitsi Meet',
+        url: 'https://meet.fischernet.eu',
+        displayUrl: 'meet.fischernet.eu',
+        description: 'Videokonferenzen für Leiterrunden, Planungstreffen und Vorstandssitzungen.',
+        icon: '/icons/jitsi.svg',
+    },
+];
+---
+
+<RootLayout
+    title="Interne Links"
+    description="Zentrale Übersicht über geschützte interne Dienste der DPSG Wehr."
+    robots="noindex, nofollow"
+>
+    <div class="max-w-3xl mx-auto py-6 sm:py-10">
+        <!-- Header -->
+        <div class="mb-8">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-900/50 mb-3"
+            >
+                <svg
+                    class="w-3.5 h-3.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Leitungsteam Portal
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Interne Links
+            </h1>
+            <p class="mt-2 text-base text-gray-600 dark:text-gray-300">
+                Zentraler Schnellzugriff auf geschützte Verwaltungswerkzeuge und Plattformen für
+                Leitende und Mitarbeitende der DPSG Wehr.
+            </p>
+        </div>
+
+        <!-- Authentik SSO Notice -->
+        <div
+            class="mb-8 p-4 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 flex items-start gap-3.5"
+        >
+            <div class="text-blue-600 dark:text-blue-400 mt-0.5 shrink-0">
+                <svg
+                    class="w-5 h-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+            </div>
+            <div class="text-sm text-blue-950 dark:text-blue-100">
+                <strong class="font-semibold block mb-0.5">Authentik Single Sign-On (SSO)</strong>
+                <span>
+                    Diese internen Portale sind zugriffsgeschützt. Die Anmeldung erfolgt automatisch
+                    oder über deinen persönlichen Authentik-Account des Stammes.
+                </span>
+            </div>
+        </div>
+
+        <!-- Directory List (Option B) -->
+        <div class="space-y-3.5">
+            {
+                services.map((service) => (
+                    <div class="group relative flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700/80 shadow-xs hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm transition-all duration-150">
+                        <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+                            {/* Service Icon */}
+                            <div class="w-11 h-11 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 flex items-center justify-center p-2 shrink-0 group-hover:scale-105 transition-transform duration-150">
+                                <img
+                                    src={service.icon}
+                                    alt={`${service.name} Icon`}
+                                    class="w-7 h-7 object-contain"
+                                    loading="lazy"
+                                />
+                            </div>
+
+                            {/* Content info */}
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h2 class="text-base font-semibold text-gray-900 dark:text-white">
+                                        {service.name}
+                                    </h2>
+                                    <span class="hidden sm:inline-block text-xs font-mono text-gray-500 dark:text-gray-400">
+                                        ({service.displayUrl})
+                                    </span>
+                                </div>
+                                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-0.5 line-clamp-2">
+                                    {service.description}
+                                </p>
+                                <span class="inline-block sm:hidden text-xs font-mono text-gray-500 dark:text-gray-400 mt-1">
+                                    {service.displayUrl}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Right action: open button */}
+                        <div class="flex items-center justify-end shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 dark:border-gray-700/60">
+                            <a
+                                href={service.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={`${service.name} öffnen`}
+                                class="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                            >
+                                <span>Öffnen</span>
+                                <svg
+                                    class="w-3.5 h-3.5"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                                    <polyline points="15 3 21 3 21 9" />
+                                    <line x1="10" y1="14" x2="21" y2="3" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                ))
+            }
+        </div>
+
+        <!-- Help / Support Footer Note -->
+        <div
+            class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700/60 text-center sm:text-left text-xs text-gray-500 dark:text-gray-400"
+        >
+            Du hast keinen Zugriff oder benötigst einen Account? Wende dich bitte an den
+            Stammesvorstand oder die IT-Verantwortlichen der DPSG Wehr.
+        </div>
+    </div>
+</RootLayout>

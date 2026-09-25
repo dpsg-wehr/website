@@ -15,6 +15,7 @@ interface Props {
     type?: string;
     publishedTime?: string;
     author?: string;
+    robots?: string;
 }
 
 const {
@@ -26,6 +27,7 @@ const {
     type = 'website',
     publishedTime,
     author,
+    robots,
 } = Astro.props;
 
 const banner = getActiveBanner();
@@ -68,6 +70,7 @@ const organizationJsonLd = {
         <link rel="canonical" href={canonicalURL} />
         <title>{formattedTitle}</title>
         <meta name="description" content={description} />
+        {robots && <meta name="robots" content={robots} />}
         <meta name="darkreader-lock" content="true" />
         <meta name="theme-color" content="#f9fafb" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#374151" media="(prefers-color-scheme: dark)" />

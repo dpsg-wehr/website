@@ -41,6 +41,10 @@ function SocialMedia({ facebook, instagram }: { facebook: string; instagram: str
         <div className="w-full flex place-content-between content-center mt-10 mb-0">
             <p className="text-center text-white text-sm ml-4">
                 © {new Date().getFullYear()} DPSG St. Bernhard Wehr
+                <span className="mx-2 text-gray-400">•</span>
+                <a href="/intern" className="text-green-50 hover:underline">
+                    Intern
+                </a>
             </p>
             <div className="flex place-content-end items-center mr-4">
                 {instagram && <InstagramLink url={instagram} />}
