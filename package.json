@@ -38,7 +38,7 @@
         "@fullcalendar/core": "7.1.0",
         "@fullcalendar/react": "7.1.0",
         "@nanostores/react": "2.0.1",
-        "astro": "7.3.4",
+        "astro": "7.3.5",
         "fuse.js": "7.5.0",
         "gray-matter": "4.0.3",
         "ics": "3.12.0",
