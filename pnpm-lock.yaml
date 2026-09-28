@@ -229,7 +229,7 @@ importers:
         version: 7.1.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(temporal-polyfill@1.0.5)
       '@nanostores/react':
         specifier: 2.0.1
-        version: 2.0.1(nanostores@1.5.3)(react@19.3.0)
+        version: 2.0.1(nanostores@1.5.4)(react@19.3.0)
       astro:
         specifier: 7.3.5
         version: 7.3.5(@types/node@26.4.0)(jiti@2.7.0)(terser@5.44.1)(tsx@4.23.12)(yaml@2.9.0)
@@ -246,8 +246,8 @@ importers:
         specifier: 2.0.4
         version: 2.0.4
       nanostores:
-        specifier: 1.5.3
-        version: 1.5.3
+        specifier: 1.5.4
+        version: 1.5.4
       react:
         specifier: 19.3.0
         version: 19.3.0
@@ -4102,8 +4102,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nanostores@1.5.3:
-    resolution: {integrity: sha512-rQLB6eV4f2AW/n3L0JmwCROpaisYy9EDEADvEFSd1C/qG8hB6O5TPlh9A791JRbJr4CnMQBzptDcvD9OR1+6WA==}
+  nanostores@1.5.4:
+    resolution: {integrity: sha512-4UXY7OAJEK0Y6V3SudBU7cXjAzTDc189R78dDOh0Xbm19gpKYto6WizSg58LJf12lTsRxKSLGyE117OiLpM4DQ==}
     engines: {node: ^20.0.0 || >=22.0.0}
 
   natural-compare@1.4.0:
@@ -6685,9 +6685,9 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@nanostores/react@2.0.1(nanostores@1.5.3)(react@19.3.0)':
+  '@nanostores/react@2.0.1(nanostores@1.5.4)(react@19.3.0)':
     dependencies:
-      nanostores: 1.5.3
+      nanostores: 1.5.4
       react: 19.3.0
 
   '@napi-rs/wasm-runtime@1.2.4(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)':
@@ -9893,7 +9893,7 @@ snapshots:
 
   nanoid@3.3.18: {}
 
-  nanostores@1.5.3: {}
+  nanostores@1.5.4: {}
 
   natural-compare@1.4.0: {}
 
