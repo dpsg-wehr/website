@@ -40,7 +40,7 @@ const iframeSrc = slug ? `${normalizedBase}${normalizedSlug}?${params.toString()
 {
     iframeSrc && (
         <div
-            class={`w-full my-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 px-3 sm:px-6 md:px-8 py-4 sm:py-6 ${propClass || className}`}
+            class={`w-full my-6 bg-white rounded-xl shadow-md border border-gray-200 dark:border-gray-600 px-3 sm:px-6 md:px-8 py-4 sm:py-6 ${propClass || className}`}
             data-campflow-wrapper
         >
             <iframe
@@ -48,7 +48,7 @@ const iframeSrc = slug ? `${normalizedBase}${normalizedSlug}?${params.toString()
                 src={iframeSrc}
                 title={title}
                 width="100%"
-                style="border: none; overflow: hidden; height: 750px; min-height: 400px; background-color: transparent; display: block;"
+                style="border: none; overflow: hidden; height: 750px; min-height: 400px; background-color: #ffffff; display: block;"
             />
             <script is:inline define:vars={{ frameId }}>
                 (() => {
