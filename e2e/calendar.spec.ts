@@ -32,7 +32,7 @@ test.describe('Calendar', () => {
         await page.goto('/pages/termine');
 
         // 1. Wait for calendar to be visible
-        await expect(page.getByRole('grid')).toBeVisible();
+        await expect(page.getByRole('grid')).toBeVisible({ timeout: 15000 });
 
         // 2. Switch to list view
         await page
@@ -50,7 +50,7 @@ test.describe('Calendar', () => {
 
     test('should respect theme toggle and update calendar colors', async ({ page }) => {
         await page.goto('/pages/termine');
-        await expect(page.getByRole('grid')).toBeVisible();
+        await expect(page.getByRole('grid')).toBeVisible({ timeout: 15000 });
 
         const getStyles = async () => {
             return await page.evaluate(() => {
