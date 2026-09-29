@@ -26,8 +26,8 @@ cd website-dpsg-wehr
 # Abhängigkeiten installieren
 pnpm install
 
-# Website generieren und optimieren
-pnpm export
+# Website generieren
+pnpm build
 ```
 
 Die generierte Website wird im Ordner `out` gespeichert. Zur Entwicklung kann ein lokaler Server gestartet werden:
@@ -36,7 +36,7 @@ Die generierte Website wird im Ordner `out` gespeichert. Zur Entwicklung kann ei
 pnpm dev
 ```
 
-Die Website ist dann unter [http://localhost:3000](http://localhost:3000) verfügbar. Falls einige Bilder nicht geladen werden können, müssen die optimierten Versionen erst mit `pnpm export` generiert werden.
+Die Website ist dann unter [http://localhost:3000](http://localhost:3000) verfügbar.
 
 ## Testing
 
@@ -58,50 +58,6 @@ pnpm test:e2e:ui
 pnpm test:all
 ```
 
-### Reports & Abdeckung
+## Bereitstellung (Deployment)
 
-```bash
-# Testabdeckung (Coverage) anzeigen
-pnpm test --coverage
-
-# Playwright Test-Report öffnen
-npx playwright show-report
-
-# Lokale Test-Ergebnisse (Monocart) im Browser ansehen
-pnpm test:report
-```
-
-## Kalender & ICS Generierung
-
-Die Website generiert automatisch ICS-Kalenderdateien für Termine.
-
-- **Öffentliche Termine**: Werden in `lib/events.public.ts` gepflegt und sind im Repository enthalten.
-- **Interne Termine**: Können in einer lokalen Datei `lib/events.internal.ts` definiert werden. Diese Datei wird von Git ignoriert (`.gitignore`).
-
-**Format für `lib/events.internal.ts`:**
-
-```typescript
-import { AppEvent } from '../types';
-
-export const internalEvents: AppEvent[] = [
-    {
-        title: 'Leiterrunde',
-        start: '2024-01-01',
-        //optional: end: "2024-01-01"
-    },
-];
-```
-
-Die Kalender werden automatisch vor dem Build (`pnpm build`) generiert:
-
-1.  `public/events.ics`: Enthält nur öffentliche Termine.
-2.  `public/internal-events.ics`: Enthält öffentliche und interne Termine (falls `events.internal.ts` existiert).
-
-Beide generierten `.ics` Dateien sind ebenfalls in `.gitignore` und werden nicht committed.
-
-## Lizenz
-
-Der Quellcode dieses Projekts ist unter der **MIT Lizenz** veröffentlicht. Siehe [LICENSE](LICENSE) für Details.
-
-**Hinweis zum Inhalt:**
-Die Inhalte in den Ordnern `content/` und `public/` (Texte, Bilder, Grafiken) sind Eigentum der DPSG Wehr und unterliegen dem Urheberrecht. Sie sind **nicht** Teil der Open-Source-Lizenz und dürfen nicht ohne Genehmigung weiterverwendet werden.
+Die Bereitstellung erfolgt vollautomatisch über Forgejo Actions. Jeder Push auf den Branch `dev` baut ein Test-Image, welches über Tailscale SSH auf den Server übertragen und mit `docker compose up -d` aktualisiert wird. Bei Änderungen auf `main` wird zusätzlich über Semantic Release eine Versionierung vorgenommen und die Produktivumgebung aktualisiert.

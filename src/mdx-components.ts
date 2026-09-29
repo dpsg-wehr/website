@@ -1,11 +1,11 @@
-import MDXImage from '@/src/components/mdx/MDXImage.astro';
+import MDXImage from '@/components/mdx/MDXImage.astro';
 import Acrostichon from '@/components/mdx/Acrostichon';
 import GroupOverview from '@/components/mdx/GroupOverview';
-import CalendarWrapper from '@/src/components/mdx/CalendarWrapper.astro';
+import CalendarWrapper from '@/components/mdx/CalendarWrapper.astro';
 import Download from '@/components/mdx/Download';
-import RecentPosts from '@/src/components/posts/RecentPosts.astro';
-import CampflowForm from '@/src/components/mdx/CampflowForm.astro';
-import CampflowScript from '@/src/components/mdx/CampflowScript.astro';
+import RecentPosts from '@/components/posts/RecentPosts.astro';
+import CampflowForm from '@/components/mdx/CampflowForm.astro';
+import CampflowScript from '@/components/mdx/CampflowScript.astro';
 
 export const mdxComponents = {
     img: MDXImage,

@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import publicEvents from '../content/events/public.json';
 import internalEvents from '../content/events/internal.example.json'; // We use example here as we don't have the real one
-import { AppEvent } from '../types';
+import { AppEvent } from '../src/types';
 
 // This script generates ICS files from the events defined in the codebase.
 // It is run as part of the build process.

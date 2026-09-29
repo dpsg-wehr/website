@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { navigationLinks } from '../lib/config';
+import { navigationLinks } from '../src/lib/config';
 
 const groups = navigationLinks.find((n) => n.label === 'Gruppen')?.links || [];
 

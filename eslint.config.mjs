@@ -11,7 +11,6 @@ export default [
     {
         ignores: [
             '.astro/**',
-            '.next/**',
             'out/**',
             'dist/**',
             'node_modules/**',
@@ -69,7 +68,7 @@ export default [
         },
     },
     {
-        files: ['.github/scripts/**/*.mjs', 'scripts/**/*.ts'],
+        files: ['scripts/**/*.ts'],
         languageOptions: {
             globals: {
                 ...globals.node,

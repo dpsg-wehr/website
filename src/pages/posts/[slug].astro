@@ -1,8 +1,8 @@
 ---
-import RootLayout from '@/src/layouts/RootLayout.astro';
+import RootLayout from '@/layouts/RootLayout.astro';
 import { getCollection, render } from 'astro:content';
-import { mdxComponents } from '@/src/mdx-components';
-import Post from '@/src/components/posts/Post.astro';
+import { mdxComponents } from '@/mdx-components';
+import Post from '@/components/posts/Post.astro';
 import getPostMetadata from '@/lib/content/posts';
 import { getExcerpt } from '@/lib/utils/metadata';
 import { resolveImage } from '@/lib/assets/images';

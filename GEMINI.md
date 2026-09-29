@@ -23,11 +23,12 @@ This is the source code for the "DPSG Wehr" website, built with **Astro 7**. The
 
 ## Directory Structure
 
-- `src/`: Astro source directory (`pages/`, `layouts/`, `styles/`).
-- `components/`: UI components (React islands where needed, shared layouts and MDX components).
-- `content/`: Raw content managed as MDX and JSON files (Decap CMS compatible).
+- `src/`: Application source directory (`components/`, `lib/`, `types/`, `pages/`, `layouts/`, `styles/`, `assets/`).
+- `content/`: Raw content managed as MDX and JSON files (Sveltia/Decap CMS compatible).
 - `docs/`: Project documentation.
-- `scripts/`: Utility scripts (`setup-vps.sh`, `vps-deploy.sh`, `generate-ics.ts`, `generate-search-index.ts`).
+- `e2e/`: Playwright end-to-end test suite.
+- `public/`: Static web assets.
+- `scripts/`: Utility scripts (`generate-ics.ts`, `generate-search-index.ts`, `run-lighthouse.ts`).
 - `docker-compose.yml`: VPS deployment config.
 - `nginx.conf`: Nginx config for static file serving, caching, and security headers.
 
@@ -42,7 +43,6 @@ This is the source code for the "DPSG Wehr" website, built with **Astro 7**. The
 - **Typecheck:** `pnpm typecheck` (`astro check && tsc --noEmit`).
 - **Lint:** `pnpm lint` (ESLint).
 - **Build:** `pnpm build` (Static export to `out/`).
-- **Setup VPS:** `./scripts/setup-vps.sh` (Initializes env/webhook config).
 
 ## Release & Deployment Workflow
 

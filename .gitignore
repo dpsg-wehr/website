@@ -16,9 +16,6 @@
 
 # astro
 /.astro/
-
-# next.js (legacy)
-/.next/
 /out/
 
 # production
@@ -41,8 +38,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
-
 
 .idea
 
@@ -51,7 +46,7 @@ public/events.ics
 public/internal-events.ics
 
 # internal events
-lib/events.internal.ts
+src/lib/events.internal.ts
 public/search-index.json
 .env
 

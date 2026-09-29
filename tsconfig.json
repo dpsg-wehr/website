@@ -5,7 +5,8 @@
         "jsx": "react-jsx",
         "jsxImportSource": "react",
         "paths": {
-            "@/*": ["./src/*", "./*"]
+            "@/content/*": ["./content/*"],
+            "@/*": ["./src/*"]
         },
         "types": ["@testing-library/jest-dom/vitest"]
     },
@@ -16,12 +17,7 @@
         "src/**/*.ts",
         "src/**/*.tsx",
         "src/**/*.astro",
-        "components/**/*.ts",
-        "components/**/*.tsx",
-        "lib/**/*.ts",
-        "lib/**/*.tsx",
         "scripts/**/*.ts",
-        "types/**/*.ts",
         "e2e/**/*.ts"
     ],
     "exclude": ["node_modules", "out", "dist"]

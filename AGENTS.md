@@ -26,8 +26,8 @@ This repository is built with **Astro 7** (Static Site Generation with React isl
 ## 3. Tech Stack & Directory Structure
 
 - **Framework:** Astro 7 (`src/pages/`, `src/layouts/`)
-- **React Islands:** React 19 (`components/`) used selectively via `client:load`, `client:visible`, or `client:idle` for interactive widgets (calendar, search, lightbox).
-- **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`, `@tailwindcss/postcss`), dark mode compatible.
+- **React Islands:** React 19 (`src/components/`) used selectively via `client:load`, `client:visible`, or `client:idle` for interactive widgets (calendar, search, lightbox).
+- **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`), dark mode compatible.
 - **Content:** MDX files in `content/` with YAML frontmatter, managed statically and compatible with Decap CMS (`public/admin/`).
 - **Pre-build Scripts:**
     - `scripts/generate-ics.ts`: Generates calendar ICS feeds (`public/events.ics`, `public/internal-events.ics`).

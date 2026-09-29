@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { convertEventToIcsAttribute } from './generate-ics';
-import { AppEvent } from '../types';
+import { AppEvent } from '../src/types';
 
 import * as ics from 'ics';
 

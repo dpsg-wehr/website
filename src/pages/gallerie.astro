@@ -1,13 +1,13 @@
 ---
-import RootLayout from '@/src/layouts/RootLayout.astro';
+import RootLayout from '@/layouts/RootLayout.astro';
 import { getEntry, render } from 'astro:content';
-import { mdxComponents } from '@/src/mdx-components';
+import { mdxComponents } from '@/mdx-components';
 import { getPhotos } from '@/lib/content/photos';
 import PhotoAlbumWrapper from '@/components/gallery/PhotoAlbumWrapper';
 import { IoLogoInstagram as Instagram } from 'react-icons/io5';
 import { Image } from 'astro:assets';
-import instaImg from '@/src/assets/images/profilbild_insta.jpg';
-import CmsEditButton from '@/src/components/ui/CmsEditButton.astro';
+import instaImg from '@/assets/images/profilbild_insta.jpg';
+import CmsEditButton from '@/components/ui/CmsEditButton.astro';
 
 const entry = await getEntry('pages', 'gallerie');
 const Content = entry ? (await render(entry)).Content : null;

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { GET } from '@/src/pages/version.json';
+import { GET } from '@/pages/version.json';
 
 describe('GET /version.json', () => {
     const originalEnv = process.env;

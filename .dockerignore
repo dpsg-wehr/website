@@ -1,13 +1,11 @@
 node_modules
 .git
-.github
 .vscode
-.next
 coverage
 .env
 .env.*
 README.md
-PLAN.md
+AGENTS.md
 GEMINI.md
 test-results/
 playwright-report/
