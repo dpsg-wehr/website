@@ -61,7 +61,7 @@ const organizationJsonLd = {
 ---
 
 <!doctype html>
-<html lang="de">
+<html lang="de" class="scroll-smooth">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -94,21 +94,33 @@ const organizationJsonLd = {
         <!-- Structured Data -->
         <script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} />
 
-        <!-- Flash-Free Dark Mode Script -->
+        <!-- Flash-Free Dark Mode Script with live OS/browser listener -->
         <script is:inline>
-            const theme = (() => {
-                if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-                    return localStorage.getItem('theme');
-                }
-                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            (() => {
+                const getInitialTheme = () => {
+                    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+                        return localStorage.getItem('theme');
+                    }
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                };
+                const applyTheme = (t) => {
+                    if (t === 'dark') {
+                        document.documentElement.classList.add('dark');
+                        document.documentElement.setAttribute('data-color-scheme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        document.documentElement.setAttribute('data-color-scheme', 'light');
+                    }
+                };
+                applyTheme(getInitialTheme());
+
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                mediaQuery.addEventListener('change', (e) => {
+                    if (!localStorage.getItem('theme')) {
+                        applyTheme(e.matches ? 'dark' : 'light');
+                    }
+                });
             })();
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-                document.documentElement.setAttribute('data-color-scheme', 'dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.setAttribute('data-color-scheme', 'light');
-            }
         </script>
 
         <!-- Progressive Enhancement for Mobile Navigation -->
@@ -167,9 +179,11 @@ const organizationJsonLd = {
                         if (!iframe.closest('[data-campflow-wrapper]')) {
                             const wrapper = document.createElement('div');
                             wrapper.setAttribute('data-campflow-wrapper', '');
-                            wrapper.className = 'w-full my-6 bg-white rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 px-3 sm:px-6 md:px-8 py-4 sm:py-6';
+                            wrapper.className = 'w-full my-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 px-3 sm:px-6 md:px-8 py-4 sm:py-6';
                             iframe.parentNode.insertBefore(wrapper, iframe);
                             wrapper.appendChild(iframe);
+                            iframe.style.backgroundColor = 'transparent';
+                            iframe.setAttribute('allowtransparency', 'true');
                         }
                     });
                 };
