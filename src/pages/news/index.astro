@@ -5,12 +5,33 @@ import PostPreview from '@/components/posts/PostPreview.astro';
 import { formatPostDate } from '@/lib/utils/date';
 
 const posts = getPostMetadata();
+
+const siteUrl = Astro.site ? Astro.site.toString().replace(/\/$/, '') : 'https://dpsg-wehr.de';
+const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+        {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Startseite',
+            item: `${siteUrl}/`,
+        },
+        {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Aktuelles',
+            item: `${siteUrl}/news`,
+        },
+    ],
+};
 ---
 
 <RootLayout
     title="Aktuelles"
     description="Neuigkeiten und Berichte von unseren Aktionen, Zeltlagern und Gruppenstunden."
 >
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
     <div class="prose dark:prose-invert mb-8 max-w-none">
         <h1>Aktuelles</h1>
         <p>

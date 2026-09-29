@@ -4,7 +4,11 @@ import { Image } from 'astro:assets';
 import logoImg from '@/assets/images/logo.png';
 ---
 
-<RootLayout title="Fehler 404 - Pfad nicht gefunden" description="Seite nicht gefunden">
+<RootLayout
+    title="Fehler 404 - Pfad nicht gefunden"
+    description="Seite nicht gefunden"
+    robots="noindex, nofollow"
+>
     <div class="h-full flex flex-col items-center">
         <div class="mx-auto my-auto flex flex-col items-center">
             <Image

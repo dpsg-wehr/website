@@ -17,7 +17,11 @@ export default defineConfig({
         react(),
         mdx(),
         sitemap({
-            filter: (page) => !page.includes('/admin/'),
+            filter: (page) =>
+                !page.includes('/admin/') &&
+                !page.includes('/404') &&
+                !page.includes('/intern') &&
+                !page.includes('/subscribe'),
         }),
     ],
     image: {

@@ -36,6 +36,63 @@ if (imageMeta) {
     imageHeight = optimized.attributes.height;
 }
 
+const siteUrl = Astro.site ? Astro.site.toString().replace(/\/$/, '') : 'https://dpsg-wehr.de';
+const canonicalPostUrl = new URL(`/posts/${slug}`, siteUrl).href;
+const absoluteImageUrl = imageUrl.startsWith('http') ? imageUrl : `${siteUrl}${imageUrl}`;
+const datePublished =
+    typeof post.data.date === 'string' ? post.data.date : post.data.date.toISOString();
+
+const blogPostingJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': canonicalPostUrl,
+    },
+    headline: post.data.title,
+    description: description,
+    image: [absoluteImageUrl],
+    datePublished: datePublished,
+    author: {
+        '@type': 'Person',
+        name: post.data.author || 'DPSG Stamm St. Bernhard Wehr',
+    },
+    publisher: {
+        '@type': 'NGO',
+        name: 'DPSG Stamm St. Bernhard Wehr',
+        url: 'https://dpsg-wehr.de',
+        logo: {
+            '@type': 'ImageObject',
+            url: 'https://dpsg-wehr.de/media/images/logo.png',
+        },
+    },
+};
+
+const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+        {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Startseite',
+            item: `${siteUrl}/`,
+        },
+        {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Aktuelles',
+            item: `${siteUrl}/news`,
+        },
+        {
+            '@type': 'ListItem',
+            position: 3,
+            name: post.data.title,
+            item: canonicalPostUrl,
+        },
+    ],
+};
+
 const eventJsonLd = post.data.event
     ? {
           '@context': 'https://schema.org',
@@ -69,8 +126,8 @@ const eventJsonLd = post.data.event
                 }
               : undefined,
           image: post.data.image
-              ? [`https://dpsg-wehr.de${post.data.image}`]
-              : ['https://dpsg-wehr.de/media/images/logo.png'],
+              ? [`${siteUrl}${post.data.image}`]
+              : [`${siteUrl}/media/images/logo.png`],
           isAccessibleForFree: post.data.event.isAccessibleForFree ?? true,
           organizer: {
               '@type': 'NGO',
@@ -88,9 +145,11 @@ const eventJsonLd = post.data.event
     imageWidth={imageWidth}
     imageHeight={imageHeight}
     type="article"
-    publishedTime={typeof post.data.date === 'string' ? post.data.date : post.data.date.toISOString()}
+    publishedTime={datePublished}
     author={post.data.author}
 >
+    <script type="application/ld+json" set:html={JSON.stringify(blogPostingJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
     {eventJsonLd && (
         <script type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />
     )}

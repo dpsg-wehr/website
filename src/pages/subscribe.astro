@@ -3,6 +3,10 @@ import RootLayout from '@/layouts/RootLayout.astro';
 import SubscribeContent from '@/components/subscribe/SubscribeContent';
 ---
 
-<RootLayout title="Interner Kalender" description="Abonniere den internen DPSG Wehr Kalender.">
+<RootLayout
+    title="Interner Kalender"
+    description="Abonniere den internen DPSG Wehr Kalender."
+    robots="noindex, nofollow"
+>
     <SubscribeContent client:load />
 </RootLayout>
