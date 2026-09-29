@@ -10,34 +10,34 @@ interface InternalService {
 }
 
 const services: InternalService[] = [
-    {
-        name: 'Sveltia CMS',
-        url: 'https://dev.dpsg-wehr.de/admin/',
-        displayUrl: 'dev.dpsg-wehr.de/admin/',
-        description: 'Redaktionelles Pflegen von Beiträgen, Terminen und Gruppeninformationen.',
-        icon: '/icons/sveltia.svg',
-    },
-    {
-        name: 'Campflow',
-        url: 'https://my.campflow.de/dpsg-wehr',
-        displayUrl: 'my.campflow.de/dpsg-wehr',
-        description: 'Lager- und Veranstaltungsanmeldungen sowie Stammes-Mitgliederverwaltung.',
-        icon: '/icons/campflow.svg',
-    },
-    {
-        name: 'OpenCloud',
-        url: 'https://cloud.dpsg-wehr.de',
-        displayUrl: 'cloud.dpsg-wehr.de',
-        description: 'Gemeinsamer Dateispeicher, Dokumentenvorlagen, Sitzungsprotokolle und Listen.',
-        icon: '/icons/opencloud.svg',
-    },
-    {
-        name: 'Jitsi Meet',
-        url: 'https://meet.fischernet.eu',
-        displayUrl: 'meet.fischernet.eu',
-        description: 'Videokonferenzen für Leiterrunden, Planungstreffen und Vorstandssitzungen.',
-        icon: '/icons/jitsi.svg',
-    },
+  {
+    name: 'OpenCloud',
+    url: 'https://cloud.dpsg-wehr.de',
+    displayUrl: 'cloud.dpsg-wehr.de',
+    description: 'Pfadicloud',
+    icon: '/icons/opencloud.svg',
+  },
+  {
+    name: 'Campflow',
+    url: 'https://my.campflow.de/dpsg-wehr',
+    displayUrl: 'my.campflow.de/dpsg-wehr',
+    description: 'Lager- und Veranstaltungsanmeldungen, Mitgliederverwaltung etc.',
+    icon: '/icons/campflow.svg',
+  },
+  {
+    name: 'Sveltia CMS',
+    url: 'https://dev.dpsg-wehr.de/admin/',
+    displayUrl: 'dev.dpsg-wehr.de/admin/',
+    description: 'Verwaltung der Website',
+    icon: '/icons/sveltia.svg',
+  },
+  {
+    name: 'Jitsi Meet',
+    url: 'https://meet.fischernet.eu',
+    displayUrl: 'meet.fischernet.eu',
+    description: 'Videokonferenzen',
+    icon: '/icons/jitsi.svg',
+  },
 ];
 ---
 
@@ -64,44 +64,14 @@ const services: InternalService[] = [
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
-                Leitungsteam Portal
+                Intern
             </div>
             <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
                 Interne Links
             </h1>
-            <p class="mt-2 text-base text-gray-600 dark:text-gray-300">
-                Zentraler Schnellzugriff auf geschützte Verwaltungswerkzeuge und Plattformen für
-                Leitende und Mitarbeitende der DPSG Wehr.
-            </p>
         </div>
 
-        <!-- Authentik SSO Notice -->
-        <div
-            class="mb-8 p-4 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 flex items-start gap-3.5"
-        >
-            <div class="text-blue-600 dark:text-blue-400 mt-0.5 shrink-0">
-                <svg
-                    class="w-5 h-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-            </div>
-            <div class="text-sm text-blue-950 dark:text-blue-100">
-                <strong class="font-semibold block mb-0.5">Authentik Single Sign-On (SSO)</strong>
-                <span>
-                    Diese internen Portale sind zugriffsgeschützt. Die Anmeldung erfolgt automatisch
-                    oder über deinen persönlichen Authentik-Account des Stammes.
-                </span>
-            </div>
-        </div>
-
-        <!-- Directory List (Option B) -->
+        <!-- Directory List -->
         <div class="space-y-3.5">
             {
                 services.map((service) => (
@@ -170,8 +140,7 @@ const services: InternalService[] = [
         <div
             class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700/60 text-center sm:text-left text-xs text-gray-500 dark:text-gray-400"
         >
-            Du hast keinen Zugriff oder benötigst einen Account? Wende dich bitte an den
-            Stammesvorstand oder die IT-Verantwortlichen der DPSG Wehr.
+            Du hast keinen Zugriff oder benötigst einen Account? Wende dich an Linus :)
         </div>
     </div>
 </RootLayout>
