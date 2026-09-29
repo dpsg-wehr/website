@@ -38,6 +38,7 @@ const imageUrl = image.startsWith('http') ? image : new URL(image, Astro.site ||
 const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NGO',
+    additionalType: 'https://www.wikidata.org/wiki/Q2301851',
     name: 'DPSG Stamm St. Bernhard Wehr',
     alternateName: ['Pfadfinder Wehr', 'DPSG Wehr', 'DPSG Stamm Wehr'],
     url: 'https://dpsg-wehr.de',
@@ -56,8 +57,9 @@ const organizationJsonLd = {
     },
     parentOrganization: {
         '@type': 'NGO',
-        name: 'Deutsche Pfadfinderschaft Sankt Georg (DPSG)',
+        name: 'Deutsche Pfadfinder*innenschaft Sankt Georg (DPSG)',
         url: 'https://dpsg.de',
+        sameAs: 'https://www.wikidata.org/wiki/Q1203670',
     },
 };
 ---
