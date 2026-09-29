@@ -8,10 +8,15 @@ export default defineConfig({
         environment: 'jsdom',
         setupFiles: ['./vitest-setup.ts'],
         exclude: ['**/node_modules/**', '**/e2e/**', '**/dist/**'],
-        reporters: ['default', 'html'],
-        outputFile: {
-            html: './test-results/unit/index.html',
-        },
+        reporters: [
+            'default',
+            [
+                'html',
+                {
+                    outputDir: './test-results/unit',
+                },
+            ],
+        ],
     },
     resolve: {
         alias: {

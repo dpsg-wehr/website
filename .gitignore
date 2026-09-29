@@ -12,6 +12,7 @@
 /allure-report
 /playwright-report
 /.lighthouseci/
+/.vitest/
 
 # astro
 /.astro/
@@ -57,4 +58,3 @@ public/search-index.json
 # python
 __pycache__/
 *.py[cod]
-
