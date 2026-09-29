@@ -31,6 +31,16 @@ export function getBerlinUtcOffset(date: Date): string {
 }
 
 /**
+ * Returns the UTC offset in hours (1 for CET, 2 for CEST) for Europe/Berlin on the specified date.
+ */
+export function getBerlinUtcOffsetHours(date: Date): number {
+    const offsetStr = getBerlinUtcOffset(date);
+    const sign = offsetStr.startsWith('-') ? -1 : 1;
+    const hours = parseInt(offsetStr.slice(1, 3), 10);
+    return sign * hours;
+}
+
+/**
  * Normalizes a banner 'until' property (Date object, date string, or timestamp)
  * into an ISO 8601 string with explicit timezone offset for Europe/Berlin.
  * Date-only inputs (e.g. '2026-09-13') are set to expire at the end of that day (23:59:59).

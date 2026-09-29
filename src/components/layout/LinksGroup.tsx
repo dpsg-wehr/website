@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { navigationLinks } from '@/lib/config';
+import { getFlattenedSidebarLinks } from '@/lib/navigation';
 import { NavigationLinkGroup } from '@/types';
 import { getIconFromName } from '@/lib/icons';
 import { IoChevronDown } from 'react-icons/io5';
@@ -14,21 +14,21 @@ export function LinksGroup({
     const { label, Icon, link, links } = navigationLinks;
     const hasLinks = Array.isArray(links);
     const [opened, setOpened] = useState(false);
-    const items = (hasLinks ? links : []).map((link) => {
-        const isThemed = !link.color;
+    const items = (hasLinks ? links : []).map((item) => {
+        const isThemed = !item.color;
         return (
             <a
                 className="font-medium flex flex-row items-center px-4 py-3 ml-4 border-l border-solid border-gray-200 dark:border-gray-500 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600"
-                href={link.link}
-                key={link.label}
+                href={item.link}
+                key={item.label}
                 onClick={toggleSidebar}
             >
                 <div
                     className={`${isThemed ? 'w-[30px] h-[30px] rounded bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 flex items-center justify-center' : 'w-4 h-4'} mr-2`}
                 >
-                    {getIconFromName(link.Icon, link.color)}
+                    {getIconFromName(item.Icon, item.color)}
                 </div>
-                {link.label}
+                {item.label}
             </a>
         );
     });
@@ -90,22 +90,14 @@ export function LinksGroup({
     );
 }
 
-export function NavbarLinksGroup({ toggleSidebar }: { toggleSidebar: () => void }) {
-    const flattenedLinks: NavigationLinkGroup[] = [];
-
-    navigationLinks.forEach((group) => {
-        if (group.label === 'Mehr' && group.links) {
-            group.links.forEach((link) => {
-                flattenedLinks.push({
-                    label: link.label,
-                    link: link.link,
-                    Icon: link.Icon,
-                });
-            });
-        } else {
-            flattenedLinks.push(group);
-        }
-    });
+export function NavbarLinksGroup({
+    toggleSidebar,
+    links,
+}: {
+    toggleSidebar: () => void;
+    links?: NavigationLinkGroup[];
+}) {
+    const flattenedLinks = getFlattenedSidebarLinks(links);
 
     const groups = flattenedLinks.map((group) => {
         return (

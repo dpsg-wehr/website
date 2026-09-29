@@ -5,6 +5,7 @@ import Banner from '@/components/layout/Banner';
 import Footer from '@/components/layout/Footer';
 import GlobalLightbox from '@/components/gallery/GlobalLightbox';
 import { getActiveBanner } from '@/lib/content/banner';
+import { createOrganizationSchema, getCanonicalUrl } from '@/lib/utils/seo';
 
 interface Props {
     title?: string;
@@ -31,37 +32,11 @@ const {
 } = Astro.props;
 
 const banner = getActiveBanner();
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://dpsg-wehr.de');
+const canonicalURL = getCanonicalUrl(Astro.url.pathname, Astro.site);
 const formattedTitle = title.includes('DPSG Wehr') ? title : `${title} - DPSG Wehr`;
-const imageUrl = image.startsWith('http') ? image : new URL(image, Astro.site || 'https://dpsg-wehr.de').href;
+const imageUrl = image.startsWith('http') ? image : getCanonicalUrl(image, Astro.site);
 
-const organizationJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'NGO',
-    additionalType: 'https://www.wikidata.org/wiki/Q2301851',
-    name: 'DPSG Stamm St. Bernhard Wehr',
-    alternateName: ['Pfadfinder Wehr', 'DPSG Wehr', 'DPSG Stamm Wehr'],
-    url: 'https://dpsg-wehr.de',
-    logo: 'https://dpsg-wehr.de/media/images/logo.png',
-    sameAs: [
-        'https://de-de.facebook.com/dpsgwehr/',
-        'https://www.instagram.com/pfadfinder_wehr/',
-        'https://github.com/dpsg-wehr/website',
-    ],
-    address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Kirchplatz 1',
-        addressLocality: 'Wehr',
-        postalCode: '79664',
-        addressCountry: 'DE',
-    },
-    parentOrganization: {
-        '@type': 'NGO',
-        name: 'Deutsche Pfadfinder*innenschaft Sankt Georg (DPSG)',
-        url: 'https://dpsg.de',
-        sameAs: 'https://www.wikidata.org/wiki/Q1203670',
-    },
-};
+const organizationJsonLd = createOrganizationSchema(Astro.site);
 ---
 
 <!doctype html>

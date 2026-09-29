@@ -5,16 +5,17 @@ import { formatPostDate } from '@/lib/utils/date';
 import CmsEditButton from '@/components/ui/CmsEditButton.astro';
 
 interface Props {
-    postMetadata: PostMetadata[];
+    postMetadata?: PostMetadata[];
     slug?: string;
     overrideMetadata?: Partial<PostMetadata>;
+    metadata?: PostMetadata;
     collection?: string;
     entryId?: string;
 }
 
-const { postMetadata, slug, overrideMetadata, collection, entryId } = Astro.props;
+const { postMetadata, slug, overrideMetadata, metadata: directMetadata, collection, entryId } = Astro.props;
 
-const foundMetadata = postMetadata.find((post) => post.slug === slug);
+const foundMetadata = directMetadata || postMetadata?.find((post) => post.slug === slug);
 const metadata = overrideMetadata
     ? ({ ...foundMetadata, ...overrideMetadata } as PostMetadata)
     : foundMetadata;

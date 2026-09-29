@@ -5,13 +5,25 @@ import imageSize from 'image-size';
 import { normalizeBannerUntil } from '@/lib/utils/date';
 import { resolveImage } from '@/lib/assets/images';
 
-export default function getPostMetadata(): PostMetadata[] {
-    const folder = 'content/posts/';
+let cachedPosts: PostMetadata[] | null = null;
 
+export function clearPostMetadataCache(): void {
+    cachedPosts = null;
+}
+
+/**
+ * Strips the .mdx file extension from an entry id or path.
+ */
+export function cleanContentSlug(id: string): string {
+    return id.replace(/\.mdx$/, '');
+}
+
+export function loadPostMetadata(): PostMetadata[] {
+    const folder = 'content/posts/';
     const files = fs.readdirSync(folder).filter((file) => file.endsWith('.mdx'));
 
     const posts = files.map((filename) => {
-        const slug = filename.replace('.mdx', '');
+        const slug = cleanContentSlug(filename);
         const fileContents = fs.readFileSync(`content/posts/${filename}`, 'utf8');
         const matterResult = matter(fileContents);
         let imgSize: { width?: number; height?: number } | undefined = undefined;
@@ -90,4 +102,18 @@ export default function getPostMetadata(): PostMetadata[] {
     });
 
     return posts;
+}
+
+export default function getPostMetadata(options?: { forceRefresh?: boolean }): PostMetadata[] {
+    if (!cachedPosts || options?.forceRefresh) {
+        cachedPosts = loadPostMetadata();
+    }
+    return cachedPosts;
+}
+
+/**
+ * Returns a specific post by its slug.
+ */
+export function getPostBySlug(slug: string): PostMetadata | undefined {
+    return getPostMetadata().find((p) => p.slug === slug);
 }

@@ -2,8 +2,9 @@ import * as ics from 'ics';
 import * as fs from 'fs';
 import * as path from 'path';
 import publicEvents from '../content/events/public.json';
-import internalEvents from '../content/events/internal.example.json'; // We use example here as we don't have the real one
+import internalEvents from '../content/events/internal.example.json'; // Fallback if no real internal events exist
 import { AppEvent } from '../src/types';
+import { getBerlinUtcOffsetHours } from '../src/lib/utils/date';
 
 // This script generates ICS files from the events defined in the codebase.
 // It is run as part of the build process.
@@ -21,29 +22,13 @@ function parseDate(dateStr: string): ics.DateArray {
     return [year, month, day];
 }
 
-// Helper to determine if a date is in Daylight Saving Time (CEST) for Berlin
-// Berlin switches to DST (UTC+2) on last Sunday of March at 2:00
-// Berlin switches back to Standard (UTC+1) on last Sunday of October at 3:00
-function getBerlinOffset(year: number, month: number, day: number, hour: number): number {
-    const date = new Date(Date.UTC(year, month - 1, day, hour));
-
-    // Last Sunday of March
-    const marchNode = new Date(Date.UTC(year, 2, 31));
-    const startDst = new Date(Date.UTC(year, 2, 31 - marchNode.getDay(), 1)); // 2:00 Local = 1:00 UTC
-
-    // Last Sunday of October
-    const octNode = new Date(Date.UTC(year, 9, 31));
-    const endDst = new Date(Date.UTC(year, 9, 31 - octNode.getDay(), 1)); // 3:00 Local (shifted) = 1:00 UTC
-
-    // If between start and end of DST, it's UTC+2, otherwise UTC+1
-    return date >= startDst && date < endDst ? 2 : 1;
-}
-
 function toBerlinUTC(dateArray: ics.DateArray): ics.DateArray {
     if (dateArray.length < 5) return dateArray; // Date-only, return as is
 
     const [y, m, d, h, min] = dateArray as [number, number, number, number, number];
-    const offset = getBerlinOffset(y, m, d, h);
+    // Approximate date in Berlin to determine the UTC offset
+    const approxDate = new Date(Date.UTC(y, m - 1, d, h, min));
+    const offset = getBerlinUtcOffsetHours(approxDate);
 
     // Create date in UTC
     const date = new Date(Date.UTC(y, m - 1, d, h - offset, min));
@@ -71,7 +56,6 @@ export function convertEventToIcsAttribute(event: AppEvent): ics.EventAttributes
 
     const attributes: ics.EventAttributes = {
         start: start,
-        // startInputType: 'utc', // Default is UTC if we don't specify local
         startOutputType: 'utc', // Force output to have 'Z'
         title: event.title,
         location: event.location,
@@ -92,6 +76,7 @@ export function convertEventToIcsAttribute(event: AppEvent): ics.EventAttributes
         return attributes;
     }
 }
+
 function generateIcs(events: AppEvent[], filename: string) {
     const icsEvents = events.map(convertEventToIcsAttribute);
 
@@ -127,7 +112,7 @@ export async function generateAll() {
 
     // Try to generate internal events if the file exists
     const internalJsonPath = path.join(process.cwd(), 'content/events/internal.json');
-    const legacyInternalEventsPath = path.join(process.cwd(), 'lib/events.internal.ts');
+    const legacyInternalEventsPath = path.join(process.cwd(), 'src/lib/events.internal.ts');
     if (fs.existsSync(internalJsonPath)) {
         console.log('Found internal events JSON file.');
         try {
@@ -139,7 +124,7 @@ export async function generateAll() {
         }
     } else if (fs.existsSync(legacyInternalEventsPath)) {
         console.log('Found internal events TS file.');
-        const modulePath = '../lib/events.internal';
+        const modulePath = '../src/lib/events.internal';
         try {
             const m = await import(modulePath);
             generateIcs(m.internalEvents, internalFilename);

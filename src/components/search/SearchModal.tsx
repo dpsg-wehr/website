@@ -2,14 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Fuse, { FuseResultMatch } from 'fuse.js';
 import { IoSearch, IoClose } from 'react-icons/io5';
 import { getIconFromName } from '@/lib/icons';
-import { navigationLinks } from '@/lib/config';
-
-interface SearchItem {
-    title: string;
-    content: string;
-    slug: string;
-    type: 'post' | 'page' | 'group' | 'file';
-}
+import { findNavigationIcon } from '@/lib/navigation';
+import type { SearchItem } from '@/types';
 
 interface SearchResult extends SearchItem {
     matches?: readonly FuseResultMatch[];
@@ -49,15 +43,9 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
         // 0. Force People icon for groups as requested
         if (type === 'group') return getIconFromName('People');
 
-        // 1. Try to find in navigationLinks
-        for (const group of navigationLinks) {
-            if (group.link === slug && group.Icon) return getIconFromName(group.Icon);
-            if (group.links) {
-                for (const subLink of group.links) {
-                    if (subLink.link === slug) return getIconFromName(subLink.Icon);
-                }
-            }
-        }
+        // 1. Try to find in navigation
+        const navIcon = findNavigationIcon(slug);
+        if (navIcon) return getIconFromName(navIcon);
 
         // 2. Fallbacks for specific types if not in menu
         switch (type) {

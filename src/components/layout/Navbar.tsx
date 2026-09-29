@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
 import { IoChevronDown } from 'react-icons/io5';
 import ToggleThemeButton from '@/components/ui/ToggleThemeButton';
-import { navigationLinks } from '@/lib/config';
+import { getNavigationLinks } from '@/lib/navigation';
 import { getIconFromName } from '@/lib/icons';
 import Sidebar from './Sidebar';
 import SearchButton from '@/components/search/SearchButton';
-import globalData from '@/content/global/index.json';
-
-import { NavigationLinkGroup, NavigationLink } from '@/types';
-import { Icons } from '@/lib/icons';
+import type { NavigationLinkGroup, NavigationLink } from '@/types';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(() => {
@@ -22,21 +19,8 @@ export default function Navbar() {
     useEffect(() => {
         (window as Window & { __NAVBAR_HYDRATED__?: boolean }).__NAVBAR_HYDRATED__ = true;
     }, []);
-    let navLinks: NavigationLinkGroup[] = navigationLinks;
 
-    if (globalData?.header?.nav) {
-        navLinks = globalData.header.nav.map((item) => ({
-            label: item.label,
-            link: item.link,
-            Icon: item.icon as Icons,
-            links: item.links?.map((subItem) => ({
-                label: subItem.label,
-                link: subItem.link,
-                Icon: subItem.icon as Icons,
-                color: subItem.color,
-            })),
-        }));
-    }
+    const navLinks: NavigationLinkGroup[] = getNavigationLinks();
 
     const renderedItems = navLinks.map((link: NavigationLinkGroup) => {
         if (link.links) {
@@ -165,7 +149,7 @@ export default function Navbar() {
                     </div>
                 </div>
             </header>
-            <Sidebar isOpen={isOpen} toggle={() => setIsOpen(false)} />
+            <Sidebar isOpen={isOpen} toggle={() => setIsOpen(false)} links={navLinks} />
         </>
     );
 }

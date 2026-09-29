@@ -3,28 +3,17 @@ import RootLayout from '@/layouts/RootLayout.astro';
 import getPostMetadata from '@/lib/content/posts';
 import PostPreview from '@/components/posts/PostPreview.astro';
 import { formatPostDate } from '@/lib/utils/date';
+import { createBreadcrumbSchema } from '@/lib/utils/seo';
 
 const posts = getPostMetadata();
 
-const siteUrl = Astro.site ? Astro.site.toString().replace(/\/$/, '') : 'https://dpsg-wehr.de';
-const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-        {
-            '@type': 'ListItem',
-            position: 1,
-            name: 'Startseite',
-            item: `${siteUrl}/`,
-        },
-        {
-            '@type': 'ListItem',
-            position: 2,
-            name: 'Aktuelles',
-            item: `${siteUrl}/news`,
-        },
+const breadcrumbJsonLd = createBreadcrumbSchema(
+    [
+        { name: 'Startseite', path: '/' },
+        { name: 'Aktuelles', path: '/news' },
     ],
-};
+    Astro.site
+);
 ---
 
 <RootLayout
@@ -51,12 +40,4 @@ const breadcrumbJsonLd = {
             ))
         }
     </div>
-
-    {
-        posts.length === 0 && (
-            <div class="text-center mt-8">
-                <p class="text-xl font-bold">Hier gibt's noch nichts zu sehen.</p>
-            </div>
-        )
-    }
 </RootLayout>

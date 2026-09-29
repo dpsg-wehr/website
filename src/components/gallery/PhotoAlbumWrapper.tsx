@@ -4,27 +4,11 @@ import { PhotoPlus, TagGroup } from '@/types';
 import { useState, useMemo } from 'react';
 import GalleryHeader from './GalleryHeader';
 import PhotoRenderer from './PhotoRenderer';
-
-const tagsInit: TagGroup[] = [
-    {
-        name: 'Jahr',
-        tags: ['2018', '2017', '2016'],
-        selectedTags: [],
-    },
-    {
-        name: 'Aktion',
-        tags: ['Lager', 'Jurtenaktion'],
-        selectedTags: [],
-    },
-    {
-        name: 'Gruppe',
-        tags: ['Wölflinge', 'Jupfis', 'Pfadis', 'Rover', 'Leiter'],
-        selectedTags: [],
-    },
-];
+import { buildPhotoTagGroups } from '@/lib/content/photos-tags';
 
 export default function PhotoAlbumWrapper({ photos }: { photos: PhotoPlus[] }) {
-    const [tags, setTags] = useState<TagGroup[]>(tagsInit);
+    const initialTags = useMemo(() => buildPhotoTagGroups(photos), [photos]);
+    const [tags, setTags] = useState<TagGroup[]>(initialTags);
 
     const filteredPhotos = useMemo(() => {
         return photos.filter((photo: PhotoPlus) =>
@@ -32,7 +16,7 @@ export default function PhotoAlbumWrapper({ photos }: { photos: PhotoPlus[] }) {
                 (group: TagGroup) =>
                     group.selectedTags == undefined ||
                     group.selectedTags.length == 0 ||
-                    group.selectedTags.some((tag: string) => photo.tags!.includes(tag))
+                    group.selectedTags.some((tag: string) => photo.tags?.includes(tag))
             )
         );
     }, [tags, photos]);

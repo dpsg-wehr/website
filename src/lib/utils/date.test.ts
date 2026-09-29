@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { formatPostDate, getBerlinUtcOffset, normalizeBannerUntil } from './date';
+import {
+    formatPostDate,
+    getBerlinUtcOffset,
+    getBerlinUtcOffsetHours,
+    normalizeBannerUntil,
+} from './date';
 
 describe('formatPostDate', () => {
     it('formats a date string correctly in German', () => {
@@ -19,6 +24,18 @@ describe('getBerlinUtcOffset', () => {
     it('returns +01:00 during winter time (CET)', () => {
         const winterDate = new Date('2026-01-15T12:00:00Z');
         expect(getBerlinUtcOffset(winterDate)).toBe('+01:00');
+    });
+});
+
+describe('getBerlinUtcOffsetHours', () => {
+    it('returns 2 during summer time (CEST)', () => {
+        const summerDate = new Date('2026-07-15T12:00:00Z');
+        expect(getBerlinUtcOffsetHours(summerDate)).toBe(2);
+    });
+
+    it('returns 1 during winter time (CET)', () => {
+        const winterDate = new Date('2026-01-15T12:00:00Z');
+        expect(getBerlinUtcOffsetHours(winterDate)).toBe(1);
     });
 });
 

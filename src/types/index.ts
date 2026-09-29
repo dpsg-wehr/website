@@ -72,3 +72,16 @@ export interface NavigationLink {
     Icon: Icons;
     color?: string;
 }
+
+export interface SearchItem {
+    title: string;
+    content: string;
+    slug: string;
+    type: 'post' | 'page' | 'group' | 'file';
+}
+
+export interface BreadcrumbItem {
+    name: string;
+    path?: string;
+    url?: string;
+}

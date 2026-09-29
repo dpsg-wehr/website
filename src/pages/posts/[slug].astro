@@ -3,25 +3,29 @@ import RootLayout from '@/layouts/RootLayout.astro';
 import { getCollection, render } from 'astro:content';
 import { mdxComponents } from '@/mdx-components';
 import Post from '@/components/posts/Post.astro';
-import getPostMetadata from '@/lib/content/posts';
+import { getPostBySlug, cleanContentSlug } from '@/lib/content/posts';
 import { getExcerpt } from '@/lib/utils/metadata';
 import { resolveImage } from '@/lib/assets/images';
+import {
+    getCanonicalUrl,
+    createBreadcrumbSchema,
+    createBlogPostingSchema,
+    createEventSchema,
+} from '@/lib/utils/seo';
 import { getImage } from 'astro:assets';
 
 export async function getStaticPaths() {
     const posts = await getCollection('posts');
     return posts.map((post) => ({
-        params: { slug: post.data.slug || post.id.replace(/\.mdx$/, '') },
+        params: { slug: post.data.slug || cleanContentSlug(post.id) },
         props: { post },
     }));
 }
 
 const { post } = Astro.props;
 const { Content } = await render(post);
-const allPostMetadata = getPostMetadata();
-const slug = post.data.slug || post.id.replace(/\.mdx$/, '');
-const metadata = allPostMetadata.find((p) => p.slug === slug);
-const postEntryId = post.id.replace(/\.mdx$/, '');
+const slug = post.data.slug || cleanContentSlug(post.id);
+const metadata = getPostBySlug(slug);
 
 const description = post.data.desc || post.data.description || getExcerpt(post.body || '');
 let imageUrl = '/media/images/logo.png';
@@ -36,106 +40,35 @@ if (imageMeta) {
     imageHeight = optimized.attributes.height;
 }
 
-const siteUrl = Astro.site ? Astro.site.toString().replace(/\/$/, '') : 'https://dpsg-wehr.de';
-const canonicalPostUrl = new URL(`/posts/${slug}`, siteUrl).href;
-const absoluteImageUrl = imageUrl.startsWith('http') ? imageUrl : `${siteUrl}${imageUrl}`;
+const canonicalPostUrl = getCanonicalUrl(`/posts/${slug}`, Astro.site);
 const datePublished =
     typeof post.data.date === 'string' ? post.data.date : post.data.date.toISOString();
 
-const blogPostingJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    mainEntityOfPage: {
-        '@type': 'WebPage',
-        '@id': canonicalPostUrl,
-    },
+const blogPostingJsonLd = createBlogPostingSchema({
     headline: post.data.title,
     description: description,
-    image: [absoluteImageUrl],
+    canonicalUrl: canonicalPostUrl,
+    imageUrl: imageUrl,
     datePublished: datePublished,
-    author: {
-        '@type': 'Person',
-        name: post.data.author || 'DPSG Stamm St. Bernhard Wehr',
-    },
-    publisher: {
-        '@type': 'NGO',
-        name: 'DPSG Stamm St. Bernhard Wehr',
-        url: 'https://dpsg-wehr.de',
-        logo: {
-            '@type': 'ImageObject',
-            url: 'https://dpsg-wehr.de/media/images/logo.png',
-        },
-    },
-};
+    author: post.data.author,
+    site: Astro.site,
+});
 
-const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-        {
-            '@type': 'ListItem',
-            position: 1,
-            name: 'Startseite',
-            item: `${siteUrl}/`,
-        },
-        {
-            '@type': 'ListItem',
-            position: 2,
-            name: 'Aktuelles',
-            item: `${siteUrl}/news`,
-        },
-        {
-            '@type': 'ListItem',
-            position: 3,
-            name: post.data.title,
-            item: canonicalPostUrl,
-        },
+const breadcrumbJsonLd = createBreadcrumbSchema(
+    [
+        { name: 'Startseite', path: '/' },
+        { name: 'Aktuelles', path: '/news' },
+        { name: post.data.title, url: canonicalPostUrl },
     ],
-};
+    Astro.site
+);
 
-const eventJsonLd = post.data.event
-    ? {
-          '@context': 'https://schema.org',
-          '@type': 'Event',
-          name: post.data.event.name || post.data.title,
-          description: description,
-          startDate: post.data.event.startDate,
-          endDate: post.data.event.endDate,
-          eventAttendanceMode:
-              post.data.event.eventAttendanceMode || 'https://schema.org/OfflineEventAttendanceMode',
-          eventStatus: post.data.event.eventStatus || 'https://schema.org/EventScheduled',
-          location: post.data.event.location
-              ? {
-                    '@type': 'Place',
-                    name: post.data.event.location.name,
-                    description: post.data.event.location.description,
-                    hasMap: post.data.event.location.hasMap,
-                    geo: post.data.event.location.geo
-                        ? {
-                              '@type': 'GeoCoordinates',
-                              latitude: post.data.event.location.geo.latitude,
-                              longitude: post.data.event.location.geo.longitude,
-                          }
-                        : undefined,
-                    address: post.data.event.location.address
-                        ? {
-                              '@type': 'PostalAddress',
-                              ...post.data.event.location.address,
-                          }
-                        : undefined,
-                }
-              : undefined,
-          image: post.data.image
-              ? [`${siteUrl}${post.data.image}`]
-              : [`${siteUrl}/media/images/logo.png`],
-          isAccessibleForFree: post.data.event.isAccessibleForFree ?? true,
-          organizer: {
-              '@type': 'NGO',
-              name: 'DPSG Stamm St. Bernhard Wehr',
-              url: 'https://dpsg-wehr.de',
-          },
-      }
-    : null;
+const eventJsonLd = createEventSchema(post.data.event, {
+    fallbackTitle: post.data.title,
+    description: description,
+    image: post.data.image,
+    site: Astro.site,
+});
 ---
 
 <RootLayout
@@ -154,10 +87,9 @@ const eventJsonLd = post.data.event
         <script type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />
     )}
     <Post
-        postMetadata={allPostMetadata}
-        slug={slug}
+        metadata={metadata}
         collection="posts"
-        entryId={postEntryId}
+        entryId={slug}
     >
         <Content components={mdxComponents} />
     </Post>

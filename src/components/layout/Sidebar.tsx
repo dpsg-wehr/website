@@ -1,8 +1,17 @@
 'use client';
 
 import { NavbarLinksGroup } from './LinksGroup';
+import type { NavigationLinkGroup } from '@/types';
 
-export default function Sidebar({ isOpen, toggle }: { isOpen: boolean; toggle: () => void }) {
+export default function Sidebar({
+    isOpen,
+    toggle,
+    links,
+}: {
+    isOpen: boolean;
+    toggle: () => void;
+    links?: NavigationLinkGroup[];
+}) {
     return (
         <div
             data-testid="mobile-sidebar"
@@ -14,7 +23,7 @@ export default function Sidebar({ isOpen, toggle }: { isOpen: boolean; toggle: (
             onClick={toggle}
         >
             <div onClick={(e) => e.stopPropagation()} className="h-full overflow-y-auto">
-                <NavbarLinksGroup toggleSidebar={toggle} />
+                <NavbarLinksGroup toggleSidebar={toggle} links={links} />
             </div>
         </div>
     );
