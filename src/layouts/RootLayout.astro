@@ -45,7 +45,7 @@ const organizationJsonLd = {
     sameAs: [
         'https://de-de.facebook.com/dpsgwehr/',
         'https://www.instagram.com/pfadfinder_wehr/',
-        'https://github.com/Linus-f/website-dpsg-wehr',
+        'https://github.com/dpsg-wehr/website',
     ],
     address: {
         '@type': 'PostalAddress',
@@ -182,7 +182,8 @@ const organizationJsonLd = {
                         if (!iframe.closest('[data-campflow-wrapper]')) {
                             const wrapper = document.createElement('div');
                             wrapper.setAttribute('data-campflow-wrapper', '');
-                            wrapper.className = 'w-full my-6 bg-white rounded-xl shadow-md border border-gray-200 dark:border-gray-600 px-3 sm:px-6 md:px-8 py-4 sm:py-6';
+                            wrapper.className =
+                                'w-full my-6 bg-white rounded-xl shadow-md border border-gray-200 dark:border-gray-600 px-3 sm:px-6 md:px-8 py-4 sm:py-6';
                             iframe.parentNode.insertBefore(wrapper, iframe);
                             wrapper.appendChild(iframe);
                             iframe.style.backgroundColor = '#ffffff';

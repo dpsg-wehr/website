@@ -18,10 +18,10 @@ Zum Generieren der Website werden [git](https://git-scm.com/) und [pnpm](https:/
 
 ```bash
 # Repository klonen
-git clone https://github.com/Linus-f/website-dpsg-wehr.git
+git clone https://github.com/dpsg-wehr/website.git
 
 # In Ordner wechseln
-cd website-dpsg-wehr
+cd website
 
 # Abhängigkeiten installieren
 pnpm install
