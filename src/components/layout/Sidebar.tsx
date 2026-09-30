@@ -23,11 +23,16 @@ export default function Sidebar({
             }`}
             onClick={toggle}
         >
-            <div onClick={(e) => e.stopPropagation()} className="h-full overflow-y-auto">
-                <div className="mx-4 mt-4 mb-2">
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className="h-full flex flex-col justify-between overflow-y-auto"
+            >
+                <div className="pt-2">
+                    <NavbarLinksGroup toggleSidebar={toggle} links={links} />
+                </div>
+                <div className="mx-4 mb-8 pt-4 border-t border-gray-200 dark:border-gray-600/60 shrink-0">
                     <LoginButton variant="sidebar" onClick={toggle} />
                 </div>
-                <NavbarLinksGroup toggleSidebar={toggle} links={links} />
             </div>
         </div>
     );
