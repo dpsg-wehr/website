@@ -17,35 +17,17 @@ export default function LoginButton({ className, variant = 'navbar', onClick }: 
                 rel="noopener noreferrer"
                 onClick={onClick}
                 aria-label="Campflow Mitgliederportal Login"
-                className={`group flex items-center justify-between p-3.5 rounded-xl bg-[#261f74] hover:bg-[#32298e] active:bg-[#1d175b] text-white border border-transparent dark:border-white/10 shadow-xs transition-colors duration-150 ${className || ''}`}
+                className={`flex items-center gap-3 p-3.5 rounded-xl bg-[#261f74] hover:bg-[#32298e] active:bg-[#1d175b] text-white border border-transparent dark:border-white/10 shadow-xs transition-colors duration-150 ${className || ''}`}
             >
-                <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center text-xl text-white shrink-0">
-                        <IoLogInOutline />
-                    </div>
-                    <div>
-                        <div className="font-semibold text-base leading-tight">
-                            Mitgliederportal
-                        </div>
-                        <div className="text-xs text-slate-300 leading-tight mt-0.5">
-                            Daten selbst verwalten (Campflow)
-                        </div>
+                <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center text-xl text-white shrink-0">
+                    <IoLogInOutline />
+                </div>
+                <div>
+                    <div className="font-semibold text-base leading-tight">Mitgliederportal</div>
+                    <div className="text-xs text-slate-300 leading-tight mt-0.5">
+                        Daten selbst verwalten (Campflow)
                     </div>
                 </div>
-                <svg
-                    className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors shrink-0 mr-1"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                >
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                    <polyline points="15 3 21 3 21 9" />
-                    <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
             </a>
         );
     }
