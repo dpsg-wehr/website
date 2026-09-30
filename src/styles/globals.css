@@ -36,14 +36,6 @@
     }
 }
 
-.prose :where(h5):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
-    font-size: 1.05em;
-    font-weight: 700;
-    margin-top: 1.4em;
-    margin-bottom: 0.5em;
-    line-height: 1.4;
-}
-
 .landing-content > h1 {
     @apply text-4xl font-bold mb-6 text-center;
 }
