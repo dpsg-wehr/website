@@ -1,0 +1,11 @@
+---
+import UmamiOptOut from './UmamiOptOut';
+
+interface Props {
+    className?: string;
+}
+
+const { className } = Astro.props;
+---
+
+<UmamiOptOut client:load className={className} />

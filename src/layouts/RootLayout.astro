@@ -37,6 +37,13 @@ const formattedTitle = title.includes('DPSG Wehr') ? title : `${title} - DPSG We
 const imageUrl = image.startsWith('http') ? image : getCanonicalUrl(image, Astro.site);
 
 const organizationJsonLd = createOrganizationSchema(Astro.site);
+
+const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
+const umamiHostUrl = import.meta.env.PUBLIC_UMAMI_HOST_URL || 'https://analytics.dpsg-wehr.de';
+const umamiDomains =
+    import.meta.env.PUBLIC_UMAMI_DOMAINS !== undefined
+        ? import.meta.env.PUBLIC_UMAMI_DOMAINS
+        : 'dpsg-wehr.de,www.dpsg-wehr.de';
 ---
 
 <!doctype html>
@@ -73,6 +80,18 @@ const organizationJsonLd = createOrganizationSchema(Astro.site);
 
         <!-- Structured Data -->
         <script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} />
+
+        <!-- Umami Analytics (Cookieless & Privacy-Friendly) -->
+        {umamiWebsiteId && (
+            <script
+                is:inline
+                defer
+                src={`${umamiHostUrl.replace(/\/$/, '')}/script.js`}
+                data-website-id={umamiWebsiteId}
+                data-do-not-track="true"
+                {...(umamiDomains ? { 'data-domains': umamiDomains } : {})}
+            />
+        )}
 
         <!-- Flash-Free Dark Mode Script with live OS/browser listener -->
         <script is:inline>

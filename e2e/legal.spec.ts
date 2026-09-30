@@ -16,7 +16,7 @@ test.describe('Legal Pages', () => {
         );
     });
 
-    test('Datenschutz page should load with DSGVO, netcup and Campflow details', async ({
+    test('Datenschutz page should load with DSGVO, netcup, Campflow and Umami Opt-Out', async ({
         page,
     }) => {
         await page.goto('/pages/datenschutz');
@@ -26,6 +26,27 @@ test.describe('Legal Pages', () => {
         ).toBeVisible();
         await expect(page.getByText('netcup GmbH')).toBeVisible();
         await expect(page.getByRole('heading', { name: /Campflow/i })).toBeVisible();
+        await expect(page.getByRole('heading', { name: /Umami/i })).toBeVisible();
+
+        // Check Umami Opt-Out interactive component
+        await expect(page.getByTestId('umami-opt-out-container')).toBeVisible();
+        const optOutBtn = page.getByTestId('umami-opt-out-button');
+        await expect(optOutBtn).toBeVisible();
+
+        // Default state: tracking is active / not opted out
+        await expect(page.getByTestId('opt-out-badge-enabled')).toBeVisible();
+
+        // Click to opt out
+        await optOutBtn.click();
+        await expect(page.getByTestId('opt-out-badge-disabled')).toBeVisible();
+        const isOptedOut = await page.evaluate(() => localStorage.getItem('umami.disabled'));
+        expect(isOptedOut).toBe('1');
+
+        // Click again to re-enable
+        await optOutBtn.click();
+        await expect(page.getByTestId('opt-out-badge-enabled')).toBeVisible();
+        const isOptedOutAfter = await page.evaluate(() => localStorage.getItem('umami.disabled'));
+        expect(isOptedOutAfter).toBeNull();
 
         const editButton = page.getByTestId('cms-edit-button');
         await expect(editButton).toBeVisible();

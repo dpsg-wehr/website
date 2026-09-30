@@ -6,6 +6,7 @@ import Download from '@/components/mdx/Download';
 import RecentPosts from '@/components/posts/RecentPosts.astro';
 import CampflowForm from '@/components/mdx/CampflowForm.astro';
 import CampflowScript from '@/components/mdx/CampflowScript.astro';
+import UmamiOptOutWrapper from '@/components/mdx/UmamiOptOutWrapper.astro';
 
 export const mdxComponents = {
     img: MDXImage,
@@ -19,4 +20,6 @@ export const mdxComponents = {
     CampflowForm: CampflowForm,
     Campflow: CampflowForm,
     script: CampflowScript,
+    UmamiOptOut: UmamiOptOutWrapper,
+    AnalyticsOptOut: UmamiOptOutWrapper,
 };
