@@ -1,6 +1,7 @@
 'use client';
 
 import { NavbarLinksGroup } from './LinksGroup';
+import LoginButton from './LoginButton';
 import type { NavigationLinkGroup } from '@/types';
 
 export default function Sidebar({
@@ -23,6 +24,9 @@ export default function Sidebar({
             onClick={toggle}
         >
             <div onClick={(e) => e.stopPropagation()} className="h-full overflow-y-auto">
+                <div className="mx-4 mt-4 mb-2">
+                    <LoginButton variant="sidebar" onClick={toggle} />
+                </div>
                 <NavbarLinksGroup toggleSidebar={toggle} links={links} />
             </div>
         </div>

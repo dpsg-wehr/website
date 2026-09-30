@@ -32,3 +32,13 @@ test('navigates from footer to the internal links page and displays services', a
     await expect(page.getByRole('link', { name: /OpenCloud öffnen/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /Jitsi Meet öffnen/i })).toBeVisible();
 });
+
+test('displays campflow portal login button in navbar on desktop', async ({ page }) => {
+    await page.goto('/');
+
+    const loginLink = page.locator('header').getByRole('link', { name: /Login/i });
+    await expect(loginLink).toBeVisible();
+    await expect(loginLink).toHaveAttribute('href', 'https://on.campflow.de/dpsg-wehr/portal');
+    await expect(loginLink).toHaveAttribute('target', '_blank');
+    await expect(loginLink).toHaveAttribute('rel', 'noopener noreferrer');
+});

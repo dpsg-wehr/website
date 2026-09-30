@@ -27,4 +27,20 @@ test.describe('Mobile Menu', () => {
         // 5. Verify sidebar is hidden (off-screen)
         await expect(sidebar).not.toBeInViewport();
     });
+
+    test('displays campflow portal login link in mobile sidebar', async ({ page }) => {
+        await page.goto('/');
+
+        const menuButton = page.getByRole('button', { name: 'Toggle navigation' });
+        await menuButton.click();
+
+        const sidebar = page.getByTestId('mobile-sidebar');
+        await expect(sidebar).toBeInViewport();
+
+        const portalLink = sidebar.getByRole('link', { name: /Mitgliederportal/i });
+        await expect(portalLink).toBeVisible();
+        await expect(portalLink).toHaveAttribute('href', 'https://on.campflow.de/dpsg-wehr/portal');
+        await expect(portalLink).toHaveAttribute('target', '_blank');
+        await expect(portalLink).toHaveAttribute('rel', 'noopener noreferrer');
+    });
 });

@@ -5,6 +5,7 @@ import { getNavigationLinks } from '@/lib/navigation';
 import { getIconFromName } from '@/lib/icons';
 import Sidebar from './Sidebar';
 import SearchButton from '@/components/search/SearchButton';
+import LoginButton from './LoginButton';
 import type { NavigationLinkGroup, NavigationLink } from '@/types';
 
 export default function Navbar() {
@@ -92,13 +93,13 @@ export default function Navbar() {
         <>
             <header
                 data-nosnippet
-                className="h-[72px] px-4 shadow-md sticky top-0 z-50 dark:bg-gray-700 bg-gray-50"
+                className="h-[72px] px-4 sm:px-6 lg:px-8 shadow-md sticky top-0 z-50 dark:bg-gray-700 bg-gray-50"
             >
-                <div className="h-full flex justify-between items-center max-w-6xl mx-auto">
+                <div className="h-full flex justify-between items-center w-full">
                     <div className="flex items-center gap-2 md:gap-4">
                         <button
                             onClick={() => setIsOpen((prev) => !prev)}
-                            className="min-[840px]:hidden rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 z-50 flex flex-col justify-center items-center w-10 h-10 gap-1 group transition-colors duration-200 cursor-pointer"
+                            className="min-[960px]:hidden rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 z-50 flex flex-col justify-center items-center w-10 h-10 gap-1 group transition-colors duration-200 cursor-pointer"
                             aria-label="Toggle navigation"
                         >
                             <span
@@ -140,12 +141,13 @@ export default function Navbar() {
                         </a>
                     </div>
 
-                    <div className="flex items-center gap-1 md:gap-2 lg:gap-4">
-                        <div className="hidden min-[840px]:flex flex-row gap-0.5 md:gap-1 lg:gap-2 items-center mr-1 md:mr-2 lg:mr-4">
+                    <div className="flex items-center gap-1 md:gap-2 lg:gap-3">
+                        <div className="hidden min-[960px]:flex flex-row gap-0.5 md:gap-1 lg:gap-2 items-center mr-1 md:mr-2">
                             {renderedItems}
                         </div>
                         <SearchButton />
                         <ToggleThemeButton />
+                        <LoginButton className="hidden sm:inline-flex" />
                     </div>
                 </div>
             </header>
