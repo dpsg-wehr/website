@@ -3,6 +3,8 @@ import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export default defineConfig({
     site: 'https://dpsg-wehr.de',
@@ -40,7 +42,44 @@ export default defineConfig({
         },
     },
     vite: {
-        plugins: [tailwindcss()],
+        plugins: [
+            tailwindcss(),
+            {
+                name: 'admin-dev-rewrite',
+                configureServer(server) {
+                    server.middlewares.use((req, res, next) => {
+                        if (req.url === '/admin' || req.url === '/admin/') {
+                            req.url = '/admin/index.html';
+                            return next();
+                        }
+                        if (
+                            req.url &&
+                            (req.url.startsWith('/media/images/') ||
+                                req.url.startsWith('/src/assets/images/'))
+                        ) {
+                            const fileName = req.url
+                                .replace(/^\/(?:media|src\/assets)\/images\//, '')
+                                .split('?')[0];
+                            const filePath = path.resolve('src/assets/images', fileName);
+                            if (fs.existsSync(filePath)) {
+                                const ext = path.extname(filePath).toLowerCase();
+                                const mime =
+                                    ext === '.png'
+                                        ? 'image/png'
+                                        : ext === '.svg'
+                                          ? 'image/svg+xml'
+                                          : ext === '.webp'
+                                            ? 'image/webp'
+                                            : 'image/jpeg';
+                                res.setHeader('Content-Type', mime);
+                                return fs.createReadStream(filePath).pipe(res);
+                            }
+                        }
+                        next();
+                    });
+                },
+            },
+        ],
         optimizeDeps: {
             include: [
                 'fuse.js',

@@ -52,74 +52,119 @@
                 color: #6b7280;
                 margin: 1.5rem 0;
             }
-        </style>
-        <!-- Load DOMPurify early so we can hook and whitelist custom JSX/MDX tags before Sveltia sanitizes them -->
-        <script src="https://unpkg.com/dompurify@3.2.4/dist/purify.min.js"></script>
-        <script>
-            // Configure DOMPurify to allow MDX elements and transform them for the preview
-            if (window.DOMPurify) {
-                DOMPurify.setConfig({
-                    ADD_TAGS: ['mdximage', 'groupoverview', 'download', 'recentposts'],
-                    ADD_ATTR: [
-                        'src',
-                        'alt',
-                        'width',
-                        'height',
-                        'priority',
-                        'name',
-                        'time',
-                        'age',
-                        'href',
-                        'title',
-                    ],
-                });
-
-                DOMPurify.addHook('afterSanitizeElements', function (node) {
-                    if (!node.tagName) return;
-                    const tag = node.tagName.toLowerCase();
-
-                    if (tag === 'mdximage') {
-                        const src = node.getAttribute('src') || '';
-                        const alt = node.getAttribute('alt') || '';
-                        const div = document.createElement('div');
-                        div.className = 'preview-mdx-image';
-                        div.innerHTML =
-                            `<img src="${src}" alt="${alt}" style="max-width: 100%; border-radius: 0.5rem; display: inline-block;" />` +
-                            (alt
-                                ? `<figcaption style="font-size: 0.875rem; color: #6b7280; margin-top: 0.35rem; font-style: italic;">${alt}</figcaption>`
-                                : '');
-                        node.replaceWith(div);
-                    } else if (tag === 'groupoverview') {
-                        const name = node.getAttribute('name') || 'Gruppe';
-                        const time = node.getAttribute('time') || '-';
-                        const age = node.getAttribute('age') || '-';
-                        const div = document.createElement('div');
-                        div.className = 'preview-group-overview';
-                        div.innerHTML =
-                            `<div style="font-weight: bold; font-size: 1.125rem; margin-bottom: 0.5rem;">⚜️ ${name}</div>` +
-                            `<div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Alter:</strong> ${age}</div>` +
-                            `<div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Gruppenstunde:</strong> ${time}</div>`;
-                        node.replaceWith(div);
-                    } else if (tag === 'download') {
-                        const href = node.getAttribute('href') || '#';
-                        const title = node.getAttribute('title') || 'Datei herunterladen';
-                        const div = document.createElement('div');
-                        div.style.margin = '0.75rem 0';
-                        div.innerHTML = `<a href="${href}" class="preview-download-btn" target="_blank">📥 ${title}</a>`;
-                        node.replaceWith(div);
-                    } else if (tag === 'recentposts') {
-                        const div = document.createElement('div');
-                        div.className = 'preview-recent-posts';
-                        div.innerHTML = `📰 <strong>[Aktuelle Beiträge werden hier auf der Website automatisch generiert]</strong>`;
-                        node.replaceWith(div);
-                    }
-                });
+            .preview-calendar {
+                padding: 1.5rem;
+                border: 2px dashed #3b82f6;
+                border-radius: 0.5rem;
+                text-align: center;
+                color: #1e40af;
+                background: #eff6ff;
+                margin: 1.5rem 0;
             }
-        </script>
+            .preview-acrostichon {
+                margin: 1.5rem 0;
+                padding: 1rem;
+                background: #f9fafb;
+                border-radius: 0.5rem;
+                border: 1px solid #e5e7eb;
+            }
+            .acrostichon-row {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0.25rem 0;
+            }
+            .acrostichon-left {
+                flex: 1;
+                text-align: right;
+                font-size: 1.15rem;
+                color: #374151;
+            }
+            .acrostichon-middle {
+                flex-shrink: 0;
+                text-align: center;
+                margin: 0 0.5rem;
+                font-weight: 700;
+                color: #2563eb;
+                font-size: 1.85rem;
+                min-width: 1.5rem;
+            }
+            .acrostichon-right {
+                flex: 1;
+                text-align: left;
+                font-size: 1.15rem;
+                color: #374151;
+            }
+            .preview-campflow {
+                padding: 1.5rem;
+                border: 2px dashed #10b981;
+                border-radius: 0.5rem;
+                text-align: center;
+                color: #065f46;
+                background: #ecfdf5;
+                margin: 1.5rem 0;
+            }
+            .preview-collapsible {
+                margin: 1rem 0;
+                padding: 0.75rem;
+                border: 1px solid #e5e7eb;
+                border-radius: 0.375rem;
+                background: #fafafa;
+            }
+        </style>
     </head>
     <body>
         <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
         <script>
+            // Helper to resolve image paths
+            const resolveImageSrc = (src) => {
+                if (!src) return '';
+                if (
+                    src.startsWith('http://') ||
+                    src.startsWith('https://') ||
+                    src.startsWith('data:') ||
+                    src.startsWith('blob:')
+                ) {
+                    return src;
+                }
+                const clean = src
+                    .replace(/^\/?(media\/images\/|src\/assets\/images\/)/, '')
+                    .replace(/^\//, '');
+
+                const isLocal =
+                    window.location.hostname === 'localhost' ||
+                    window.location.hostname === '127.0.0.1';
+                if (isLocal) {
+                    return `/media/images/${clean}`;
+                }
+                return `https://git.linus-fischer.de/linus/website-dpsg-wehr/raw/branch/dev/src/assets/images/${clean}`;
+            };
+
+            const parseProps = (attrs) => {
+                const getAttr = (name) => {
+                    const m = attrs.match(
+                        new RegExp(`${name}=(?:"([^"]*)"|'([^']*)'|\\{([^}]*)\\})`)
+                    );
+                    if (!m) return undefined;
+                    return m[1] !== undefined ? m[1] : m[2] !== undefined ? m[2] : m[3];
+                };
+                return getAttr;
+            };
+
+            function renderAcrostichonHtml(items) {
+                const list = Array.isArray(items) ? items : [];
+                if (list.length === 0) {
+                    return '<div class="preview-acrostichon"><div style="color: #9ca3af; text-align: center;">[Akrostichon Gedicht]</div></div>';
+                }
+                const rowsHtml = list
+                    .map(
+                        (item) =>
+                            `<div class="acrostichon-row"><div class="acrostichon-left">${item.left || '&nbsp;'}</div><div class="acrostichon-middle">${item.middle || '&nbsp;'}</div><div class="acrostichon-right">${item.right || '&nbsp;'}</div></div>`
+                    )
+                    .join('');
+                return `<div class="preview-acrostichon">${rowsHtml}</div>`;
+            }
+
             window.addEventListener('DOMContentLoaded', () => {
                 // ==========================================
                 // 1. GERMAN SPELL CHECK OBSERVER
@@ -138,10 +183,7 @@
                     });
                 };
 
-                const domObserver = new MutationObserver(() => {
-                    ensureGermanSpellcheck();
-                    enhanceAnyCustomTags();
-                });
+                const domObserver = new MutationObserver(ensureGermanSpellcheck);
                 domObserver.observe(document.body, { childList: true, subtree: true });
                 document.addEventListener('focusin', ensureGermanSpellcheck);
                 document.addEventListener('input', ensureGermanSpellcheck);
@@ -149,81 +191,7 @@
                 ensureGermanSpellcheck();
 
                 // ==========================================
-                // 2. BACKUP DOM TRANSFORMER FOR PREVIEW PANES
-                // ==========================================
-                const parseProps = (attrs) => {
-                    const getAttr = (name) => {
-                        const m = attrs.match(
-                            new RegExp(`${name}=(?:"([^"]*)"|'([^']*)'|\\{([^}]*)\\})`)
-                        );
-                        if (!m) return undefined;
-                        return m[1] !== undefined ? m[1] : m[2] !== undefined ? m[2] : m[3];
-                    };
-                    return getAttr;
-                };
-
-                function enhanceAnyCustomTags() {
-                    const containers = [
-                        ...document.querySelectorAll(
-                            'main, [class*="preview"], [aria-label*="Preview"], [aria-label*="Vorschau"]'
-                        ),
-                    ];
-
-                    document.querySelectorAll('iframe').forEach((frame) => {
-                        try {
-                            if (frame.contentDocument && frame.contentDocument.body) {
-                                containers.push(frame.contentDocument.body);
-                            }
-                        } catch (e) {}
-                    });
-
-                    containers.forEach((container) => {
-                        // Transform any custom tag nodes that might be rendered directly as HTML elements
-                        container
-                            .querySelectorAll('mdximage, groupoverview, download, recentposts')
-                            .forEach((el) => {
-                                const tag = el.tagName.toLowerCase();
-                                if (tag === 'mdximage') {
-                                    const src = el.getAttribute('src') || '';
-                                    const alt = el.getAttribute('alt') || '';
-                                    const div = document.createElement('div');
-                                    div.className = 'preview-mdx-image';
-                                    div.innerHTML =
-                                        `<img src="${src}" alt="${alt}" style="max-width: 100%; border-radius: 0.5rem; display: inline-block;" />` +
-                                        (alt
-                                            ? `<figcaption style="font-size: 0.875rem; color: #6b7280; margin-top: 0.35rem; font-style: italic;">${alt}</figcaption>`
-                                            : '');
-                                    el.replaceWith(div);
-                                } else if (tag === 'groupoverview') {
-                                    const name = el.getAttribute('name') || 'Gruppe';
-                                    const time = el.getAttribute('time') || '-';
-                                    const age = el.getAttribute('age') || '-';
-                                    const div = document.createElement('div');
-                                    div.className = 'preview-group-overview';
-                                    div.innerHTML =
-                                        `<div style="font-weight: bold; font-size: 1.125rem; margin-bottom: 0.5rem;">⚜️ ${name}</div>` +
-                                        `<div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Alter:</strong> ${age}</div>` +
-                                        `<div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Gruppenstunde:</strong> ${time}</div>`;
-                                    el.replaceWith(div);
-                                } else if (tag === 'download') {
-                                    const href = el.getAttribute('href') || '#';
-                                    const title = el.getAttribute('title') || 'Datei herunterladen';
-                                    const div = document.createElement('div');
-                                    div.style.margin = '0.75rem 0';
-                                    div.innerHTML = `<a href="${href}" class="preview-download-btn" target="_blank">📥 ${title}</a>`;
-                                    el.replaceWith(div);
-                                } else if (tag === 'recentposts') {
-                                    const div = document.createElement('div');
-                                    div.className = 'preview-recent-posts';
-                                    div.innerHTML = `📰 <strong>[Aktuelle Beiträge werden hier auf der Website automatisch generiert]</strong>`;
-                                    el.replaceWith(div);
-                                }
-                            });
-                    });
-                }
-
-                // ==========================================
-                // 3. REGISTER CMS EDITOR COMPONENTS
+                // 2. REGISTER CMS COMPONENTS
                 // ==========================================
                 const CMS = window.CMS || window.SveltiaCMS;
                 if (!CMS || !CMS.registerEditorComponent) return;
@@ -248,26 +216,33 @@
                             required: false,
                         },
                     ],
-                    pattern: /^<MDXImage\s+([^>]+?)\s*\/>/s,
+                    pattern: /<MDXImage\s+([^>]+?)\s*\/>/s,
                     fromBlock: (match) => {
                         const get = parseProps(match[1]);
                         return {
                             src: get('src') || '',
                             alt: get('alt') || '',
                             priority: get('priority') === 'true',
+                            width: get('width') || '',
+                            height: get('height') || '',
                         };
                     },
                     toBlock: (data) => {
                         let props = `src="${data.src || ''}"`;
                         if (data.alt) props += ` alt="${data.alt}"`;
+                        if (data.width) props += ` width={${data.width}}`;
+                        if (data.height) props += ` height={${data.height}}`;
                         if (data.priority) props += ` priority={true}`;
                         return `<MDXImage ${props} />`;
                     },
                     toPreview: (data) => {
-                        return `<div class="preview-mdx-image">
-                            <img src="${data.src || ''}" alt="${data.alt || ''}" />
-                            ${data.alt ? `<figcaption>${data.alt}</figcaption>` : ''}
-                        </div>`;
+                        const rawSrc = data.src || '';
+                        const resolved = resolveImageSrc(rawSrc);
+                        const clean = rawSrc
+                            .replace(/^\/?(media\/images\/|src\/assets\/images\/)/, '')
+                            .replace(/^\//, '');
+                        const remoteFallback = `https://git.linus-fischer.de/linus/website-dpsg-wehr/raw/branch/dev/src/assets/images/${clean}`;
+                        return `<div class="preview-mdx-image"><img src="${resolved}" onerror="if(this.src!=='${remoteFallback}')this.src='${remoteFallback}'" alt="${data.alt || ''}" style="max-width: 100%; border-radius: 0.5rem; display: inline-block;" />${data.alt ? `<figcaption style="font-size: 0.875rem; color: #6b7280; margin-top: 0.35rem; font-style: italic;">${data.alt}</figcaption>` : ''}</div>`;
                     },
                 });
 
@@ -280,7 +255,7 @@
                         { name: 'time', label: 'Gruppenstunden-Zeit', widget: 'string' },
                         { name: 'age', label: 'Alter', widget: 'string' },
                     ],
-                    pattern: /^<GroupOverview\s+([^>]+?)\s*\/>/s,
+                    pattern: /<GroupOverview\s+([^>]+?)\s*\/>/s,
                     fromBlock: (match) => {
                         const get = parseProps(match[1]);
                         return {
@@ -293,11 +268,7 @@
                         return `<GroupOverview name="${data.name || ''}" time="${data.time || ''}" age="${data.age || ''}" />`;
                     },
                     toPreview: (data) => {
-                        return `<div class="preview-group-overview">
-                            <div style="font-weight: bold; font-size: 1.125rem; margin-bottom: 0.5rem;">⚜️ ${data.name || 'Gruppe'}</div>
-                            <div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Alter:</strong> ${data.age || '-'}</div>
-                            <div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Gruppenstunde:</strong> ${data.time || '-'}</div>
-                        </div>`;
+                        return `<div class="preview-group-overview"><div style="font-weight: bold; font-size: 1.125rem; margin-bottom: 0.5rem;">⚜️ ${data.name || 'Gruppe'}</div><div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Alter:</strong> ${data.age || '-'}</div><div style="font-size: 0.9rem; margin: 0.25rem 0;"><strong>Gruppenstunde:</strong> ${data.time || '-'}</div></div>`;
                     },
                 });
 
@@ -306,22 +277,23 @@
                     id: 'Download',
                     label: 'Datei Download Button',
                     fields: [
-                        { name: 'href', label: 'Dateipfad / URL', widget: 'string' },
+                        { name: 'src', label: 'Dateipfad / URL', widget: 'string' },
                         { name: 'title', label: 'Button-Beschriftung', widget: 'string' },
                     ],
-                    pattern: /^<Download\s+([^>]+?)\s*\/>/s,
+                    pattern: /<Download\s+([^>]+?)\s*\/>/s,
                     fromBlock: (match) => {
                         const get = parseProps(match[1]);
                         return {
-                            href: get('href') || '',
+                            src: get('src') || get('href') || '',
                             title: get('title') || '',
                         };
                     },
                     toBlock: (data) => {
-                        return `<Download href="${data.href || ''}" title="${data.title || ''}" />`;
+                        return `<Download src="${data.src || ''}" title="${data.title || ''}" />`;
                     },
                     toPreview: (data) => {
-                        return `<div style="margin: 0.75rem 0;"><a href="${data.href || '#'}" class="preview-download-btn" target="_blank">📥 ${data.title || data.href || 'Datei herunterladen'}</a></div>`;
+                        const fileUrl = data.src || '#';
+                        return `<div style="margin: 0.75rem 0;"><a href="${fileUrl}" class="preview-download-btn" target="_blank">📥 ${data.title || data.src || 'Datei herunterladen'}</a></div>`;
                     },
                 });
 
@@ -330,12 +302,170 @@
                     id: 'RecentPosts',
                     label: 'Aktuelle Beiträge Widget',
                     fields: [],
-                    pattern: /^<RecentPosts\s*\/>/s,
+                    pattern: /<RecentPosts\s*\/?>/s,
                     fromBlock: () => ({}),
                     toBlock: () => `<RecentPosts />`,
                     toPreview: () => {
                         return `<div class="preview-recent-posts">📰 <strong>[Aktuelle Beiträge werden hier auf der Website automatisch generiert]</strong></div>`;
                     },
+                });
+
+                // 5. Calendar Widget
+                CMS.registerEditorComponent({
+                    id: 'Calendar',
+                    label: 'Terminkalender Widget',
+                    fields: [],
+                    pattern: /<Calendar\s*\/?>/s,
+                    fromBlock: () => ({}),
+                    toBlock: () => `<Calendar />`,
+                    toPreview: () => {
+                        return `<div class="preview-calendar">📅 <strong>[Terminkalender: Aktuelle Termine aus der Terminliste werden hier auf der Website interaktiv dargestellt]</strong></div>`;
+                    },
+                });
+
+                // 6. Acrostichon Component
+                CMS.registerEditorComponent({
+                    id: 'Acrostichon',
+                    label: 'Akrostichon (Buchstaben-Gedicht)',
+                    fields: [
+                        {
+                            name: 'raw',
+                            label: 'Zeilen-Daten (JSON oder Array)',
+                            widget: 'text',
+                        },
+                    ],
+                    pattern: /<Acrostichon\s+([\s\S]+?)\s*\/>/s,
+                    fromBlock: (match) => {
+                        const rawAttrs = match[1];
+                        const dataMatch = rawAttrs.match(/data=\{?(\[[\s\S]*?\])\}?/);
+                        let items = [];
+                        let rawJson = '';
+                        if (dataMatch) {
+                            try {
+                                items = new Function('return ' + dataMatch[1])();
+                                rawJson = JSON.stringify(items, null, 2);
+                            } catch (e) {
+                                rawJson = dataMatch[1];
+                            }
+                        }
+                        return {
+                            raw: rawJson,
+                            items: items,
+                        };
+                    },
+                    toBlock: (data) => {
+                        try {
+                            const parsed =
+                                typeof data.raw === 'string' ? JSON.parse(data.raw) : data.raw;
+                            return `<Acrostichon\n    data={${JSON.stringify(parsed, null, 8)}}\n/>`;
+                        } catch (e) {
+                            return `<Acrostichon\n    data={${data.raw || '[]'}}\n/>`;
+                        }
+                    },
+                    toPreview: (data) => {
+                        let items = data.items;
+                        if (!items && data.raw) {
+                            try {
+                                items = JSON.parse(data.raw);
+                            } catch (e) {
+                                try {
+                                    items = new Function('return ' + data.raw)();
+                                } catch (err) {}
+                            }
+                        }
+                        return renderAcrostichonHtml(items);
+                    },
+                });
+
+                // 7. Collapsible Component
+                CMS.registerEditorComponent({
+                    id: 'Collapsible',
+                    label: 'Aufklappbereich (Collapsible)',
+                    fields: [
+                        { name: 'label', label: 'Titel / Beschriftung', widget: 'string' },
+                        { name: 'body', label: 'Inhalt', widget: 'markdown' },
+                    ],
+                    pattern:
+                        /<Collapsible\s+label=(?:"([^"]*)"|'([^']*)'|\{`([^`]*)`\})>([\s\S]*?)<\/Collapsible>/s,
+                    fromBlock: (match) => {
+                        const label = match[1] || match[2] || match[3] || 'Details';
+                        const body = match[4] || '';
+                        return { label, body };
+                    },
+                    toBlock: (data) => {
+                        return `<Collapsible label="${data.label || 'Details'}">\n${data.body || ''}\n</Collapsible>`;
+                    },
+                    toPreview: (data) => {
+                        return `<details class="preview-collapsible"><summary style="font-weight: 600; cursor: pointer; color: #374151;">${data.label || 'Details'}</summary><div style="padding-top: 0.5rem; color: #4b5563;">${data.body || ''}</div></details>`;
+                    },
+                });
+
+                // 8. Lilie Component
+                CMS.registerEditorComponent({
+                    id: 'Lilie',
+                    label: 'Pfadfinder-Lilie',
+                    fields: [
+                        {
+                            name: 'color',
+                            label: 'Farbe (z.B. #08833c oder Stufenfarbe)',
+                            widget: 'string',
+                            required: false,
+                        },
+                    ],
+                    pattern: /<Lilie(?:\s+[^>]*?)?\/>/s,
+                    fromBlock: (match) => {
+                        const get = parseProps(match[1] || '');
+                        return {
+                            color: get('color') || '',
+                        };
+                    },
+                    toBlock: (data) => {
+                        return data.color ? `<Lilie color="${data.color}" />` : `<Lilie />`;
+                    },
+                    toPreview: (data) => {
+                        const color = data.color || '#08833c';
+                        return `<span style="display: inline-block; vertical-align: middle; color: ${color};" title="Lilie">⚜️</span>`;
+                    },
+                });
+
+                // 9. CampflowForm Component
+                CMS.registerEditorComponent({
+                    id: 'CampflowForm',
+                    label: 'Campflow Anmeldeformular',
+                    fields: [
+                        {
+                            name: 'formId',
+                            label: 'Formular-ID',
+                            widget: 'string',
+                            required: false,
+                        },
+                    ],
+                    pattern: /<(?:CampflowForm|Campflow)(?:\s+[^>]*?)?\/>/s,
+                    fromBlock: (match) => {
+                        const get = parseProps(match[1] || '');
+                        return {
+                            formId: get('formId') || get('id') || '',
+                        };
+                    },
+                    toBlock: (data) => {
+                        return data.formId
+                            ? `<CampflowForm formId="${data.formId}" />`
+                            : `<CampflowForm />`;
+                    },
+                    toPreview: (data) => {
+                        return `<div class="preview-campflow">📝 <strong>[Campflow Anmeldeformular${data.formId ? `: ${data.formId}` : ''}]</strong></div>`;
+                    },
+                });
+
+                // 10. MDX Export Handler (Hides leftover ESM exports like "export const metadata = ...")
+                CMS.registerEditorComponent({
+                    id: 'MDXExport',
+                    label: 'MDX Export (Unsichtbar)',
+                    fields: [{ name: 'code', label: 'Code', widget: 'text' }],
+                    pattern: /export\s+const\s+[\s\S]+?;\s*/s,
+                    fromBlock: (match) => ({ code: match[0] }),
+                    toBlock: (data) => data.code || '',
+                    toPreview: () => '',
                 });
             });
         </script>
