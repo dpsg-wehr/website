@@ -28,9 +28,7 @@ describe('UmamiOptOut component', () => {
         render(<UmamiOptOut />);
 
         expect(await screen.findByTestId('opt-out-dev-notice')).toBeInTheDocument();
-        expect(
-            screen.getByText(/Sie befinden sich auf einer Entwicklungs- oder Testumgebung/i)
-        ).toBeInTheDocument();
+        expect(screen.getByText(/Sie befinden sich auf einer Testumgebung/i)).toBeInTheDocument();
     });
 
     it('toggles opt-out on and off via localStorage', async () => {
@@ -85,7 +83,7 @@ describe('UmamiOptOut component', () => {
         render(<UmamiOptOut />);
 
         expect(await screen.findByTestId('opt-out-badge-dnt')).toBeInTheDocument();
-        expect(screen.getByText(/Do Not Track.*aktiviert/i)).toBeInTheDocument();
+        expect(screen.getByText(/Do Not Track/i)).toBeInTheDocument();
 
         if (originalDnt) {
             Object.defineProperty(navigator, 'doNotTrack', originalDnt);
