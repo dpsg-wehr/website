@@ -1,4 +1,4 @@
-import { useSyncExternalStore, useCallback, useState } from 'react';
+import { useSyncExternalStore, useCallback } from 'react';
 
 interface UmamiOptOutProps {
     className?: string;
@@ -81,20 +81,16 @@ export default function UmamiOptOut({ className = '' }: UmamiOptOutProps) {
         getIsDevDomainServerSnapshot
     );
 
-    const [statusMessage, setStatusMessage] = useState<string | null>(null);
-
     const toggleOptOut = useCallback(() => {
         try {
             if (isOptedOut) {
                 localStorage.removeItem('umami.disabled');
-                setStatusMessage('Webanalyse wurde wieder aktiviert.');
             } else {
                 localStorage.setItem('umami.disabled', '1');
-                setStatusMessage('Webanalyse wurde für diesen Browser deaktiviert (Opt-Out).');
             }
             window.dispatchEvent(new Event(STORAGE_EVENT));
         } catch {
-            setStatusMessage('Fehler beim Speichern der Einstellung im Browser.');
+            // Silently ignore storage quota/security errors
         }
     }, [isOptedOut]);
 
@@ -229,15 +225,6 @@ export default function UmamiOptOut({ className = '' }: UmamiOptOutProps) {
                     </button>
                 </div>
             </div>
-
-            {statusMessage && (
-                <div
-                    role="status"
-                    className="mt-3 text-xs p-2 rounded-md bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600"
-                >
-                    {statusMessage}
-                </div>
-            )}
         </div>
     );
 }
