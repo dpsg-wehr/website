@@ -1,4 +1,4 @@
-import React, { useSyncExternalStore, useCallback, useState } from 'react';
+import { useSyncExternalStore, useCallback, useState } from 'react';
 
 interface UmamiOptOutProps {
     className?: string;
@@ -54,6 +54,19 @@ function getDntServerSnapshot(): boolean {
     return false;
 }
 
+function getIsDevDomainSnapshot(): boolean {
+    try {
+        if (typeof window === 'undefined') return false;
+        const host = window.location.hostname;
+        return Boolean(host && host !== 'dpsg-wehr.de' && host !== 'www.dpsg-wehr.de');
+    } catch {
+        return false;
+    }
+}
+function getIsDevDomainServerSnapshot(): boolean {
+    return false;
+}
+
 export default function UmamiOptOut({ className = '' }: UmamiOptOutProps) {
     const isMounted = useSyncExternalStore(subscribeNoop, getIsClient, getIsServer);
     const isOptedOut = useSyncExternalStore(
@@ -62,6 +75,11 @@ export default function UmamiOptOut({ className = '' }: UmamiOptOutProps) {
         getOptOutServerSnapshot
     );
     const isDnt = useSyncExternalStore(subscribeNoop, getDntSnapshot, getDntServerSnapshot);
+    const isDevDomain = useSyncExternalStore(
+        subscribeNoop,
+        getIsDevDomainSnapshot,
+        getIsDevDomainServerSnapshot
+    );
 
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
@@ -153,6 +171,22 @@ export default function UmamiOptOut({ className = '' }: UmamiOptOutProps) {
                 </div>
 
                 <div className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
+                    {isDevDomain && (
+                        <p
+                            data-testid="opt-out-dev-notice"
+                            className="m-0 text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 p-3 rounded-lg text-xs leading-relaxed border border-amber-200 dark:border-amber-900/50"
+                        >
+                            <strong>Hinweis (Testumgebung):</strong> Sie befinden sich auf einer
+                            Entwicklungs- oder Testumgebung (
+                            <code>
+                                {typeof window !== 'undefined' ? window.location.hostname : ''}
+                            </code>
+                            ). Umami Analytics ist so konfiguriert, dass ausschließlich Besuche auf
+                            der Produktionsdomain <code>dpsg-wehr.de</code> erfasst werden. Auf
+                            dieser Testdomain werden daher keine Analysedaten übertragen.
+                        </p>
+                    )}
+
                     {isDnt && (
                         <p className="m-0 text-blue-800 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 p-3 rounded-lg text-xs leading-relaxed border border-blue-200 dark:border-blue-900/50">
                             <strong>Hinweis zum Browserschutz:</strong> Ihr Browser hat das Signal
@@ -163,7 +197,7 @@ export default function UmamiOptOut({ className = '' }: UmamiOptOutProps) {
                     )}
 
                     <p className="m-0 text-sm leading-relaxed">
-                        {isTrackingBlocked
+                        {isTrackingBlocked || isDevDomain
                             ? 'Die Erfassung Ihrer Besuchsdaten auf dieser Website ist derzeit unterbunden.'
                             : 'Ihr Besuch wird anonymisiert und ohne Cookies erfasst, um die Website zu verbessern.'}
                     </p>

@@ -24,6 +24,15 @@ describe('UmamiOptOut component', () => {
         ).toBeInTheDocument();
     });
 
+    it('displays notice when running on a development/test domain', async () => {
+        render(<UmamiOptOut />);
+
+        expect(await screen.findByTestId('opt-out-dev-notice')).toBeInTheDocument();
+        expect(
+            screen.getByText(/Sie befinden sich auf einer Entwicklungs- oder Testumgebung/i)
+        ).toBeInTheDocument();
+    });
+
     it('toggles opt-out on and off via localStorage', async () => {
         const user = userEvent.setup();
         render(<UmamiOptOut />);
