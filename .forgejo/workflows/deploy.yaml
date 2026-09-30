@@ -265,6 +265,36 @@ jobs:
                   node-version: 24.21.0
                   cache: 'pnpm'
 
+            - name: 🔑 Fetch Secrets from Infisical
+              env:
+                  INFISICAL_API_URL: ${{ secrets.INFISICAL_API_URL }}
+                  INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+                  INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+                  INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
+              run: |
+                  if [ -z "$INFISICAL_CLIENT_ID" ]; then
+                    echo "Notice: INFISICAL_CLIENT_ID not set, skipping Infisical secrets fetch."
+                    exit 0
+                  fi
+
+                  npm install -g @infisical/cli
+
+                  INFISICAL_TOKEN=$(infisical login \
+                    --domain="${INFISICAL_API_URL}" \
+                    --method=universal-auth \
+                    --client-id="${INFISICAL_CLIENT_ID}" \
+                    --client-secret="${INFISICAL_CLIENT_SECRET}" \
+                    --silent \
+                    --plain)
+                  export INFISICAL_TOKEN
+
+                  infisical export \
+                    --domain="${INFISICAL_API_URL}" \
+                    --projectId="${INFISICAL_PROJECT_ID}" \
+                    --env="prod" \
+                    --path="/projects/website-dpsg-wehr" \
+                    --format=dotenv | sed -E "s/=(['\"])(.*)\1$/=\2/" >> "$GITHUB_ENV"
+
             - name: 🧩 Install Dependencies
               run: pnpm install --frozen-lockfile
 
@@ -279,6 +309,7 @@ jobs:
             - name: 🏗️ Build Static Site
               env:
                   INTERNAL_ICS_TOKEN: ${{ secrets.INTERNAL_ICS_TOKEN }}
+                  PUBLIC_UMAMI_WEBSITE_ID: ${{ secrets.PUBLIC_UMAMI_WEBSITE_ID || env.PUBLIC_UMAMI_WEBSITE_ID }}
                   PUBLIC_GIT_COMMIT: ${{ github.sha }}
                   PUBLIC_GIT_REF: ${{ github.ref_name }}
                   PUBLIC_APP_ENV: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
