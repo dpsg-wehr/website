@@ -5,7 +5,7 @@ interface FooterCampProps {
 export default function FooterCamp({ className = '' }: FooterCampProps) {
     return (
         <div
-            className={`relative w-full overflow-hidden select-none pointer-events-none ${className}`}
+            className={`relative w-full overflow-hidden select-none pointer-events-none [--tent-w:min(340px,calc(100vw-1.5rem))] sm:[--tent-w:480px] md:[--tent-w:600px] lg:[--tent-w:728px] ${className}`}
             aria-hidden="true"
         >
             {/* Top clearance for tent roofs and flag banner */}
@@ -30,7 +30,11 @@ export default function FooterCamp({ className = '' }: FooterCampProps) {
                                 decoding="async"
                                 width={728}
                                 height={445}
-                                className="absolute right-2 sm:right-6 md:right-10 lg:right-12 -top-[63px] sm:-top-[89px] md:-top-[111px] lg:-top-[135px] w-[340px] sm:w-[480px] md:w-[600px] lg:w-[728px] max-w-none pointer-events-none select-none"
+                                style={{
+                                    width: 'var(--tent-w)',
+                                    top: 'calc(14.2px - var(--tent-w) * (150 / 728))',
+                                }}
+                                className="absolute right-2 sm:right-6 md:right-10 lg:right-12 max-w-none pointer-events-none select-none"
                             />
                         </picture>
                     </div>

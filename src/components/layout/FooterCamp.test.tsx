@@ -21,6 +21,14 @@ describe('FooterCamp', () => {
         expect(img).toHaveAttribute('loading', 'lazy');
     });
 
+    it('positions tent with dynamic grassline alignment formula', () => {
+        const { container } = render(<FooterCamp />);
+        const img = container.querySelector('picture img') as HTMLImageElement;
+        expect(img).toBeInTheDocument();
+        expect(img.style.width).toBe('var(--tent-w)');
+        expect(img.style.top).toBe('calc(14.2px - var(--tent-w) * (150 / 728))');
+    });
+
     it('applies custom className when provided', () => {
         const { container } = render(<FooterCamp className="custom-class" />);
         const wrapper = container.firstChild as HTMLElement;
