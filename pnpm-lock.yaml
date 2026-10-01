@@ -168,7 +168,7 @@ overrides:
   brace-expansion@>=4.0.0 <5.0.12: 5.0.12
   esbuild: 0.28.2
   js-yaml@>=3.0.0 <3.15.2: 3.15.2
-  js-yaml@>=4.0.0 <4.3.2: 4.3.2
+  js-yaml@>=4.0.0 <4.3.2: 5.4.2
   morgan@<1.12.1: 1.12.1
   qs@>=2.2.5 <6.16.0: 6.16.0
   sharp: 0.35.5
@@ -3408,6 +3408,10 @@ packages:
     resolution: {integrity: sha512-SFNOvSJ+Dgf/9An904Yx+CgSlIPCkIpao4qo51lpee25TIRejdH3rhR4EZMGoNx3/TP3O+wzWuiTFl4sqbltzA==}
     hasBin: true
 
+  js-yaml@5.4.2:
+    resolution: {integrity: sha512-m+aqu+LwO1O6sIopafj8HUVl5aawITwZQe/yHpMCKjaWBaA/d07B/QdMb3529REftiU+RMMHL3Vlsw3hON7vWg==}
+    hasBin: true
+
   jsdom@30.1.1:
     resolution: {integrity: sha512-FahmoPK5vbPc+jxV1iErMHmAZypCZ942NHF4+qqaWAuvaKKTBZxawnmAtrbGWLU7MtlxfqIP0qw6aSI+aWGtLg==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
@@ -5577,7 +5581,7 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.5
       '@types/mdast': 4.0.4
-      js-yaml: 4.3.2
+      js-yaml: 5.4.2
       picomatch: 4.0.7
       retext-smartypants: 6.2.0
       shiki: 4.4.3
@@ -8743,6 +8747,10 @@ snapshots:
       esprima: 4.0.1
 
   js-yaml@4.3.2:
+    dependencies:
+      argparse: 2.0.1
+
+  js-yaml@5.4.2:
     dependencies:
       argparse: 2.0.1
 
