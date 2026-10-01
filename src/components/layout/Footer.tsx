@@ -1,5 +1,6 @@
 import { IoLogoInstagram, IoLogoFacebook } from 'react-icons/io5';
 import globalData from '@/content/global/index.json';
+import FooterCamp from './FooterCamp';
 
 function SocialLink({
     url,
@@ -194,10 +195,13 @@ export default function Footer() {
     }
 
     return (
-        <footer data-nosnippet className="bg-gray-800 pb-2 mt-14">
-            <div className="max-w-sm sm:max-w-4xl px-3 flex flex-col justify-center mx-auto my-0">
-                <FooterMain columns={columns} />
-                <SocialMedia facebook={social.facebook} instagram={social.instagram} />
+        <footer data-nosnippet className="w-full">
+            <FooterCamp />
+            <div className="bg-gray-800 pb-2 pt-6">
+                <div className="max-w-sm sm:max-w-4xl px-3 flex flex-col justify-center mx-auto my-0">
+                    <FooterMain columns={columns} />
+                    <SocialMedia facebook={social.facebook} instagram={social.instagram} />
+                </div>
             </div>
         </footer>
     );
