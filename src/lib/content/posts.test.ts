@@ -45,6 +45,27 @@ describe('getPostMetadata', () => {
         expect(result[0].slug).toBe('first-post');
     });
 
+    it('should prioritize frontmatter slug over filename', () => {
+        vi.mocked(fs.readdirSync).mockReturnValue(['first-post.mdx'] as unknown as ReturnType<
+            typeof fs.readdirSync
+        >);
+
+        vi.mocked(fs.readFileSync).mockReturnValue('mocked file content');
+
+        vi.mocked(matter).mockReturnValue({
+            data: {
+                title: 'First Post',
+                date: '2023-01-01',
+                slug: 'custom-post-slug',
+            },
+        } as unknown as ReturnType<typeof matter>);
+
+        const result = getPostMetadata();
+
+        expect(result).toHaveLength(1);
+        expect(result[0].slug).toBe('custom-post-slug');
+    });
+
     it('should cache posts across multiple calls unless forced', () => {
         vi.mocked(fs.readdirSync).mockReturnValue(['first-post.mdx'] as unknown as ReturnType<
             typeof fs.readdirSync

@@ -112,6 +112,11 @@
                         "external": false
                     },
                     {
+                        "text": "RSS-Feed",
+                        "url": "/rss.xml",
+                        "external": true
+                    },
+                    {
                         "text": "Quellcode",
                         "url": "https://github.com/dpsg-wehr/website",
                         "external": true

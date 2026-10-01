@@ -23,9 +23,9 @@ export function loadPostMetadata(): PostMetadata[] {
     const files = fs.readdirSync(folder).filter((file) => file.endsWith('.mdx'));
 
     const posts = files.map((filename) => {
-        const slug = cleanContentSlug(filename);
         const fileContents = fs.readFileSync(`content/posts/${filename}`, 'utf8');
         const matterResult = matter(fileContents);
+        const slug = matterResult.data.slug || cleanContentSlug(filename);
         let imgSize: { width?: number; height?: number } | undefined = undefined;
         if (matterResult.data.image) {
             const meta = resolveImage(matterResult.data.image);
@@ -91,6 +91,7 @@ export function loadPostMetadata(): PostMetadata[] {
             },
             desc: matterResult.data.desc,
             banner: banner,
+            body: matterResult.content,
         };
     });
 

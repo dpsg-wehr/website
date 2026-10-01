@@ -32,6 +32,7 @@ export interface PostMetadata {
         variant?: 'amber' | 'blue' | 'green' | 'red' | (string & {});
         dismissible?: boolean;
     };
+    body?: string;
 }
 
 export interface AcrostichonData {

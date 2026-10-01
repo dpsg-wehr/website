@@ -9,6 +9,37 @@ test.describe('News Page', () => {
         await expect(page.getByRole('heading', { name: 'Aktuelles' })).toBeVisible();
     });
 
+    test('should provide an RSS auto-discovery link and RSS button', async ({ page, request }) => {
+        // Auto-discovery <link> in head
+        const rssLink = page.locator('link[rel="alternate"][type="application/rss+xml"]');
+        await expect(rssLink).toHaveCount(1);
+        await expect(rssLink).toHaveAttribute('href', /https?:\/\/[^/]+\/rss\.xml/);
+        await expect(rssLink).toHaveAttribute('title', 'DPSG Stamm Wehr - Aktuelles');
+
+        // RSS button on the news page
+        const rssButton = page.getByRole('link', { name: 'RSS-Feed' }).first();
+        await expect(rssButton).toBeVisible();
+        await expect(rssButton).toHaveAttribute('href', '/rss.xml');
+
+        // Fetch /rss.xml directly and verify content
+        const rssResponse = await request.get('/rss.xml');
+        expect(rssResponse.status()).toBe(200);
+        const rssText = await rssResponse.text();
+        expect(rssText).toContain('xml-stylesheet');
+        expect(rssText).toContain('/rss-style.xsl');
+        expect(rssText).toContain('<rss version="2.0"');
+        expect(rssText).toContain('<title>DPSG Stamm Wehr - Aktuelles</title>');
+        expect(rssText).toContain('<language>de</language>');
+        expect(rssText).toContain('/posts/');
+        expect(rssText).toContain('<content:encoded>');
+
+        // Verify stylesheet is accessible
+        const xslResponse = await request.get('/rss-style.xsl');
+        expect(xslResponse.status()).toBe(200);
+        const xslText = await xslResponse.text();
+        expect(xslText).toContain('xsl:stylesheet');
+    });
+
     test('should list news posts and navigate to a post', async ({ page }) => {
         const posts = page.locator('article');
         const count = await posts.count();

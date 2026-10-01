@@ -54,7 +54,7 @@ function generateSearchIndex() {
             const fileContent = fs.readFileSync(filePath, 'utf8');
             const { data, content } = matter(fileContent);
 
-            let slug = file.replace('.mdx', '');
+            let slug = data.slug || file.replace('.mdx', '');
             let route = `${baseRoute}/${slug}`;
 
             // Special cases for custom routes

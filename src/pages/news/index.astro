@@ -22,7 +22,29 @@ const breadcrumbJsonLd = createBreadcrumbSchema(
 >
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
     <div class="prose dark:prose-invert mb-8 max-w-none">
-        <h1>Aktuelles</h1>
+        <div class="flex flex-wrap items-center justify-between gap-4 not-prose mb-4">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white m-0">
+                Aktuelles
+            </h1>
+            <a
+                href="/rss.xml"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg text-amber-800 bg-amber-100 hover:bg-amber-200 dark:text-amber-200 dark:bg-amber-900/40 dark:hover:bg-amber-900/60 transition-colors"
+                title="RSS-Feed abonnieren"
+                aria-label="RSS-Feed abonnieren"
+            >
+                <svg
+                    class="w-4 h-4 fill-current"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <circle cx="6.18" cy="17.82" r="2.18" />
+                    <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z" />
+                </svg>
+                <span>RSS-Feed</span>
+            </a>
+        </div>
         <p>
             Hier findet ihr aktuelle Berichte und Informationen über unsere Aktivitäten. Ob
             Zeltlager, Stammesaktionen oder Neuigkeiten aus den Gruppen - bleibt auf dem

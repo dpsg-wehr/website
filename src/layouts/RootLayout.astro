@@ -53,6 +53,12 @@ const umamiDomains =
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="canonical" href={canonicalURL} />
+        <link
+            rel="alternate"
+            type="application/rss+xml"
+            title="DPSG Stamm Wehr - Aktuelles"
+            href={new URL('/rss.xml', Astro.site).toString()}
+        />
         <title>{formattedTitle}</title>
         <meta name="description" content={description} />
         {robots && <meta name="robots" content={robots} />}
