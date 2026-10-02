@@ -173,7 +173,7 @@ overrides:
   qs@>=2.2.5 <6.16.0: 6.16.0
   sharp: 0.35.5
   tmp@<0.2.6: 0.2.7
-  uuid@<11.1.1: 11.1.1
+  uuid@<11.1.1: 14.0.2
 
 importers:
 
@@ -5233,8 +5233,8 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
-  uuid@11.1.1:
-    resolution: {integrity: sha512-vIYxrBCC/N/K+Js3qSN88go7kIfNPssr/hHCesKCQNAjmgvYS2oqr69kIufEG+O4+PfezOH4EbIeHCfFov8ZgQ==}
+  uuid@14.0.2:
+    resolution: {integrity: sha512-xZe/16rV4aa+HGSOCiY2YeLT1OybRLrrkL/Rqaq7p7GMVXjFh+6wN4oMYgjFmnSnhY8t6Xpdl2l9qmnHYuMHwQ==}
     hasBin: true
 
   vary@1.1.2:
@@ -6616,7 +6616,7 @@ snapshots:
       open: 7.4.2
       proxy-agent: 6.5.0(supports-color@7.2.0)
       tmp: 0.2.7
-      uuid: 11.1.1
+      uuid: 14.0.2
       yargs: 15.4.1
       yargs-parser: 13.1.2
     transitivePeerDependencies:
@@ -10901,7 +10901,7 @@ snapshots:
 
   utils-merge@1.0.1: {}
 
-  uuid@11.1.1: {}
+  uuid@14.0.2: {}
 
   vary@1.1.2: {}
 
