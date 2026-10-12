@@ -7,6 +7,7 @@ import RecentPosts from '@/components/posts/RecentPosts.astro';
 import CampflowForm from '@/components/mdx/CampflowForm.astro';
 import CampflowScript from '@/components/mdx/CampflowScript.astro';
 import UmamiOptOutWrapper from '@/components/mdx/UmamiOptOutWrapper.astro';
+import OsmMap from '@/components/mdx/OsmMap.astro';
 
 export const mdxComponents = {
     img: MDXImage,
@@ -22,4 +23,7 @@ export const mdxComponents = {
     script: CampflowScript,
     UmamiOptOut: UmamiOptOutWrapper,
     AnalyticsOptOut: UmamiOptOutWrapper,
+    OsmMap: OsmMap,
+    OSMMap: OsmMap,
+    Map: OsmMap,
 };

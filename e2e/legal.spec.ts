@@ -16,7 +16,7 @@ test.describe('Legal Pages', () => {
         );
     });
 
-    test('Datenschutz page should load with DSGVO, netcup, Campflow and Umami Opt-Out', async ({
+    test('Datenschutz page should load with DSGVO, netcup, Campflow, OpenStreetMap and Umami Opt-Out', async ({
         page,
     }) => {
         await page.goto('/pages/datenschutz');
@@ -24,8 +24,9 @@ test.describe('Legal Pages', () => {
         await expect(
             page.getByRole('heading', { name: 'Hinweis zur verantwortlichen Stelle' })
         ).toBeVisible();
-        await expect(page.getByText('netcup GmbH')).toBeVisible();
+        await expect(page.getByText('netcup GmbH').first()).toBeVisible();
         await expect(page.getByRole('heading', { name: /Campflow/i })).toBeVisible();
+        await expect(page.getByRole('heading', { name: /OpenStreetMap/i })).toBeVisible();
         await expect(page.getByRole('heading', { name: /Umami/i })).toBeVisible();
 
         // Check Umami Opt-Out interactive component
@@ -85,10 +86,41 @@ test.describe('Legal Pages', () => {
         await expect(loadButton).toBeHidden();
     });
 
-    test('Kontakt page should load with contact details', async ({ page }) => {
+    test('Kontakt page should load with contact details and OpenStreetMap 2-click consent', async ({
+        page,
+    }) => {
         await page.goto('/pages/kontakt');
         await expect(page.getByRole('heading', { name: 'Kontakt' })).toBeVisible();
         await expect(page.getByText('Rebecca Müller und Thomas Meier')).toBeVisible();
         await expect(page.getByText('stavo@dpsg-wehr.de')).toBeVisible();
+        await expect(page.getByText('Kirchplatz')).toBeVisible();
+
+        // 2-Click OSM placeholder should be visible initially
+        const loadMapBtn = page.getByRole('button', { name: 'Karte laden' });
+        await expect(loadMapBtn).toBeVisible();
+
+        const osmLink = page.getByRole('link', {
+            name: /Größere Karte direkt bei OpenStreetMap öffnen/i,
+        });
+        await expect(osmLink).toBeVisible();
+        await expect(osmLink).toHaveAttribute('href', /openstreetmap\.org/);
+        await expect(osmLink).toHaveAttribute('href', /47\.629072/);
+        await expect(osmLink).toHaveAttribute('href', /7\.901672/);
+
+        // Iframe should be hidden initially
+        const mapIframe = page.locator('iframe[title="Standort DPSG Stamm St. Bernhard Wehr"]');
+        await expect(mapIframe).toBeHidden();
+
+        // Click to load map
+        await loadMapBtn.click();
+
+        // Iframe should now be visible with src set
+        await expect(mapIframe).toBeVisible();
+        const src = await mapIframe.getAttribute('src');
+        expect(src).toContain('openstreetmap.org/export/embed.html');
+        expect(src).toContain('marker=47.629072%2C7.901672');
+
+        // Placeholder load button should now be hidden
+        await expect(loadMapBtn).toBeHidden();
     });
 });

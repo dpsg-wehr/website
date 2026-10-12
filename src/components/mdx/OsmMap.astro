@@ -1,0 +1,224 @@
+---
+interface Props {
+    lat?: number | string;
+    lon?: number | string;
+    zoom?: number | string;
+    bbox?: string;
+    title?: string;
+    height?: string;
+    class?: string;
+    className?: string;
+    [key: string]: any;
+}
+
+const {
+    lat: propLat = 47.629072,
+    lon: propLon = 7.901672,
+    zoom = 19,
+    bbox: propBbox,
+    title = 'Standort DPSG Stamm St. Bernhard Wehr',
+    height = '420px',
+    class: propClass = '',
+    className = '',
+} = Astro.props;
+
+const lat = Number(propLat);
+const lon = Number(propLon);
+const zoomNum = Number(zoom);
+
+// Dynamic bounding box based on zoom level:
+const span = 360 / Math.pow(2, zoomNum);
+const lonDelta = span * 2.0;
+const latDelta = span * 1.2;
+
+const bbox =
+    propBbox ||
+    `${(lon - lonDelta).toFixed(6)}%2C${(lat - latDelta).toFixed(6)}%2C${(lon + lonDelta).toFixed(6)}%2C${(lat + latDelta).toFixed(6)}`;
+
+const randomStr = Math.random().toString(36).substring(2, 10);
+const frameId = `osm${randomStr}`;
+
+const iframeSrc = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
+const directUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${zoom}/${lat}/${lon}`;
+---
+
+<div
+    id={`wrapper-${frameId}`}
+    class={`w-full my-6 bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden isolate transition-all ${propClass || className}`}
+    data-osm-wrapper
+>
+    {/* 2-Click Consent Placeholder */}
+    <div
+        id={`placeholder-${frameId}`}
+        class="flex flex-col items-center text-center py-6 sm:py-8 px-4"
+    >
+        <div
+            class="w-12 h-12 mb-4 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                ></path>
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+            </svg>
+        </div>
+
+        <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            {title}
+        </h4>
+
+        <p class="max-w-lg text-sm text-gray-600 dark:text-gray-300 mb-5 leading-relaxed">
+            An dieser Stelle ist eine interaktive Karte von <strong>OpenStreetMap</strong> eingebunden.
+            Beim Laden der Karte werden Daten (wie Ihre IP-Adresse) an die Server der OpenStreetMap Foundation übertragen.
+            Weitere Informationen finden Sie in unserer{' '}
+            <a
+                href="/pages/datenschutz#openstreetmap"
+                class="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+            >
+                Datenschutzerklärung
+            </a>.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+            <button
+                type="button"
+                id={`btn-load-${frameId}`}
+                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs focus:ring-2 focus:ring-emerald-600 focus:outline-hidden transition-colors cursor-pointer"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    ></path>
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    ></path>
+                </svg>
+                <span>Karte laden</span>
+            </button>
+
+            <a
+                href={directUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+                <span>Größere Karte direkt bei OpenStreetMap öffnen</span>
+                <svg
+                    class="w-3.5 h-3.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+            </a>
+        </div>
+
+        <noscript class="mt-4 text-xs text-amber-600 dark:text-amber-400">
+            JavaScript ist in Ihrem Browser deaktiviert. Bitte nutzen Sie den Link &bdquo;Größere Karte direkt bei OpenStreetMap öffnen&ldquo;.
+        </noscript>
+    </div>
+
+    {/* Map Container (initially hidden) */}
+    <div id={`map-container-${frameId}`} class="w-full rounded-t-xl overflow-hidden" style="display: none;">
+        <iframe
+            id={frameId}
+            data-src={iframeSrc}
+            title={title}
+            width="100%"
+            height={height}
+            class="w-full rounded-t-xl overflow-hidden"
+            style={`border: none; width: 100%; height: ${height}; display: block; border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem; overflow: hidden;`}
+        ></iframe>
+        <div class="px-4 py-2.5 bg-gray-50 dark:bg-gray-700/60 border-t border-gray-200 dark:border-gray-600/80 text-xs text-gray-600 dark:text-gray-300 flex flex-wrap justify-between items-center gap-2">
+            <a
+                href={directUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:underline font-medium text-blue-600 dark:text-blue-400"
+            >
+                Größere Karte anzeigen
+            </a>
+            <span class="text-gray-500 dark:text-gray-400">
+                ©{' '}
+                <a
+                    href="https://www.openstreetmap.org/copyright"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:underline text-blue-600 dark:text-blue-400"
+                >
+                    OpenStreetMap-Mitwirkende
+                </a>
+            </span>
+        </div>
+    </div>
+
+    <script is:inline define:vars={{ frameId }}>
+        (() => {
+            const placeholder = document.getElementById(`placeholder-${frameId}`);
+            const mapContainer = document.getElementById(`map-container-${frameId}`);
+            const iframe = document.getElementById(frameId);
+            const btn = document.getElementById(`btn-load-${frameId}`);
+
+            const loadMap = () => {
+                if (!iframe) return;
+                if (!iframe.src && iframe.dataset.src) {
+                    iframe.src = iframe.dataset.src;
+                }
+                if (placeholder) {
+                    placeholder.style.display = 'none';
+                }
+                if (mapContainer) {
+                    mapContainer.style.display = 'block';
+                }
+                try {
+                    sessionStorage.setItem('osm_embed_consent', 'true');
+                } catch {
+                    // ignore quota or disabled storage
+                }
+            };
+
+            if (btn) {
+                btn.addEventListener('click', loadMap);
+            }
+
+            // Auto-load if user already consented during this browser session
+            try {
+                if (sessionStorage.getItem('osm_embed_consent') === 'true') {
+                    loadMap();
+                }
+            } catch {
+                // ignore
+            }
+        })();
+    </script>
+</div>

@@ -104,6 +104,15 @@
                 background: #ecfdf5;
                 margin: 1.5rem 0;
             }
+            .preview-osm-map {
+                padding: 1.5rem;
+                border: 2px dashed #059669;
+                border-radius: 0.5rem;
+                text-align: center;
+                color: #065f46;
+                background: #ecfdf5;
+                margin: 1.5rem 0;
+            }
             .preview-collapsible {
                 margin: 1rem 0;
                 padding: 0.75rem;
@@ -337,7 +346,7 @@
                     pattern: /<Acrostichon\s+([\s\S]+?)\s*\/>/s,
                     fromBlock: (match) => {
                         const rawAttrs = match[1];
-                        const dataMatch = rawAttrs.match(/data=\{?(\[[\s\S]*?\])\}?/);
+                        const dataMatch = rawAttrs.match(/data=\{?(\[[\\s\S]*?\])\}?/);
                         let items = [];
                         let rawJson = '';
                         if (dataMatch) {
@@ -457,7 +466,36 @@
                     },
                 });
 
-                // 10. MDX Export Handler (Hides leftover ESM exports like "export const metadata = ...")
+                // 10. OsmMap Component
+                CMS.registerEditorComponent({
+                    id: 'OsmMap',
+                    label: 'OpenStreetMap Karte',
+                    fields: [
+                        {
+                            name: 'title',
+                            label: 'Titel',
+                            widget: 'string',
+                            required: false,
+                        },
+                    ],
+                    pattern: /<(?:OsmMap|OSMMap|Map)(?:\s+[^>]*?)?\/>/s,
+                    fromBlock: (match) => {
+                        const get = parseProps(match[1] || '');
+                        return {
+                            title: get('title') || '',
+                        };
+                    },
+                    toBlock: (data) => {
+                        return data.title
+                            ? `<OsmMap title="${data.title}" />`
+                            : `<OsmMap />`;
+                    },
+                    toPreview: (data) => {
+                        return `<div class="preview-osm-map">🗺️ <strong>[OpenStreetMap Karte${data.title ? `: ${data.title}` : ''}]</strong></div>`;
+                    },
+                });
+
+                // 11. MDX Export Handler (Hides leftover ESM exports like "export const metadata = ...")
                 CMS.registerEditorComponent({
                     id: 'MDXExport',
                     label: 'MDX Export (Unsichtbar)',
