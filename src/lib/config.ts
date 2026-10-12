@@ -35,7 +35,7 @@ export const navigationLinks: Array<NavigationLinkGroup> = [
         ],
     },
     { label: 'Fotos', link: '/gallerie', Icon: 'Image' },
-    { label: 'Termine', link: '/pages/termine', Icon: 'Calendar' },
+    { label: 'Anmeldung', link: '/pages/anmeldung', Icon: 'File' },
     {
         label: 'Mehr',
         link: '',
@@ -51,7 +51,7 @@ export const navigationLinks: Array<NavigationLinkGroup> = [
                 link: 'http://www.pfadfinderhaus-noeggenschwiel.de/',
                 Icon: 'House',
             },
-            { label: 'FAQ', link: '/pages/faq', Icon: 'Help' },
+            { label: 'Kontakt', link: '/pages/kontakt', Icon: 'Mail' },
         ],
     },
 ];

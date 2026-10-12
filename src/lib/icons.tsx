@@ -9,6 +9,7 @@ import {
     IoSearchOutline,
     IoEllipsisHorizontal,
     IoDocumentOutline,
+    IoMailOutline,
 } from 'react-icons/io5';
 
 export type Icons =
@@ -22,7 +23,8 @@ export type Icons =
     | 'House'
     | 'Search'
     | 'More'
-    | 'File';
+    | 'File'
+    | 'Mail';
 
 export const getIconFromName = (iconsName: Icons, color?: string): React.JSX.Element | null => {
     switch (iconsName) {
@@ -30,6 +32,8 @@ export const getIconFromName = (iconsName: Icons, color?: string): React.JSX.Ele
             return <Lilie color={color} />;
         case 'File':
             return <IoDocumentOutline />;
+        case 'Mail':
+            return <IoMailOutline />;
         case 'More':
             return <IoEllipsisHorizontal />;
         case 'Search':

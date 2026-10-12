@@ -16,7 +16,7 @@ describe('Navigation Service', () => {
                 label: 'Mehr',
                 link: '',
                 links: [
-                    { label: 'FAQ', link: '/pages/faq', Icon: 'Help' as const },
+                    { label: 'Kontakt', link: '/pages/kontakt', Icon: 'Mail' as const },
                     { label: 'Hütte', link: 'https://example.com', Icon: 'House' as const },
                 ],
             },
@@ -24,7 +24,7 @@ describe('Navigation Service', () => {
 
         const flattened = getFlattenedSidebarLinks(testLinks);
         expect(flattened.some((g) => g.label === 'Mehr')).toBe(false);
-        expect(flattened.some((g) => g.label === 'FAQ')).toBe(true);
+        expect(flattened.some((g) => g.label === 'Kontakt')).toBe(true);
         expect(flattened.some((g) => g.label === 'Hütte')).toBe(true);
     });
 

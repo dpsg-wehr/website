@@ -49,9 +49,9 @@
                 "icon": "Image"
             },
             {
-                "label": "Termine",
-                "link": "/pages/termine",
-                "icon": "Calendar"
+                "label": "Anmeldung",
+                "link": "/pages/anmeldung",
+                "icon": "File"
             },
             {
                 "label": "Mehr",
@@ -69,9 +69,9 @@
                         "icon": "House"
                     },
                     {
-                        "label": "FAQ",
-                        "link": "/pages/faq",
-                        "icon": "Help"
+                        "label": "Kontakt",
+                        "link": "/pages/kontakt",
+                        "icon": "Mail"
                     }
                 ]
             }

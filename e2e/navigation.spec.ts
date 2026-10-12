@@ -42,3 +42,21 @@ test('displays campflow portal login button in navbar on desktop', async ({ page
     await expect(loginLink).toHaveAttribute('target', '_blank');
     await expect(loginLink).toHaveAttribute('rel', 'noopener noreferrer');
 });
+
+test('navbar contains Anmeldung instead of Termine and navigates to Anmeldung', async ({
+    page,
+}) => {
+    await page.goto('/');
+
+    const header = page.locator('header');
+    // Termine should not be in the navbar
+    await expect(header.getByRole('link', { name: 'Termine' })).toHaveCount(0);
+
+    // Anmeldung should be visible in navbar and navigate correctly
+    const anmeldungLink = header.getByRole('link', { name: 'Anmeldung' });
+    await expect(anmeldungLink).toBeVisible();
+    await anmeldungLink.click();
+
+    await expect(page).toHaveURL(/.*pages\/anmeldung/);
+    await expect(page.getByRole('heading', { name: 'Anmeldung', exact: true })).toBeVisible();
+});

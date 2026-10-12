@@ -8,6 +8,8 @@ const pagesToTest = [
     { name: 'Subscribe', path: '/subscribe' },
     { name: 'Impressum', path: '/pages/impressum' },
     { name: 'Datenschutz', path: '/pages/datenschutz' },
+    { name: 'Kontakt', path: '/pages/kontakt' },
+    { name: 'Anmeldung', path: '/pages/anmeldung' },
 ];
 
 test.describe('Accessibility (a11y) Audits', () => {

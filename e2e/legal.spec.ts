@@ -56,9 +56,9 @@ test.describe('Legal Pages', () => {
         );
     });
 
-    test('Campflow 2-click consent solution functions on FAQ page', async ({ page }) => {
-        await page.goto('/pages/faq');
-        await expect(page.getByRole('heading', { name: 'Häufig gestellte Fragen' })).toBeVisible();
+    test('Campflow 2-click consent solution functions on Anmeldung page', async ({ page }) => {
+        await page.goto('/pages/anmeldung');
+        await expect(page.getByRole('heading', { name: 'Anmeldung', exact: true })).toBeVisible();
 
         // 2-Click placeholder should be visible initially
         const loadButton = page.getByRole('button', { name: 'Formular laden' });
@@ -83,5 +83,12 @@ test.describe('Legal Pages', () => {
 
         // Placeholder should be hidden
         await expect(loadButton).toBeHidden();
+    });
+
+    test('Kontakt page should load with contact details', async ({ page }) => {
+        await page.goto('/pages/kontakt');
+        await expect(page.getByRole('heading', { name: 'Kontakt' })).toBeVisible();
+        await expect(page.getByText('Rebecca Müller und Thomas Meier')).toBeVisible();
+        await expect(page.getByText('stavo@dpsg-wehr.de')).toBeVisible();
     });
 });
