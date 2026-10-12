@@ -60,3 +60,31 @@ test('navbar contains Anmeldung instead of Termine and navigates to Anmeldung', 
     await expect(page).toHaveURL(/.*pages\/anmeldung/);
     await expect(page.getByRole('heading', { name: 'Anmeldung', exact: true })).toBeVisible();
 });
+
+test('disables browser DNS prefetching and prefetches internal links on hover without prefetching external links', async ({
+    page,
+}) => {
+    await page.goto('/');
+
+    // Check meta tag disabling speculative DNS prefetching
+    const dnsMeta = page.locator('meta[http-equiv="x-dns-prefetch-control"]');
+    await expect(dnsMeta).toHaveAttribute('content', 'off');
+
+    // Hover over internal News link in navbar
+    const newsLink = page.locator('header').getByRole('link', { name: 'News' });
+    await newsLink.hover();
+
+    // Verify Astro prefetcher creates a prefetch link (or low-priority fetch) for /news
+    await expect(page.locator('link[rel="prefetch"][href*="news"]')).toBeAttached({
+        timeout: 2000,
+    });
+
+    // Hover over external Facebook link in footer
+    const facebookLink = page.locator('footer').getByRole('link', { name: 'Facebook' });
+    await facebookLink.hover();
+
+    // Give it a moment to ensure no external prefetch is created
+    await page.waitForTimeout(300);
+    const externalPrefetch = page.locator('link[rel="prefetch"][href*="facebook.com"]');
+    await expect(externalPrefetch).toHaveCount(0);
+});
