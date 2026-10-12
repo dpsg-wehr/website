@@ -42,7 +42,7 @@ const directUrl = slug ? `${normalizedBase}${normalizedSlug}` : '';
     iframeSrc && (
         <div
             id={`wrapper-${frameId}`}
-            class={`w-full my-6 bg-white rounded-xl shadow-md border border-gray-200 dark:border-gray-600 px-3 sm:px-6 md:px-8 py-4 sm:py-6 transition-all ${propClass || className}`}
+            class={`w-full my-6 not-prose bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 px-3 sm:px-6 md:px-8 py-4 sm:py-6 transition-all ${propClass || className}`}
             data-campflow-wrapper
         >
             {/* 2-Click Consent Placeholder */}
@@ -50,7 +50,7 @@ const directUrl = slug ? `${normalizedBase}${normalizedSlug}` : '';
                 id={`placeholder-${frameId}`}
                 class="flex flex-col items-center text-center py-6 sm:py-8 px-4"
             >
-                <div class="w-12 h-12 mb-4 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600">
+                <div class="w-12 h-12 mb-4 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="w-6 h-6"
@@ -67,18 +67,18 @@ const directUrl = slug ? `${normalizedBase}${normalizedSlug}` : '';
                     </svg>
                 </div>
 
-                <h4 class="text-lg font-semibold text-gray-900 mb-2">
+                <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     {title}
                 </h4>
 
-                <p class="max-w-lg text-sm text-gray-600 mb-5 leading-relaxed">
-                    Dieses Formular wird vom externen Dienst <strong>Campflow</strong> bereitgestellt.
+                <p class="max-w-lg text-sm text-gray-600 dark:text-gray-300 mb-5 leading-relaxed">
+                    Dieses Formular wird vom externen Dienst <strong class="font-semibold text-gray-900 dark:text-white">Campflow</strong> bereitgestellt.
                     Beim Laden des Formulars werden personenbezogene Daten (wie Ihre IP-Adresse) an Campflow übertragen.
                     Wir haben mit Campflow einen Vertrag zur Auftragsverarbeitung (AVV) abgeschlossen.
                     Weitere Informationen finden Sie in unserer{' '}
                     <a
                         href="/pages/datenschutz"
-                        class="text-blue-600 hover:underline font-medium"
+                        class="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                     >
                         Datenschutzerklärung
                     </a>.
@@ -116,7 +116,7 @@ const directUrl = slug ? `${normalizedBase}${normalizedSlug}` : '';
                         href={directUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                        class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/60 transition-colors"
                     >
                         <span>Direkt bei Campflow öffnen</span>
                         <svg
@@ -135,7 +135,7 @@ const directUrl = slug ? `${normalizedBase}${normalizedSlug}` : '';
                     </a>
                 </div>
 
-                <noscript class="mt-4 text-xs text-amber-600">
+                <noscript class="mt-4 text-xs text-amber-600 dark:text-amber-400">
                     JavaScript ist in Ihrem Browser deaktiviert. Bitte nutzen Sie den Link &bdquo;Direkt bei Campflow öffnen&ldquo;.
                 </noscript>
             </div>
@@ -154,6 +154,7 @@ const directUrl = slug ? `${normalizedBase}${normalizedSlug}` : '';
                     const placeholder = document.getElementById(`placeholder-${frameId}`);
                     const iframe = document.getElementById(frameId);
                     const btn = document.getElementById(`btn-load-${frameId}`);
+                    const wrapper = document.getElementById(`wrapper-${frameId}`);
 
                     const loadIframe = () => {
                         if (!iframe) return;
@@ -164,6 +165,10 @@ const directUrl = slug ? `${normalizedBase}${normalizedSlug}` : '';
                             placeholder.style.display = 'none';
                         }
                         iframe.style.display = 'block';
+                        if (wrapper) {
+                            wrapper.classList.remove('dark:bg-gray-800');
+                            wrapper.classList.add('bg-white');
+                        }
                         try {
                             sessionStorage.setItem('campflow_embed_consent', 'true');
                         } catch {

@@ -120,6 +120,56 @@
                 border-radius: 0.375rem;
                 background: #fafafa;
             }
+
+            @media (prefers-color-scheme: dark) {
+                .preview-campflow,
+                .preview-osm-map {
+                    border-color: #059669;
+                    color: #a7f3d0;
+                    background: rgba(6, 78, 59, 0.35);
+                }
+                .preview-calendar {
+                    border-color: #3b82f6;
+                    color: #bfdbfe;
+                    background: rgba(30, 64, 175, 0.25);
+                }
+                .preview-recent-posts {
+                    border-color: #6b7280;
+                    color: #9ca3af;
+                }
+                .preview-group-overview {
+                    background: #1f2937;
+                    color: #f3f4f6;
+                }
+                .preview-acrostichon {
+                    background: #1f2937;
+                    border-color: #374151;
+                }
+                .acrostichon-left,
+                .acrostichon-right {
+                    color: #e5e7eb;
+                }
+                .preview-collapsible {
+                    border-color: #374151;
+                    background: #1f2937;
+                    color: #f3f4f6;
+                }
+            }
+
+            :root[data-theme='dark'] .preview-campflow,
+            [data-theme='dark'] .preview-campflow,
+            :root[data-theme='dark'] .preview-osm-map,
+            [data-theme='dark'] .preview-osm-map {
+                border-color: #059669;
+                color: #a7f3d0;
+                background: rgba(6, 78, 59, 0.35);
+            }
+            :root[data-theme='dark'] .preview-calendar,
+            [data-theme='dark'] .preview-calendar {
+                border-color: #3b82f6;
+                color: #bfdbfe;
+                background: rgba(30, 64, 175, 0.25);
+            }
         </style>
     </head>
     <body>
@@ -346,7 +396,7 @@
                     pattern: /<Acrostichon\s+([\s\S]+?)\s*\/>/s,
                     fromBlock: (match) => {
                         const rawAttrs = match[1];
-                        const dataMatch = rawAttrs.match(/data=\{?(\[[\\s\S]*?\])\}?/);
+                        const dataMatch = rawAttrs.match(/data=\{?(\[[\s\S]*?\])\}?/);
                         let items = [];
                         let rawJson = '';
                         if (dataMatch) {
@@ -443,8 +493,8 @@
                     label: 'Campflow Anmeldeformular',
                     fields: [
                         {
-                            name: 'formId',
-                            label: 'Formular-ID',
+                            name: 'slug',
+                            label: 'Slug / Formular-ID',
                             widget: 'string',
                             required: false,
                         },
@@ -453,16 +503,16 @@
                     fromBlock: (match) => {
                         const get = parseProps(match[1] || '');
                         return {
-                            formId: get('formId') || get('id') || '',
+                            slug: get('slug') || get('formId') || get('id') || '',
                         };
                     },
                     toBlock: (data) => {
-                        return data.formId
-                            ? `<CampflowForm formId="${data.formId}" />`
+                        return data.slug
+                            ? `<CampflowForm slug="${data.slug}" />`
                             : `<CampflowForm />`;
                     },
                     toPreview: (data) => {
-                        return `<div class="preview-campflow">📝 <strong>[Campflow Anmeldeformular${data.formId ? `: ${data.formId}` : ''}]</strong></div>`;
+                        return `<div class="preview-campflow">📝 <strong>[Campflow Anmeldeformular${data.slug ? `: ${data.slug}` : ''}]</strong></div>`;
                     },
                 });
 
@@ -486,9 +536,7 @@
                         };
                     },
                     toBlock: (data) => {
-                        return data.title
-                            ? `<OsmMap title="${data.title}" />`
-                            : `<OsmMap />`;
+                        return data.title ? `<OsmMap title="${data.title}" />` : `<OsmMap />`;
                     },
                     toPreview: (data) => {
                         return `<div class="preview-osm-map">🗺️ <strong>[OpenStreetMap Karte${data.title ? `: ${data.title}` : ''}]</strong></div>`;

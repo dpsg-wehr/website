@@ -86,6 +86,30 @@ test.describe('Legal Pages', () => {
         await expect(loadButton).toBeHidden();
     });
 
+    test('Campflow consent placeholder is clearly visible in dark mode', async ({ page }) => {
+        await page.emulateMedia({ colorScheme: 'dark' });
+        await page.goto('/pages/anmeldung');
+
+        const wrapper = page.locator('[data-campflow-wrapper]');
+        await expect(wrapper).toBeVisible();
+
+        const strongCampflow = wrapper.locator('strong', { hasText: 'Campflow' });
+        await expect(strongCampflow).toBeVisible();
+
+        // Verify contrast / computed styling: strong text and wrapper background
+        const colors = await page.evaluate(() => {
+            const wrap = document.querySelector('[data-campflow-wrapper]');
+            const strong = wrap ? wrap.querySelector('strong') : null;
+            if (!wrap || !strong) return null;
+            const wrapBg = window.getComputedStyle(wrap).backgroundColor;
+            const strongColor = window.getComputedStyle(strong).color;
+            return { wrapBg, strongColor };
+        });
+
+        expect(colors).not.toBeNull();
+        expect(colors!.wrapBg).not.toBe(colors!.strongColor);
+    });
+
     test('Kontakt page should load with contact details and OpenStreetMap 2-click consent', async ({
         page,
     }) => {
