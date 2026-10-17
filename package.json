@@ -49,7 +49,7 @@
         "react-icons": "5.7.0",
         "react-photo-album": "3.6.1",
         "react-select": "5.10.2",
-        "sanitize-html": "2.18.0",
+        "sanitize-html": "2.18.1",
         "sharp": "0.35.5",
         "temporal-polyfill": "1.0.6",
         "yet-another-react-lightbox": "3.32.2"
