@@ -225,8 +225,8 @@ importers:
         specifier: 5.7.0
         version: 5.7.0(react@19.3.1)
       react-photo-album:
-        specifier: 3.6.1
-        version: 3.6.1(@types/react@19.3.0)(react@19.3.1)
+        specifier: 3.6.2
+        version: 3.6.2(@types/react@19.3.0)(react@19.3.1)
       react-select:
         specifier: 5.10.2
         version: 5.10.2(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(supports-color@7.2.0)
@@ -4343,8 +4343,8 @@ packages:
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
 
-  react-photo-album@3.6.1:
-    resolution: {integrity: sha512-m4pTIpgEpdAJgRnf3DfISHfIHMjJkouWJdKUyGy9UaFBBePv1kolqKTzAmZrfQcoZBVfT/g9vvcc39o1RfwZgA==}
+  react-photo-album@3.6.2:
+    resolution: {integrity: sha512-ZEOzeCH5d2DuSrhRbDcueZop9k7FVaEwxcxX7k6B1oN1kMK2g9aRppBJoJKMISMbebwzqlE25RaM3vX0qcJOQA==}
     engines: {node: '>=18'}
     peerDependencies:
       '@types/react': ^18 || ^19
@@ -9830,7 +9830,7 @@ snapshots:
 
   react-is@17.0.2: {}
 
-  react-photo-album@3.6.1(@types/react@19.3.0)(react@19.3.1):
+  react-photo-album@3.6.2(@types/react@19.3.0)(react@19.3.1):
     dependencies:
       react: 19.3.1
     optionalDependencies:
