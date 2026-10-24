@@ -32,13 +32,13 @@
         "*.{js,jsx,ts,tsx}": "eslint --fix --no-warn-ignored"
     },
     "dependencies": {
-        "@astrojs/mdx": "8.1.0",
-        "@astrojs/react": "7.1.0",
+        "@astrojs/mdx": "8.1.1",
+        "@astrojs/react": "7.1.1",
         "@astrojs/rss": "4.0.19",
         "@astrojs/sitemap": "3.7.4",
         "@fullcalendar/core": "7.1.1",
         "@fullcalendar/react": "7.1.1",
-        "astro": "7.4.1",
+        "astro": "7.4.2",
         "fuse.js": "7.5.0",
         "gray-matter": "4.0.3",
         "ics": "3.12.1",
