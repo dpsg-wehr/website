@@ -52,7 +52,7 @@
         "sanitize-html": "2.18.1",
         "sharp": "0.35.5",
         "temporal-polyfill": "1.0.6",
-        "yet-another-react-lightbox": "3.32.2"
+        "yet-another-react-lightbox": "3.33.0"
     },
     "devDependencies": {
         "@astrojs/check": "0.9.12",
