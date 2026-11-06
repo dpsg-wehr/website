@@ -2,7 +2,7 @@ name: dpsg-wehr
 
 services:
     website:
-        image: dpsg-wehr:latest
+        image: git.linus-fischer.de/linus/website-dpsg-wehr:${IMAGE_TAG:-latest}
         restart: unless-stopped
         deploy:
             mode: replicated
@@ -33,7 +33,7 @@ services:
             - 'traefik.http.services.dpsg-website.loadbalancer.server.port=80'
 
     website-dev:
-        image: dpsg-wehr:dev
+        image: git.linus-fischer.de/linus/website-dpsg-wehr:${DEV_IMAGE_TAG:-dev}
         restart: unless-stopped
         deploy:
             mode: replicated

@@ -47,11 +47,12 @@ This is the source code for the "DPSG Wehr" website, built with **Astro 7**. The
 ## Release & Deployment Workflow
 
 1. **CI/CD with Forgejo Actions (`.forgejo/workflows/deploy.yaml`):**
-    - Triggered on push to `main` or `dev`.
+    - Triggered on push to `main` (production), `dev` (staging), or release tags (`v*`).
     - Builds static website and optimizes images with `pnpm build`.
-    - Packages into lightweight `nginx:alpine` image (`Dockerfile.static`).
-    - Streams Docker image directly to the VPS over Tailscale SSH (`docker save | ssh docker load`) and runs `docker compose up -d` with rolling updates.
-2. **VPS Minimal Deployment:**
-    - VPS only maintains `docker-compose.yml`, `.env`, and `public/generated`.
-    - `website` serves production (`dpsg-wehr.de`).
-    - `website-dev` serves dev preview (`dev.dpsg-wehr.de`) routed via Traefik behind Authentik forward-auth middleware.
+    - Builds container image using `Dockerfile.static` with standard OCI labels (`org.opencontainers.image.*`) including `source`, `revision`, `version`, and `created`.
+    - Tags images with SemVer (`<version>`, `v<version>`, `dev.<run>`, `v<version>-dev.<run>`), major/minor aliases, short/full SHA, and floating tags (`latest` or `dev`).
+    - Publishes all tags to the Forgejo Container Registry (`git.linus-fischer.de/linus/website-dpsg-wehr`).
+2. **GitOps & Automated Deployment (Komodo + Renovate):**
+    - Service configuration stacks are managed in a central Git repository.
+    - Renovate bot detects new container image releases/alpha dev tags via the Forgejo registry and standard OCI labels.
+    - Merged updates in the service configuration repository trigger webhooks on Komodo, which automatically pulls and rolls out container updates.

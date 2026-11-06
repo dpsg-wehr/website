@@ -5,6 +5,8 @@ on:
         branches:
             - main
             - dev
+        tags:
+            - 'v*'
         paths-ignore:
             - 'docs/**'
             - 'README.md'
@@ -246,7 +248,7 @@ jobs:
                   python3 scripts/automerge_pr.py
 
     build-and-deploy:
-        name: 🚀 Build & Deploy
+        name: 🐳 Build & Publish Container Image
         needs: test
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         runs-on: ubuntu-latest
@@ -312,19 +314,11 @@ jobs:
                   PUBLIC_UMAMI_WEBSITE_ID: ${{ secrets.PUBLIC_UMAMI_WEBSITE_ID || env.PUBLIC_UMAMI_WEBSITE_ID }}
                   PUBLIC_GIT_COMMIT: ${{ github.sha }}
                   PUBLIC_GIT_REF: ${{ github.ref_name }}
-                  PUBLIC_APP_ENV: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+                  PUBLIC_APP_ENV: ${{ (github.ref_name == 'main' || startsWith(github.ref, 'refs/tags/')) && 'production' || 'staging' }}
               run: pnpm build
 
-            - name: 🛠️ Ensure Docker & SSH Tools Installed
+            - name: 🛠️ Ensure Docker CLI Installed
               run: |
-                  if ! command -v ssh >/dev/null 2>&1; then
-                    echo "Installing openssh-client..."
-                    if command -v apt-get >/dev/null 2>&1; then
-                      apt-get update && apt-get install -y openssh-client
-                    elif command -v apk >/dev/null 2>&1; then
-                      apk add --no-cache openssh-client
-                    fi
-                  fi
                   if ! command -v docker >/dev/null 2>&1; then
                     echo "Installing Docker CLI..."
                     if command -v apt-get >/dev/null 2>&1; then
@@ -334,58 +328,80 @@ jobs:
                     fi
                   fi
 
-            - name: 🐳 Build Static Nginx Image
+            - name: 🔑 Log in to Forgejo Container Registry
               run: |
-                  TAG="${{ github.ref_name == 'main' && 'latest' || 'dev' }}"
-                  echo "Building image dpsg-wehr:$TAG ..."
-                  docker build -t dpsg-wehr:$TAG -f Dockerfile.static .
+                  echo "${{ secrets.REGISTRY_TOKEN || secrets.FORGEJO_TOKEN || secrets.GITHUB_TOKEN }}" | docker login git.linus-fischer.de -u "${{ github.actor }}" --password-stdin
 
-            - name: 🚀 Stream Image & Deploy to VPS over SSH
-              env:
-                  SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-                  VPS_HOST: ${{ secrets.VPS_HOST }}
-                  VPS_USER: ${{ secrets.VPS_USER }}
-                  VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
-                  VPS_PATH: ${{ secrets.VPS_PATH || '/home/linus/docker/website-pfadfinder' }}
+            - name: 🏷️ Determine Image Tags & OCI Labels
+              id: meta
               run: |
-                  mkdir -p ~/.ssh
-                  echo "$SSH_KEY" > ~/.ssh/id_ed25519
-                  chmod 600 ~/.ssh/id_ed25519
-                  ssh-keyscan -p "$VPS_PORT" -H "$VPS_HOST" >> ~/.ssh/known_hosts
+                  IMAGE_BASE="git.linus-fischer.de/${{ github.repository }}"
+                  IMAGE_BASE=$(echo "$IMAGE_BASE" | tr '[:upper:]' '[:lower:]')
 
-                  TAG="${{ github.ref_name == 'main' && 'latest' || 'dev' }}"
-                  SVC="${{ github.ref_name == 'main' && 'website' || 'website-dev' }}"
+                  PKG_VERSION=$(node -p "require('./package.json').version")
+                  CLEAN_VERSION="${PKG_VERSION#v}"
+                  SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+                  BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+                  SOURCE_URL="https://git.linus-fischer.de/${{ github.repository }}"
+                  SOURCE_URL=$(echo "$SOURCE_URL" | tr '[:upper:]' '[:lower:]')
 
-                  echo "🚀 Streaming dpsg-wehr:$TAG to VPS ($VPS_HOST)..."
-                  docker save dpsg-wehr:$TAG | ssh -p "$VPS_PORT" -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" "docker load"
+                  # Base tags: exact commit SHA and short SHA
+                  TAGS="-t ${IMAGE_BASE}:${{ github.sha }} -t ${IMAGE_BASE}:sha-${SHORT_SHA}"
+                  BUILD_VERSION="${CLEAN_VERSION}"
 
-                  echo "🔄 Restarting service $SVC in $VPS_PATH on VPS..."
-                  ssh -p "$VPS_PORT" -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" "cd \"$VPS_PATH\" && docker compose up -d $SVC && docker image prune -f"
-
-                  echo "🔍 Verifying deployment via /version.json..."
-                  EXPECTED_SHA="${{ github.sha }}"
-                  VERIFIED=false
-                  for i in {1..12}; do
-                    CONTAINER_INFO=$(ssh -p "$VPS_PORT" -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" "cd \"$VPS_PATH\" && docker compose exec -T $SVC curl -fsS http://127.0.0.1/version.json" 2>/dev/null || true)
-                    DEPLOYED_SHA=$(echo "$CONTAINER_INFO" | python3 -c "import sys, json; print(json.load(sys.stdin).get('commit', ''))" 2>/dev/null || true)
-                    if [ "$DEPLOYED_SHA" = "$EXPECTED_SHA" ]; then
-                      echo "✅ Container is running expected commit: $DEPLOYED_SHA"
-                      VERIFIED=true
-                      break
+                  if [ "${{ github.ref_name }}" = "main" ]; then
+                    BUILD_VERSION="${CLEAN_VERSION}"
+                    TAGS="${TAGS} -t ${IMAGE_BASE}:${CLEAN_VERSION} -t ${IMAGE_BASE}:v${CLEAN_VERSION} -t ${IMAGE_BASE}:latest"
+                    if [[ "$CLEAN_VERSION" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+                      MAJOR="${BASH_REMATCH[1]}"
+                      MINOR="${BASH_REMATCH[2]}"
+                      TAGS="${TAGS} -t ${IMAGE_BASE}:${MAJOR} -t ${IMAGE_BASE}:v${MAJOR} -t ${IMAGE_BASE}:${MAJOR}.${MINOR} -t ${IMAGE_BASE}:v${MAJOR}.${MINOR}"
                     fi
-                    echo "Waiting for container update (attempt $i/12, current: ${DEPLOYED_SHA:-unknown})..."
-                    sleep 3
-                  done
-
-                  if [ "$VERIFIED" != "true" ]; then
-                    echo "⚠️ Notice: Container running commit does not match $EXPECTED_SHA or could not be verified."
+                  elif [ "${{ github.ref_name }}" = "dev" ]; then
+                    DEV_VERSION="${CLEAN_VERSION}-dev.${{ github.run_number }}"
+                    BUILD_VERSION="${DEV_VERSION}"
+                    TAGS="${TAGS} -t ${IMAGE_BASE}:${DEV_VERSION} -t ${IMAGE_BASE}:v${DEV_VERSION} -t ${IMAGE_BASE}:dev -t ${IMAGE_BASE}:dev-${SHORT_SHA}"
+                  elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+                    TAG_NAME="${{ github.ref_name }}"
+                    CLEAN_TAG="${TAG_NAME#v}"
+                    BUILD_VERSION="${CLEAN_TAG}"
+                    TAGS="${TAGS} -t ${IMAGE_BASE}:${TAG_NAME} -t ${IMAGE_BASE}:${CLEAN_TAG} -t ${IMAGE_BASE}:latest"
+                    if [[ "$CLEAN_TAG" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+                      MAJOR="${BASH_REMATCH[1]}"
+                      MINOR="${BASH_REMATCH[2]}"
+                      TAGS="${TAGS} -t ${IMAGE_BASE}:${MAJOR} -t ${IMAGE_BASE}:v${MAJOR} -t ${IMAGE_BASE}:${MAJOR}.${MINOR} -t ${IMAGE_BASE}:v${MAJOR}.${MINOR}"
+                    fi
+                  else
+                    SAFE_REF=$(echo "${{ github.ref_name }}" | tr '/' '-')
+                    BRANCH_VERSION="${CLEAN_VERSION}-${SAFE_REF}.${{ github.run_number }}"
+                    BUILD_VERSION="${BRANCH_VERSION}"
+                    TAGS="${TAGS} -t ${IMAGE_BASE}:${SAFE_REF} -t ${IMAGE_BASE}:${BRANCH_VERSION}"
                   fi
 
-                  if [ "$SVC" = "website" ]; then
-                    echo "🌐 Checking public endpoint https://dpsg-wehr.de/version.json..."
-                    PUBLIC_INFO=$(curl -fsSL https://dpsg-wehr.de/version.json 2>/dev/null || true)
-                    PUBLIC_SHA=$(echo "$PUBLIC_INFO" | python3 -c "import sys, json; print(json.load(sys.stdin).get('commit', ''))" 2>/dev/null || true)
-                    echo "Public endpoint commit: ${PUBLIC_SHA:-unknown}"
-                  fi
+                  LABELS="--label org.opencontainers.image.title=website-dpsg-wehr"
+                  LABELS="${LABELS} --label org.opencontainers.image.description=Website of DPSG Stamm Franz von Sales Wehr"
+                  LABELS="${LABELS} --label org.opencontainers.image.url=https://dpsg-wehr.de"
+                  LABELS="${LABELS} --label org.opencontainers.image.source=${SOURCE_URL}"
+                  LABELS="${LABELS} --label org.opencontainers.image.version=${BUILD_VERSION}"
+                  LABELS="${LABELS} --label org.opencontainers.image.revision=${{ github.sha }}"
+                  LABELS="${LABELS} --label org.opencontainers.image.created=${BUILD_DATE}"
+                  LABELS="${LABELS} --label org.opencontainers.image.licenses=MIT"
+                  LABELS="${LABELS} --label org.opencontainers.image.vendor=DPSG Stamm Franz von Sales Wehr"
 
-                  echo "✅ Deployment completed successfully!"
+                  echo "IMAGE_BASE=${IMAGE_BASE}" >> "$GITHUB_ENV"
+                  echo "TAGS=${TAGS}" >> "$GITHUB_ENV"
+                  echo "LABELS=${LABELS}" >> "$GITHUB_ENV"
+                  echo "BUILD_VERSION=${BUILD_VERSION}" >> "$GITHUB_ENV"
+                  echo "BUILD_DATE=${BUILD_DATE}" >> "$GITHUB_ENV"
+
+            - name: 🐳 Build Docker Image
+              run: |
+                  docker build ${TAGS} ${LABELS} \
+                    --build-arg VERSION="${BUILD_VERSION}" \
+                    --build-arg VCS_REF="${{ github.sha }}" \
+                    --build-arg BUILD_DATE="${BUILD_DATE}" \
+                    -f Dockerfile.static .
+
+            - name: 🚀 Push Image to Forgejo Registry
+              run: |
+                  docker push --all-tags "${IMAGE_BASE}"
