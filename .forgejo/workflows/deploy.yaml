@@ -381,25 +381,14 @@ jobs:
                     TAGS="${TAGS} -t ${IMAGE_BASE}:${SAFE_REF} -t ${IMAGE_BASE}:${BRANCH_VERSION}"
                   fi
 
-                  LABELS="--label org.opencontainers.image.title=website-dpsg-wehr"
-                  LABELS="${LABELS} --label org.opencontainers.image.description=Website of DPSG Stamm Franz von Sales Wehr"
-                  LABELS="${LABELS} --label org.opencontainers.image.url=https://dpsg-wehr.de"
-                  LABELS="${LABELS} --label org.opencontainers.image.source=${SOURCE_URL}"
-                  LABELS="${LABELS} --label org.opencontainers.image.version=${BUILD_VERSION}"
-                  LABELS="${LABELS} --label org.opencontainers.image.revision=${{ github.sha }}"
-                  LABELS="${LABELS} --label org.opencontainers.image.created=${BUILD_DATE}"
-                  LABELS="${LABELS} --label org.opencontainers.image.licenses=MIT"
-                  LABELS="${LABELS} --label org.opencontainers.image.vendor=DPSG Stamm Franz von Sales Wehr"
-
                   echo "IMAGE_BASE=${IMAGE_BASE}" >> "$GITHUB_ENV"
                   echo "TAGS=${TAGS}" >> "$GITHUB_ENV"
-                  echo "LABELS=${LABELS}" >> "$GITHUB_ENV"
                   echo "BUILD_VERSION=${BUILD_VERSION}" >> "$GITHUB_ENV"
                   echo "BUILD_DATE=${BUILD_DATE}" >> "$GITHUB_ENV"
 
             - name: 🐳 Build Docker Image
               run: |
-                  docker build ${TAGS} ${LABELS} \
+                  docker build ${TAGS} \
                     --build-arg VERSION="${BUILD_VERSION}" \
                     --build-arg VCS_REF="${{ github.sha }}" \
                     --build-arg BUILD_DATE="${BUILD_DATE}" \
