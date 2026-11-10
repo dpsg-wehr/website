@@ -252,6 +252,9 @@ jobs:
         needs: test
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
         steps:
             - name: 📥 Checkout Code
               uses: actions/checkout@v7.0.1
