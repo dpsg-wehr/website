@@ -11,8 +11,6 @@ services:
                 order: start-first
                 failure_action: rollback
                 delay: 5s
-        volumes:
-            - ./public/generated:/usr/share/nginx/html/generated:ro
         networks:
             - proxy
         healthcheck:
@@ -42,8 +40,6 @@ services:
                 order: start-first
                 failure_action: rollback
                 delay: 5s
-        volumes:
-            - ./public/generated:/usr/share/nginx/html/generated:ro
         networks:
             - proxy
         healthcheck:
