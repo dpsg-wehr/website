@@ -36,6 +36,12 @@
             "matchPackageNames": ["@playwright/test", "playwright", "mcr.microsoft.com/playwright"],
             "groupName": "Playwright",
             "schedule": ["at any time"]
+        },
+        {
+            "description": "Prevent breaking major updates on pnpm-workspace.yaml overrides (e.g. js-yaml v3 for gray-matter, brace-expansion v1 for minimatch)",
+            "matchDepTypes": ["pnpm-workspace.overrides"],
+            "matchUpdateTypes": ["major"],
+            "enabled": false
         }
     ]
 }
