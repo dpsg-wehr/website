@@ -8,6 +8,10 @@ test.describe('Legal Pages', () => {
         await expect(page.getByText('Stamm St. Bernhard Wehr (Baden)').first()).toBeVisible();
         await expect(page.getByText('Rebecca Müller und Thomas Meier')).toBeVisible();
 
+        const phoneLink = page.getByRole('link', { name: '015679 832718' });
+        await expect(phoneLink).toBeVisible();
+        await expect(phoneLink).toHaveAttribute('href', 'tel:+4915679832718');
+
         const editButton = page.getByTestId('cms-edit-button');
         await expect(editButton).toBeVisible();
         await expect(editButton).toHaveAttribute(
