@@ -51,7 +51,7 @@
         "react-select": "5.10.2",
         "sanitize-html": "2.18.1",
         "sharp": "0.35.5",
-        "temporal-polyfill": "1.0.7",
+        "temporal-polyfill": "1.0.8",
         "yet-another-react-lightbox": "3.33.0"
     },
     "devDependencies": {
