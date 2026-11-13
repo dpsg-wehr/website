@@ -18,6 +18,7 @@ This is the source code for the "DPSG Wehr" website, built with **Astro 7**. The
 - **Language:** [TypeScript](https://www.typescriptlang.org)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com) v4, [React Icons](https://react-icons.github.io/react-icons/)
 - **Content:** Astro MDX integration (`@astrojs/mdx`), `gray-matter` for frontmatter.
+- **Toolchain:** [Vite+](https://viteplus.dev) (`vite-plus`, `vp`) – formatting (Oxfmt), linting (Oxlint; ESLint only for `.astro` templates), type checking (tsgolint), unit tests (Vitest), staged-file checks. Configured in `vite.config.ts` and `vitest.config.ts`.
 - **Testing:** [Vitest](https://vitest.dev/) (Unit/Component), [Playwright](https://playwright.dev/) (E2E), [Monocart Reporter](https://github.com/cenfun/monocart-reporter).
 - **Package Manager:** [pnpm](https://pnpm.io)
 
@@ -37,11 +38,12 @@ This is the source code for the "DPSG Wehr" website, built with **Astro 7**. The
 ### Key Commands
 
 - **Start Development Server:** `pnpm dev` (Runs Astro dev server at `http://localhost:3000`).
-- **Run Unit Tests:** `pnpm test` (Vitest watch mode).
+- **Run Unit Tests:** `pnpm test` (Vitest through `vp test`, one run) or `pnpm test:watch` (watch mode).
 - **Run E2E Tests:** `pnpm test:e2e` (Playwright).
 - **Run All Tests:** `pnpm test:all` (Sequential Vitest + Playwright).
-- **Typecheck:** `pnpm typecheck` (`astro check && tsc --noEmit`).
-- **Lint:** `pnpm lint` (ESLint).
+- **Typecheck:** `pnpm typecheck` (`astro check && vp check --no-fmt --no-lint`).
+- **Lint:** `pnpm lint` (`vp lint` + `eslint .` for `.astro` templates).
+- **Format & Checks:** `pnpm check` (format + lint + type check in one pass), `pnpm check:fix` (apply fixes).
 - **Build:** `pnpm build` (Static export to `out/`).
 
 ## Release & Deployment Workflow

@@ -38,6 +38,26 @@ pnpm dev
 
 Die Website ist dann unter [http://localhost:3000](http://localhost:3000) verfügbar.
 
+## Code-Qualität (Vite+)
+
+Formatierung, Lint und Typprüfung laufen über [Vite+](https://viteplus.dev) (`vite-plus`), das als Projekt-Abhängigkeit installiert ist – ein global installiertes `vp` wird nicht benötigt.
+
+```bash
+# Format + Lint + Typprüfung in einem Durchlauf
+pnpm check
+
+# ... inkl. automatischer Korrekturen
+pnpm check:fix
+
+# Lint (Oxlint + ESLint für .astro-Templates)
+pnpm lint
+
+# Typprüfung (astro check + tsgolint)
+pnpm typecheck
+```
+
+Konfiguration: `vite.config.ts` (Format, Lint, Pre-Commit-Checks), `vitest.config.ts` (Tests) und `eslint.config.mjs` (nur `.astro`-Templates). Der Pre-Commit-Hook `.vite-hooks/pre-commit` läuft über `vp staged` und lässt sich mit `VP_GIT_HOOKS=0` umgehen (z. B. für CMS-Automatisierung).
+
 ## Testing
 
 Das Projekt verfügt über eine automatisierte Testsuite, die Unit-Tests, Komponenten-Tests und End-to-End (E2E) Tests umfasst.
@@ -45,8 +65,11 @@ Das Projekt verfügt über eine automatisierte Testsuite, die Unit-Tests, Kompon
 ### Tests ausführen
 
 ```bash
-# Unit- & Komponenten-Tests (Vitest) im Watch-Mode
+# Unit- & Komponenten-Tests (Vitest über vp test, ein Durchlauf)
 pnpm test
+
+# ... im Watch-Mode
+pnpm test:watch
 
 # E2E-Tests (Playwright)
 pnpm test:e2e
