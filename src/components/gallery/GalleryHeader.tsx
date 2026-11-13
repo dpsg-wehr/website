@@ -1,6 +1,7 @@
-import { TagGroup } from '@/types';
-import SelectWrapper from './SelectWrapper';
 import Collapsible from '@/components/mdx/Collapsible';
+import { TagGroup } from '@/types';
+
+import SelectWrapper from './SelectWrapper';
 
 export default function GalleryHeader({
     tags,
@@ -15,7 +16,7 @@ export default function GalleryHeader({
 
     return (
         <Collapsible label="Filter">
-            <div className="mb-4 flex flex-col md:flex-row place-content-between gap-4">
+            <div className="mb-4 flex flex-col place-content-between gap-4 md:flex-row">
                 {dropdowns}
             </div>
         </Collapsible>

@@ -1,7 +1,7 @@
 ---
+import PostPreview from '@/components/posts/PostPreview.astro';
 import RootLayout from '@/layouts/RootLayout.astro';
 import getPostMetadata from '@/lib/content/posts';
-import PostPreview from '@/components/posts/PostPreview.astro';
 import { formatPostDate } from '@/lib/utils/date';
 import { createBreadcrumbSchema } from '@/lib/utils/seo';
 
@@ -22,23 +22,19 @@ const breadcrumbJsonLd = createBreadcrumbSchema(
 >
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
     <div class="prose dark:prose-invert mb-8 max-w-none">
-        <div class="flex flex-wrap items-center justify-between gap-4 not-prose mb-4">
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white m-0">
+        <div class="not-prose mb-4 flex flex-wrap items-center justify-between gap-4">
+            <h1 class="m-0 text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white">
                 Aktuelles
             </h1>
             <a
                 href="/rss.xml"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg text-amber-800 bg-amber-100 hover:bg-amber-200 dark:text-amber-200 dark:bg-amber-900/40 dark:hover:bg-amber-900/60 transition-colors"
+                class="inline-flex items-center gap-1.5 rounded-lg bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-800 transition-colors hover:bg-amber-200 dark:bg-amber-900/40 dark:text-amber-200 dark:hover:bg-amber-900/60"
                 title="RSS-Feed abonnieren"
                 aria-label="RSS-Feed abonnieren"
             >
-                <svg
-                    class="w-4 h-4 fill-current"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                >
+                <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="6.18" cy="17.82" r="2.18" />
                     <path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z" />
                 </svg>
@@ -47,19 +43,12 @@ const breadcrumbJsonLd = createBreadcrumbSchema(
         </div>
         <p>
             Hier findet ihr aktuelle Berichte und Informationen über unsere Aktivitäten. Ob
-            Zeltlager, Stammesaktionen oder Neuigkeiten aus den Gruppen - bleibt auf dem
-            Laufenden!
+            Zeltlager, Stammesaktionen oder Neuigkeiten aus den Gruppen - bleibt auf dem Laufenden!
         </p>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto sm:max-w-max">
-        {
-            posts.map((post, index) => (
-                <PostPreview
-                    {...post}
-                    date={formatPostDate(post.date)}
-                    priority={index < 4}
-                />
-            ))
-        }
+    <div class="mx-auto grid max-w-md grid-cols-1 gap-4 sm:max-w-max sm:grid-cols-2">
+        {posts.map((post, index) => (
+            <PostPreview {...post} date={formatPostDate(post.date)} priority={index < 4} />
+        ))}
     </div>
 </RootLayout>

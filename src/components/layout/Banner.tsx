@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useSyncExternalStore } from 'react';
-import { BannerConfig } from '@/types';
 import { HiX, HiArrowRight } from 'react-icons/hi';
+
+import { BannerConfig } from '@/types';
 
 function checkIsVisible(banner: BannerConfig | null): boolean {
     if (!banner) return false;
@@ -96,23 +97,23 @@ export default function Banner({ banner }: { banner: BannerConfig | null }) {
             aria-label="Aktueller Hinweis"
             className={`relative z-40 transition-colors ${styles.aside}`}
         >
-            <div className="max-w-6xl mx-auto px-4 py-2 sm:py-2.5 flex items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2 text-xs sm:py-2.5 sm:text-sm">
                 <a
                     href={banner.link}
-                    className={`flex-1 flex items-center justify-center flex-wrap gap-x-2 gap-y-1 text-center group no-underline transition-colors py-0.5 ${styles.link}`}
+                    className={`group flex flex-1 flex-wrap items-center justify-center gap-x-2 gap-y-1 py-0.5 text-center no-underline transition-colors ${styles.link}`}
                 >
                     {banner.badge && (
                         <span
-                            className={`shrink-0 inline-flex items-center text-[11px] sm:text-xs px-2.5 py-0.5 rounded-full leading-tight uppercase tracking-wider ${styles.badge}`}
+                            className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-[11px] leading-tight tracking-wider uppercase sm:text-xs ${styles.badge}`}
                         >
                             {banner.badge}
                         </span>
                     )}
-                    <span className="font-medium group-hover:underline leading-tight">
+                    <span className="leading-tight font-medium group-hover:underline">
                         {banner.text}
                         <span className="inline-block whitespace-nowrap">
                             &nbsp;
-                            <HiArrowRight className="inline-block w-3.5 h-3.5 align-middle -mt-0.5 transition-transform duration-200 group-hover:translate-x-0.5" />
+                            <HiArrowRight className="-mt-0.5 inline-block h-3.5 w-3.5 align-middle transition-transform duration-200 group-hover:translate-x-0.5" />
                         </span>
                     </span>
                 </a>
@@ -122,9 +123,9 @@ export default function Banner({ banner }: { banner: BannerConfig | null }) {
                         onClick={handleDismiss}
                         type="button"
                         aria-label="Hinweis schließen"
-                        className={`p-1 rounded-md transition-colors cursor-pointer shrink-0 ${styles.closeBtn}`}
+                        className={`shrink-0 cursor-pointer rounded-md p-1 transition-colors ${styles.closeBtn}`}
                     >
-                        <HiX className="w-4 h-4" />
+                        <HiX className="h-4 w-4" />
                     </button>
                 )}
             </div>

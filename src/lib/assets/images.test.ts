@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import { resolveImage, getAllImages } from './images';
 
 describe('resolveImage utility', () => {

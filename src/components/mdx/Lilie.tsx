@@ -4,7 +4,7 @@ export default function Lilie({ color }: { color?: string }) {
             xmlns="http://www.w3.org/2000/svg"
             fill={color || 'currentColor'}
             viewBox="0 0 182.004 186.404"
-            className="w-full h-full"
+            className="h-full w-full"
             width="1em"
             height="1em"
             aria-hidden="true"

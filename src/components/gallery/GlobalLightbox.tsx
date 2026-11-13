@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import type { SlideImage } from 'yet-another-react-lightbox';
 
 const LightboxWrapper = lazy(() => import('./LightboxWrapper'));
@@ -8,7 +8,8 @@ export default function GlobalLightbox() {
     const [lightBoxOpen, setLightboxOpen] = useState(false);
     const [index, setIndex] = useState(0);
 
-    const openLightbox = (src: string) => {
+    // Stable: reads the DOM and only uses state setters, so the click effect can depend on it.
+    const openLightbox = useCallback((src: string) => {
         const images = document.querySelectorAll('img[data-lightbox="true"]');
         const newSlides: SlideImage[] = Array.from(images).map((img) => {
             const htmlImg = img as HTMLImageElement;
@@ -34,7 +35,7 @@ export default function GlobalLightbox() {
             setIndex(targetIndex);
         }
         setLightboxOpen(true);
-    };
+    }, []);
 
     useEffect(() => {
         const handleClick = (e: MouseEvent) => {
@@ -52,7 +53,7 @@ export default function GlobalLightbox() {
 
         document.addEventListener('click', handleClick);
         return () => document.removeEventListener('click', handleClick);
-    }, []);
+    }, [openLightbox]);
 
     if (!lightBoxOpen) return null;
 

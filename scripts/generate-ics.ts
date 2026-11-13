@@ -1,10 +1,12 @@
-import * as ics from 'ics';
 import * as fs from 'fs';
 import * as path from 'path';
-import publicEvents from '../content/events/public.json';
+
+import * as ics from 'ics';
+
 import internalEvents from '../content/events/internal.example.json'; // Fallback if no real internal events exist
-import { AppEvent } from '../src/types';
+import publicEvents from '../content/events/public.json';
 import { getBerlinUtcOffsetHours } from '../src/lib/utils/date';
+import { AppEvent } from '../src/types';
 
 // This script generates ICS files from the events defined in the codebase.
 // It is run as part of the build process.

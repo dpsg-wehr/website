@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { convertEventToIcsAttribute } from './generate-ics';
-import { AppEvent } from '../src/types';
-
 import * as ics from 'ics';
+import { describe, it, expect } from 'vitest';
+
+import { AppEvent } from '../src/types';
+import { convertEventToIcsAttribute } from './generate-ics';
 
 describe('ICS Timezone Logic (Berlin -> UTC)', () => {
     // Helper to format DateArray [Y, M, D, H, m] to ISO UTC string

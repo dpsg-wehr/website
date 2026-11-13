@@ -1,18 +1,19 @@
 ---
-import RootLayout from '@/layouts/RootLayout.astro';
+import { getImage } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
-import { mdxComponents } from '@/mdx-components';
+
 import Post from '@/components/posts/Post.astro';
+import RootLayout from '@/layouts/RootLayout.astro';
+import { resolveImage } from '@/lib/assets/images';
 import { getPostBySlug, cleanContentSlug } from '@/lib/content/posts';
 import { getExcerpt } from '@/lib/utils/metadata';
-import { resolveImage } from '@/lib/assets/images';
 import {
     getCanonicalUrl,
     createBreadcrumbSchema,
     createBlogPostingSchema,
     createEventSchema,
 } from '@/lib/utils/seo';
-import { getImage } from 'astro:assets';
+import { mdxComponents } from '@/mdx-components';
 
 export async function getStaticPaths() {
     const posts = await getCollection('posts');
@@ -83,14 +84,8 @@ const eventJsonLd = createEventSchema(post.data.event, {
 >
     <script type="application/ld+json" set:html={JSON.stringify(blogPostingJsonLd)} />
     <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
-    {eventJsonLd && (
-        <script type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />
-    )}
-    <Post
-        metadata={metadata}
-        collection="posts"
-        entryId={slug}
-    >
+    {eventJsonLd && <script type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />}
+    <Post metadata={metadata} collection="posts" entryId={slug}>
         <Content components={mdxComponents} />
     </Post>
 </RootLayout>

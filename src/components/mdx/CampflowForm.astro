@@ -38,22 +38,61 @@ const iframeSrc = slug ? `${normalizedBase}${normalizedSlug}?${params.toString()
 const directUrl = slug ? `${normalizedBase}${normalizedSlug}` : '';
 ---
 
-{
-    iframeSrc && (
+{iframeSrc && (
+    <div
+        id={`wrapper-${frameId}`}
+        class={`not-prose my-6 w-full rounded-xl border border-gray-200 bg-white px-3 py-4 shadow-md transition-all sm:px-6 sm:py-6 md:px-8 dark:border-gray-700 dark:bg-gray-800 ${propClass || className}`}
+        data-campflow-wrapper
+    >
+        {/* 2-Click Consent Placeholder */}
         <div
-            id={`wrapper-${frameId}`}
-            class={`w-full my-6 not-prose bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 px-3 sm:px-6 md:px-8 py-4 sm:py-6 transition-all ${propClass || className}`}
-            data-campflow-wrapper
+            id={`placeholder-${frameId}`}
+            class="flex flex-col items-center px-4 py-6 text-center sm:py-8"
         >
-            {/* 2-Click Consent Placeholder */}
-            <div
-                id={`placeholder-${frameId}`}
-                class="flex flex-col items-center text-center py-6 sm:py-8 px-4"
-            >
-                <div class="w-12 h-12 mb-4 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
+            <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-blue-600 dark:border-blue-900/50 dark:bg-blue-950/60 dark:text-blue-400">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                </svg>
+            </div>
+
+            <h4 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">{title}</h4>
+
+            <p class="mb-5 max-w-lg text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                Dieses Formular wird vom externen Dienst{' '}
+                <strong class="font-semibold text-gray-900 dark:text-white">Campflow</strong>{' '}
+                bereitgestellt. Beim Laden des Formulars werden personenbezogene Daten (wie Ihre
+                IP-Adresse) an Campflow übertragen. Wir haben mit Campflow einen Vertrag zur
+                Auftragsverarbeitung (AVV) abgeschlossen. Weitere Informationen finden Sie in
+                unserer{' '}
+                <a
+                    href="/pages/datenschutz"
+                    class="font-medium text-blue-600 hover:underline dark:text-blue-400"
+                >
+                    Datenschutzerklärung
+                </a>
+                .
+            </p>
+
+            <div class="flex flex-col items-center gap-3 sm:flex-row">
+                <button
+                    type="button"
+                    id={`btn-load-${frameId}`}
+                    class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-xs transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="w-6 h-6"
+                        class="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -62,154 +101,115 @@ const directUrl = slug ? `${normalizedBase}${normalizedSlug}` : '';
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                         />
-                    </svg>
-                </div>
-
-                <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {title}
-                </h4>
-
-                <p class="max-w-lg text-sm text-gray-600 dark:text-gray-300 mb-5 leading-relaxed">
-                    Dieses Formular wird vom externen Dienst <strong class="font-semibold text-gray-900 dark:text-white">Campflow</strong> bereitgestellt.
-                    Beim Laden des Formulars werden personenbezogene Daten (wie Ihre IP-Adresse) an Campflow übertragen.
-                    Wir haben mit Campflow einen Vertrag zur Auftragsverarbeitung (AVV) abgeschlossen.
-                    Weitere Informationen finden Sie in unserer{' '}
-                    <a
-                        href="/pages/datenschutz"
-                        class="text-blue-600 dark:text-blue-400 hover:underline font-medium"
-                    >
-                        Datenschutzerklärung
-                    </a>.
-                </p>
-
-                <div class="flex flex-col sm:flex-row items-center gap-3">
-                    <button
-                        type="button"
-                        id={`btn-load-${frameId}`}
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-xs focus:ring-2 focus:ring-blue-500 focus:outline-hidden transition-colors cursor-pointer"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="w-4 h-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            />
-                        </svg>
-                        <span>Formular laden</span>
-                    </button>
-
-                    <a
-                        href={directUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/60 transition-colors"
-                    >
-                        <span>Direkt bei Campflow öffnen</span>
-                        <svg
-                            class="w-3.5 h-3.5"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
+                        <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                        >
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                            <polyline points="15 3 21 3 21 9" />
-                            <line x1="10" y1="14" x2="21" y2="3" />
-                        </svg>
-                    </a>
-                </div>
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                    </svg>
+                    <span>Formular laden</span>
+                </button>
 
-                <noscript class="mt-4 text-xs text-amber-600 dark:text-amber-400">
-                    JavaScript ist in Ihrem Browser deaktiviert. Bitte nutzen Sie den Link &bdquo;Direkt bei Campflow öffnen&ldquo;.
-                </noscript>
+                <a
+                    href={directUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700/60"
+                >
+                    <span>Direkt bei Campflow öffnen</span>
+                    <svg
+                        class="h-3.5 w-3.5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                </a>
             </div>
 
-            {/* Iframe element (initially unmounted/hidden without src) */}
-            <iframe
-                id={frameId}
-                data-src={iframeSrc}
-                title={title}
-                width="100%"
-                style="border: none; overflow: hidden; height: 750px; min-height: 400px; background-color: #ffffff; display: none;"
-            />
-
-            <script is:inline define:vars={{ frameId }}>
-                (() => {
-                    const placeholder = document.getElementById(`placeholder-${frameId}`);
-                    const iframe = document.getElementById(frameId);
-                    const btn = document.getElementById(`btn-load-${frameId}`);
-                    const wrapper = document.getElementById(`wrapper-${frameId}`);
-
-                    const loadIframe = () => {
-                        if (!iframe) return;
-                        if (!iframe.src && iframe.dataset.src) {
-                            iframe.src = iframe.dataset.src;
-                        }
-                        if (placeholder) {
-                            placeholder.style.display = 'none';
-                        }
-                        iframe.style.display = 'block';
-                        if (wrapper) {
-                            wrapper.classList.remove('dark:bg-gray-800');
-                            wrapper.classList.add('bg-white');
-                        }
-                        try {
-                            sessionStorage.setItem('campflow_embed_consent', 'true');
-                        } catch {
-                            // ignore quota or disabled storage
-                        }
-                    };
-
-                    if (btn) {
-                        btn.addEventListener('click', loadIframe);
-                    }
-
-                    // Auto-load if user already consented during this browser session
-                    try {
-                        if (sessionStorage.getItem('campflow_embed_consent') === 'true') {
-                            loadIframe();
-                        }
-                    } catch {
-                        // ignore
-                    }
-
-                    const handleMessage = (e) => {
-                        if (!e || !e.data || e.data.frameId !== frameId) return;
-                        if (!iframe) return;
-
-                        if (e.data.type === undefined || e.data.type === 'resize') {
-                            if (typeof e.data.height === 'number' && e.data.height > 0) {
-                                iframe.style.height = `${e.data.height}px`;
-                            }
-                        } else if (e.data.type === 'scroll') {
-                            const rect = iframe.getBoundingClientRect();
-                            const top = Math.max(
-                                0,
-                                window.scrollY + rect.top + (Number(e.data.top) || 0) - 100
-                            );
-                            window.scrollTo({ top, behavior: 'smooth' });
-                        }
-                    };
-
-                    window.addEventListener('message', handleMessage);
-                })();
-            </script>
+            <noscript class="mt-4 text-xs text-amber-600 dark:text-amber-400">
+                JavaScript ist in Ihrem Browser deaktiviert. Bitte nutzen Sie den Link &bdquo;Direkt
+                bei Campflow öffnen&ldquo;.
+            </noscript>
         </div>
-    )
-}
+
+        {/* Iframe element (initially unmounted/hidden without src) */}
+        <iframe
+            id={frameId}
+            data-src={iframeSrc}
+            title={title}
+            width="100%"
+            style="border: none; overflow: hidden; height: 750px; min-height: 400px; background-color: #ffffff; display: none;"
+        />
+
+        <script is:inline define:vars={{ frameId }}>
+            (() => {
+                const placeholder = document.getElementById(`placeholder-${frameId}`);
+                const iframe = document.getElementById(frameId);
+                const btn = document.getElementById(`btn-load-${frameId}`);
+                const wrapper = document.getElementById(`wrapper-${frameId}`);
+
+                const loadIframe = () => {
+                    if (!iframe) return;
+                    if (!iframe.src && iframe.dataset.src) {
+                        iframe.src = iframe.dataset.src;
+                    }
+                    if (placeholder) {
+                        placeholder.style.display = 'none';
+                    }
+                    iframe.style.display = 'block';
+                    if (wrapper) {
+                        wrapper.classList.remove('dark:bg-gray-800');
+                        wrapper.classList.add('bg-white');
+                    }
+                    try {
+                        sessionStorage.setItem('campflow_embed_consent', 'true');
+                    } catch {
+                        // ignore quota or disabled storage
+                    }
+                };
+
+                if (btn) {
+                    btn.addEventListener('click', loadIframe);
+                }
+
+                // Auto-load if user already consented during this browser session
+                try {
+                    if (sessionStorage.getItem('campflow_embed_consent') === 'true') {
+                        loadIframe();
+                    }
+                } catch {
+                    // ignore
+                }
+
+                const handleMessage = (e) => {
+                    if (!e || !e.data || e.data.frameId !== frameId) return;
+                    if (!iframe) return;
+
+                    if (e.data.type === undefined || e.data.type === 'resize') {
+                        if (typeof e.data.height === 'number' && e.data.height > 0) {
+                            iframe.style.height = `${e.data.height}px`;
+                        }
+                    } else if (e.data.type === 'scroll') {
+                        const rect = iframe.getBoundingClientRect();
+                        const top = Math.max(
+                            0,
+                            window.scrollY + rect.top + (Number(e.data.top) || 0) - 100
+                        );
+                        window.scrollTo({ top, behavior: 'smooth' });
+                    }
+                };
+
+                window.addEventListener('message', handleMessage);
+            })();
+        </script>
+    </div>
+)}

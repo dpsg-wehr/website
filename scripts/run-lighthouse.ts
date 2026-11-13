@@ -1,4 +1,5 @@
 import { execSync } from 'child_process';
+
 import { chromium } from '@playwright/test';
 
 // Ensure CHROME_PATH is set to Playwright's chromium if not already provided

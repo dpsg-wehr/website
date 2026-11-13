@@ -1,5 +1,6 @@
-import type { APIRoute } from 'astro';
 import { execSync } from 'node:child_process';
+
+import type { APIRoute } from 'astro';
 
 export const prerender = true;
 

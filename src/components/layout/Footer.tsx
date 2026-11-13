@@ -1,6 +1,11 @@
 import { IoLogoInstagram, IoLogoFacebook } from 'react-icons/io5';
+
 import globalData from '@/content/global/index.json';
+
 import FooterCamp from './FooterCamp';
+
+/** Baked in at build time so the footer render stays pure. */
+const CURRENT_YEAR = new Date().getFullYear();
 
 function SocialLink({
     url,
@@ -19,7 +24,7 @@ function SocialLink({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            className={`w-8 h-8 rounded-full border border-gray-600 flex items-center justify-center text-white ${hoverColor} transition-colors ml-4`}
+            className={`flex h-8 w-8 items-center justify-center rounded-full border border-gray-600 text-white ${hoverColor} ml-4 transition-colors`}
         >
             {children}
         </a>
@@ -44,15 +49,15 @@ function InstagramLink({ url }: { url: string }) {
 
 function SocialMedia({ facebook, instagram }: { facebook: string; instagram: string }) {
     return (
-        <div className="w-full flex place-content-between content-center mt-10 mb-0">
-            <p className="text-center text-white text-sm ml-4">
-                © {new Date().getFullYear()} DPSG St. Bernhard Wehr
+        <div className="mt-10 mb-0 flex w-full place-content-between content-center">
+            <p className="ml-4 text-center text-sm text-white">
+                © {CURRENT_YEAR} DPSG St. Bernhard Wehr
                 <span className="mx-2 text-gray-400">•</span>
                 <a href="/intern" className="text-green-50 underline hover:text-white">
                     Intern
                 </a>
             </p>
-            <div className="flex place-content-end items-center mr-4">
+            <div className="mr-4 flex place-content-end items-center">
                 {instagram && <InstagramLink url={instagram} />}
                 {facebook && <FacebookLink url={facebook} />}
             </div>
@@ -75,7 +80,7 @@ function FooterLink({
             href={url}
             target={external ? '_blank' : undefined}
             rel={external ? 'noopener noreferrer' : undefined}
-            className="text-green-50 hover:underline text-sm mb-1"
+            className="mb-1 text-sm text-green-50 hover:underline"
         >
             {text}
         </a>
@@ -90,8 +95,8 @@ function FooterLinkColumn({
     links: { text: string; url: string; external: boolean }[];
 }) {
     return (
-        <div className="flex flex-col w-auto m-4 mb-0 sm:flex-1">
-            <h1 className="font-semibold text-lg mb-2">{title}</h1>
+        <div className="m-4 mb-0 flex w-auto flex-col sm:flex-1">
+            <h1 className="mb-2 text-lg font-semibold">{title}</h1>
             {links.map((link, i) => (
                 <FooterLink key={i} {...link} />
             ))}
@@ -101,15 +106,15 @@ function FooterLinkColumn({
 
 function FooterDPSG() {
     return (
-        <div className="md:flex-shrink-0 m-4 mb-0">
-            <h1 className="font-semibold text-lg mb-2">DPSG</h1>
+        <div className="m-4 mb-0 md:flex-shrink-0">
+            <h1 className="mb-2 text-lg font-semibold">DPSG</h1>
             <a href="https://www.dpsg.de" target="_blank" rel="noopener noreferrer">
                 <img
                     src="/dpsg.svg"
                     alt="DPSG Logo"
                     width="224"
                     height="108"
-                    className="bg-white w-full sm:w-56"
+                    className="w-full bg-white sm:w-56"
                     loading="lazy"
                     data-image-component="true"
                 />
@@ -124,8 +129,8 @@ function FooterMain({
     columns: { title: string; links: { text: string; url: string; external: boolean }[] }[];
 }) {
     return (
-        <div className="flex flex-col sm:flex-row flex-wrap gap-4 text-white">
-            <div className="flex-1 flex flex-row place-content-between">
+        <div className="flex flex-col flex-wrap gap-4 text-white sm:flex-row">
+            <div className="flex flex-1 flex-row place-content-between">
                 {columns.map((col, i) => (
                     <FooterLinkColumn key={i} title={col.title} links={col.links} />
                 ))}
@@ -188,7 +193,7 @@ export default function Footer() {
                     col?.links?.map((l) => ({
                         text: l?.text || '',
                         url: l?.url || '',
-                        external: !!l?.external,
+                        external: l?.external ?? false,
                     })) || [],
             }));
         }
@@ -197,8 +202,8 @@ export default function Footer() {
     return (
         <footer data-nosnippet className="w-full">
             <FooterCamp />
-            <div className="bg-gray-800 pb-2 pt-6">
-                <div className="max-w-sm sm:max-w-4xl px-3 flex flex-col justify-center mx-auto my-0">
+            <div className="bg-gray-800 pt-6 pb-2">
+                <div className="mx-auto my-0 flex max-w-sm flex-col justify-center px-3 sm:max-w-4xl">
                     <FooterMain columns={columns} />
                     <SocialMedia facebook={social.facebook} instagram={social.instagram} />
                 </div>

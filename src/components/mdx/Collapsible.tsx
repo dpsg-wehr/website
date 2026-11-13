@@ -18,12 +18,12 @@ export default function Collapsible({
         <div className="mb-2">
             <button
                 type="button"
-                className="flex flex-row items-center text-gray-700 dark:text-gray-300 bg-transparent border-none p-0 cursor-pointer"
+                className="flex cursor-pointer flex-row items-center border-none bg-transparent p-0 text-gray-700 dark:text-gray-300"
                 onClick={toggle}
                 aria-expanded={open}
             >
                 <p className="mr-2">{label}</p>
-                <div className={`${open ? '' : 'transform -rotate-90'}`}>
+                <div className={open ? '' : '-rotate-90 transform'}>
                     <ChevronDown />
                 </div>
             </button>

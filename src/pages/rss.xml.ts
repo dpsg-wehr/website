@@ -1,5 +1,6 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
+
 import getPostMetadata from '@/lib/content/posts';
 import { renderRssContent } from '@/lib/content/rss';
 

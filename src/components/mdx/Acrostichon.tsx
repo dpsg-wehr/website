@@ -6,17 +6,17 @@ export default function Acrostichon({ data = [] }: { data?: AcrostichonData[] })
     }
     const rows = data.map((item, i) => {
         return (
-            <div key={i} className="flex justify-center align-middle items-center">
-                <div key={item.left} className="flex-1 text-right my-0 text-xl">
+            <div key={i} className="flex items-center justify-center align-middle">
+                <div key={item.left} className="my-0 flex-1 text-right text-xl">
                     {item.left == '' ? <br /> : item.left}
                 </div>
                 <div
                     key={item.middle}
-                    className="flex-shrink-0 text-center mx-2 font-semibold text-blue-600 text-4xl my-0"
+                    className="mx-2 my-0 flex-shrink-0 text-center text-4xl font-semibold text-blue-600"
                 >
                     {item.middle == '' ? <br /> : item.middle}
                 </div>
-                <div key={item.right} className="flex-1 my-0 text-xl">
+                <div key={item.right} className="my-0 flex-1 text-xl">
                     {item.right == '' ? <br /> : item.right}
                 </div>
             </div>

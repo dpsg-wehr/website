@@ -1,7 +1,7 @@
-import getPostMetadata from '@/lib/content/posts';
 import globalData from '@/content/global/index.json';
-import { BannerConfig } from '@/types';
+import getPostMetadata from '@/lib/content/posts';
 import { normalizeBannerUntil } from '@/lib/utils/date';
+import { BannerConfig } from '@/types';
 
 export function getActiveBanner(): BannerConfig | null {
     const posts = getPostMetadata();

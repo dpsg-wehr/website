@@ -2,7 +2,7 @@
 ---
 
 <div id="calendar-root">
-    <div class="h-[670px] w-full bg-gray-100 dark:bg-gray-800 animate-pulse rounded-lg flex items-center justify-center text-gray-500">
+    <div class="flex h-[670px] w-full animate-pulse items-center justify-center rounded-lg bg-gray-100 text-gray-500 dark:bg-gray-800">
         Kalender wird geladen...
     </div>
 </div>
@@ -38,12 +38,15 @@
     const el = document.getElementById('calendar-root');
     if (el) {
         if ('IntersectionObserver' in window) {
-            const observer = new IntersectionObserver((entries) => {
-                if (entries[0]?.isIntersecting) {
-                    observer.disconnect();
-                    scheduleInit();
-                }
-            }, { rootMargin: '200px' });
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    if (entries[0]?.isIntersecting) {
+                        observer.disconnect();
+                        scheduleInit();
+                    }
+                },
+                { rootMargin: '200px' }
+            );
             observer.observe(el);
         } else {
             scheduleInit();

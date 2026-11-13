@@ -14,10 +14,4 @@ const slug = props['data-slug'] || props.slug;
 const isCampflow = src.includes('campflow.de') || Boolean(slug && src.includes('campflow'));
 ---
 
-{
-    isCampflow ? (
-        <CampflowForm {...props} slug={slug} />
-    ) : (
-        <script {...props} />
-    )
-}
+{isCampflow ? <CampflowForm {...props} slug={slug} /> : <script {...props} />}

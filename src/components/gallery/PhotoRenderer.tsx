@@ -1,4 +1,5 @@
 import type { RenderImageContext, RenderImageProps } from 'react-photo-album';
+
 import type { PhotoPlus } from '@/types';
 
 export default function PhotoRenderer(

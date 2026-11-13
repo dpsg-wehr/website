@@ -1,4 +1,5 @@
 import { Photo } from 'react-photo-album';
+
 import { Icons } from '@/lib/icons';
 
 export interface BannerConfig {

@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
+
 import matter from 'gray-matter';
+
 import type { SearchItem } from '../src/types';
 
 const CONTENT_DIRS = [

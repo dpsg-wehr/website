@@ -1,4 +1,3 @@
-import Lilie from '@/components/mdx/Lilie';
 import {
     IoNewspaper,
     IoPeople,
@@ -11,6 +10,8 @@ import {
     IoDocumentOutline,
     IoMailOutline,
 } from 'react-icons/io5';
+
+import Lilie from '@/components/mdx/Lilie';
 
 export type Icons =
     | 'Lilie'

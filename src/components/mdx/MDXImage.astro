@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+
 import { resolveImage } from '@/lib/assets/images';
 
 interface Props {
@@ -37,7 +38,7 @@ const {
 if (!src) return;
 
 const isPriority = priority === true || priority === 'true' || loadingProp === 'eager';
-const loadingAttr = isPriority ? 'eager' : (loadingProp || 'lazy');
+const loadingAttr = isPriority ? 'eager' : loadingProp || 'lazy';
 const fetchPriorityAttr = fetchPriorityProp || (isPriority ? 'high' : undefined);
 const imageMeta = resolveImage(src);
 

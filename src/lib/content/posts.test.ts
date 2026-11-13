@@ -1,7 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import getPostMetadata, { clearPostMetadataCache, getPostBySlug, cleanContentSlug } from './posts';
 import fs from 'fs';
+
 import matter from 'gray-matter';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+import getPostMetadata, { clearPostMetadataCache, getPostBySlug, cleanContentSlug } from './posts';
 
 // Setup mocking
 vi.mock('fs', () => ({

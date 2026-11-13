@@ -1,20 +1,17 @@
 ---
 import getPostMetadata from '@/lib/content/posts';
-import PostPreview from './PostPreview.astro';
 import { formatPostDate } from '@/lib/utils/date';
+
+import PostPreview from './PostPreview.astro';
 
 const postMetadata = getPostMetadata();
 const recentPosts = postMetadata.slice(0, 2);
 ---
 
 {recentPosts.length > 0 && (
-    <div class="not-prose grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto sm:max-w-max no-underline">
+    <div class="not-prose mx-auto grid max-w-md grid-cols-1 gap-4 no-underline sm:max-w-max sm:grid-cols-2">
         {recentPosts.map((post) => (
-            <PostPreview
-                {...post}
-                priority={false}
-                date={formatPostDate(post.date)}
-            />
+            <PostPreview {...post} priority={false} date={formatPostDate(post.date)} />
         ))}
     </div>
 )}

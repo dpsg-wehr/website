@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { buildPhotoTagGroups } from './photos-tags';
+
 import type { PhotoPlus } from '@/types';
+
+import { buildPhotoTagGroups } from './photos-tags';
 
 describe('buildPhotoTagGroups', () => {
     it('returns default fallback groups when photos have no tags', () => {

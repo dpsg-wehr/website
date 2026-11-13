@@ -52,17 +52,17 @@ export default function SearchButton() {
                 onClick={onOpenSearch}
                 onMouseEnter={preloadSearch}
                 onFocus={preloadSearch}
-                className="group cursor-pointer bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-100 py-1.5 px-2 lg:px-3 rounded-lg flex items-center gap-2 w-auto min-[500px]:w-36 lg:w-44 text-left"
+                className="group flex w-auto cursor-pointer items-center gap-2 rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-left transition-all duration-100 hover:border-gray-300 min-[500px]:w-36 lg:w-44 lg:px-3 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-500"
             >
                 <IoSearch
                     aria-hidden="true"
-                    className="text-gray-400 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200 text-lg shrink-0"
+                    className="shrink-0 text-lg text-gray-400 group-hover:text-gray-600 dark:text-gray-400 dark:group-hover:text-gray-200"
                 />
                 <span className="sr-only min-[500px]:hidden">Suchen</span>
-                <span className="hidden min-[500px]:inline flex-1 text-sm font-light text-gray-600 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-gray-200 truncate">
+                <span className="hidden flex-1 truncate text-sm font-light text-gray-600 group-hover:text-gray-800 min-[500px]:inline dark:text-gray-400 dark:group-hover:text-gray-200">
                     Suchen...
                 </span>
-                <kbd className="hidden min-[500px]:inline-flex px-1.5 py-0.5 text-[10px] font-semibold text-gray-600 bg-gray-50 border border-gray-200 rounded dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 uppercase shrink-0">
+                <kbd className="hidden shrink-0 rounded border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600 uppercase min-[500px]:inline-flex dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300">
                     {isMac ? '⌘' : 'Ctrl'} K
                 </kbd>
             </button>

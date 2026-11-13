@@ -1,7 +1,7 @@
-import { navigationLinks as defaultNavLinks } from '@/lib/config';
 import globalData from '@/content/global/index.json';
-import type { NavigationLinkGroup, NavigationLink } from '@/types';
+import { navigationLinks as defaultNavLinks } from '@/lib/config';
 import type { Icons } from '@/lib/icons';
+import type { NavigationLinkGroup, NavigationLink } from '@/types';
 
 interface RawNavItem {
     label: string;

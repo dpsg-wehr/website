@@ -1,7 +1,8 @@
 ---
-import RootLayout from '@/layouts/RootLayout.astro';
 import { Image } from 'astro:assets';
+
 import logoImg from '@/assets/images/logo.png';
+import RootLayout from '@/layouts/RootLayout.astro';
 ---
 
 <RootLayout
@@ -9,7 +10,7 @@ import logoImg from '@/assets/images/logo.png';
     description="Seite nicht gefunden"
     robots="noindex, nofollow"
 >
-    <div class="h-full flex flex-col items-center">
+    <div class="flex h-full flex-col items-center">
         <div class="mx-auto my-auto flex flex-col items-center">
             <Image
                 src={logoImg}
@@ -18,12 +19,12 @@ import logoImg from '@/assets/images/logo.png';
                 class="-ml-8"
                 loading="eager"
             />
-            <div class="prose dark:prose-invert mt-4 text-center max-w-none">
+            <div class="prose dark:prose-invert mt-4 max-w-none text-center">
                 <h1>Fehler 404 - Pfad nicht gefunden</h1>
                 <p>
-                    Oh nein! Wir haben nicht gefunden wonach du gesucht hast. Manchmal passiert
-                    das selbst uns. Möglicherweise ist der Link falsch oder die Seite wurde
-                    entfernt. Bitte überprüfe die URL und versuch es erneut. Vielen Dank!
+                    Oh nein! Wir haben nicht gefunden wonach du gesucht hast. Manchmal passiert das
+                    selbst uns. Möglicherweise ist der Link falsch oder die Seite wurde entfernt.
+                    Bitte überprüfe die URL und versuch es erneut. Vielen Dank!
                 </p>
                 <a href="/">Hier gehts zurück zur Startseite</a>
             </div>

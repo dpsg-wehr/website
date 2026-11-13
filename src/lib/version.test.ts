@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+
 import { GET } from '@/pages/version.json';
 
 describe('GET /version.json', () => {

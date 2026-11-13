@@ -100,20 +100,20 @@ export default function GroupOverview({
     return (
         <div
             data-testid="group-overview-card"
-            className="my-6 not-prose rounded-xl bg-white dark:bg-gray-800 shadow-xs hover:shadow-md transition-all duration-300 border border-gray-200/80 dark:border-gray-700/80 p-5 sm:p-6"
+            className="not-prose my-6 rounded-xl border border-gray-200/80 bg-white p-5 shadow-xs transition-all duration-300 hover:shadow-md sm:p-6 dark:border-gray-700/80 dark:bg-gray-800"
             style={{ borderTop: `4px solid ${accentColor}` }}
         >
-            <div className="flex items-center gap-3.5 sm:gap-4 mb-4 pb-3.5 border-b border-gray-100 dark:border-gray-700/60">
+            <div className="mb-4 flex items-center gap-3.5 border-b border-gray-100 pb-3.5 sm:gap-4 dark:border-gray-700/60">
                 {logoPng ? (
-                    <picture className="shrink-0 flex items-center justify-center">
+                    <picture className="flex shrink-0 items-center justify-center">
                         {logoWebp && <source srcSet={logoWebp} type="image/webp" />}
                         <img
                             src={logoPng}
                             alt={meta.alt}
                             className={
                                 meta.isWide
-                                    ? 'h-9 sm:h-11 w-auto max-w-[130px] sm:max-w-[150px] object-contain'
-                                    : 'w-12 h-12 sm:w-14 sm:h-14 object-contain rounded-md'
+                                    ? 'h-9 w-auto max-w-[130px] object-contain sm:h-11 sm:max-w-[150px]'
+                                    : 'h-12 w-12 rounded-md object-contain sm:h-14 sm:w-14'
                             }
                             loading="eager"
                             decoding="async"
@@ -121,18 +121,18 @@ export default function GroupOverview({
                     </picture>
                 ) : null}
                 <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white m-0 tracking-tight">
+                    <h2 className="m-0 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl dark:text-white">
                         {name}
                     </h2>
                 </div>
             </div>
 
             <div className="space-y-2 text-sm sm:text-base">
-                <div className="text-gray-700 dark:text-gray-300 font-medium">{age}</div>
+                <div className="font-medium text-gray-700 dark:text-gray-300">{age}</div>
 
                 <div className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
                     <IoCalendarOutline
-                        className="w-5 h-5 text-gray-500 dark:text-gray-400 shrink-0 mt-0.5"
+                        className="mt-0.5 h-5 w-5 shrink-0 text-gray-500 dark:text-gray-400"
                         aria-hidden="true"
                     />
                     <span>{time}</span>
@@ -141,12 +141,12 @@ export default function GroupOverview({
                 {email && (
                     <div className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
                         <IoMailOutline
-                            className="w-5 h-5 text-gray-500 dark:text-gray-400 shrink-0 mt-0.5"
+                            className="mt-0.5 h-5 w-5 shrink-0 text-gray-500 dark:text-gray-400"
                             aria-hidden="true"
                         />
                         <a
                             href={`mailto:${email}`}
-                            className="text-blue-600 dark:text-blue-400 hover:underline break-all"
+                            className="break-all text-blue-600 hover:underline dark:text-blue-400"
                         >
                             {email}
                         </a>
@@ -154,13 +154,13 @@ export default function GroupOverview({
                 )}
 
                 {description && (
-                    <p className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700/60 text-sm text-gray-600 dark:text-gray-300 leading-relaxed italic m-0">
+                    <p className="m-0 mt-3 border-t border-gray-100 pt-3 text-sm leading-relaxed text-gray-600 italic dark:border-gray-700/60 dark:text-gray-300">
                         {description}
                     </p>
                 )}
 
                 {children && (
-                    <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700/60 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+                    <div className="mt-3 border-t border-gray-100 pt-3 text-sm leading-relaxed text-gray-600 dark:border-gray-700/60 dark:text-gray-300">
                         {children}
                     </div>
                 )}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { IoSunny } from 'react-icons/io5';
 import { IoMdBonfire } from 'react-icons/io';
+import { IoSunny } from 'react-icons/io5';
 
 export default function ToggleThemeButton() {
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -8,7 +8,7 @@ export default function ToggleThemeButton() {
 
     useEffect(() => {
         const isDark = document.documentElement.classList.contains('dark');
-        Promise.resolve().then(() => {
+        void Promise.resolve().then(() => {
             setTheme(isDark ? 'dark' : 'light');
             setMounted(true);
         });
@@ -32,7 +32,7 @@ export default function ToggleThemeButton() {
         <button
             onClick={onToggleTheme}
             aria-label="Toggle dark mode"
-            className={`cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 dark:text-white text-gray-800 w-10 h-10 flex items-center justify-center rounded text-xl ${
+            className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded text-xl text-gray-800 transition-colors duration-200 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-600 ${
                 !mounted ? 'invisible' : ''
             }`}
         >

@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getActiveBanner } from './banner';
+
 import getPostMetadata from '@/lib/content/posts';
+
+import { getActiveBanner } from './banner';
 
 vi.mock('@/lib/content/posts');
 vi.mock('@/content/global/index.json', () => ({

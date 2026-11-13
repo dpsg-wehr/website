@@ -1,8 +1,10 @@
-import { describe, it, expect, vi } from 'vitest';
-import { GET } from '@/pages/rss.xml';
-import { renderRssContent } from './rss';
 import type { APIContext } from 'astro';
+import { describe, it, expect, vi } from 'vitest';
+
+import { GET } from '@/pages/rss.xml';
 import type { PostMetadata } from '@/types';
+
+import { renderRssContent } from './rss';
 
 vi.mock('@/lib/content/posts', () => ({
     default: vi.fn(() => [

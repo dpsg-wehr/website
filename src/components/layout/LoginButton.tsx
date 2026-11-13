@@ -17,14 +17,14 @@ export default function LoginButton({ className, variant = 'navbar', onClick }: 
                 rel="noopener noreferrer"
                 onClick={onClick}
                 aria-label="Campflow Mitgliederportal Login"
-                className={`flex items-center gap-3 p-3.5 rounded-xl bg-[#261f74] hover:bg-[#32298e] active:bg-[#1d175b] text-white border border-transparent dark:border-white/10 shadow-xs transition-colors duration-150 ${className || ''}`}
+                className={`flex items-center gap-3 rounded-xl border border-transparent bg-[#261f74] p-3.5 text-white shadow-xs transition-colors duration-150 hover:bg-[#32298e] active:bg-[#1d175b] dark:border-white/10 ${className || ''}`}
             >
-                <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center text-xl text-white shrink-0">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/15 text-xl text-white">
                     <IoLogInOutline />
                 </div>
                 <div>
-                    <div className="font-semibold text-base leading-tight">Mitgliederportal</div>
-                    <div className="text-xs text-slate-300 leading-tight mt-0.5">
+                    <div className="text-base leading-tight font-semibold">Mitgliederportal</div>
+                    <div className="mt-0.5 text-xs leading-tight text-slate-300">
                         Daten selbst verwalten (Campflow)
                     </div>
                 </div>
@@ -47,9 +47,9 @@ export default function LoginButton({ className, variant = 'navbar', onClick }: 
             aria-label="Campflow Mitgliederportal Login"
             title="Campflow Mitgliederportal"
             onClick={onClick}
-            className={`cursor-pointer ${defaultDisplay} items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-[#261f74] hover:bg-[#32298e] active:bg-[#1d175b] text-white border border-transparent dark:border-white/20 transition-colors duration-150 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-[#261f74] dark:focus:ring-indigo-400 focus:ring-offset-2 dark:focus:ring-offset-gray-700 shrink-0 ${className || ''}`}
+            className={`cursor-pointer ${defaultDisplay} shrink-0 items-center justify-center gap-1.5 rounded-lg border border-transparent bg-[#261f74] px-3 py-1.5 text-sm font-medium text-white shadow-xs transition-colors duration-150 hover:bg-[#32298e] focus:ring-2 focus:ring-[#261f74] focus:ring-offset-2 focus:outline-hidden active:bg-[#1d175b] dark:border-white/20 dark:focus:ring-indigo-400 dark:focus:ring-offset-gray-700 ${className || ''}`}
         >
-            <IoLogInOutline className="text-lg shrink-0 text-white" />
+            <IoLogInOutline className="shrink-0 text-lg text-white" />
             <span>Login</span>
         </a>
     );

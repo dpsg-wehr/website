@@ -1,10 +1,13 @@
-import PhotoAlbum from 'react-photo-album';
-import 'react-photo-album/styles.css';
-import { PhotoPlus, TagGroup } from '@/types';
 import { useState, useMemo } from 'react';
+
+import 'react-photo-album/styles.css';
+import PhotoAlbum from 'react-photo-album';
+
+import { buildPhotoTagGroups } from '@/lib/content/photos-tags';
+import { PhotoPlus, TagGroup } from '@/types';
+
 import GalleryHeader from './GalleryHeader';
 import PhotoRenderer from './PhotoRenderer';
-import { buildPhotoTagGroups } from '@/lib/content/photos-tags';
 
 export default function PhotoAlbumWrapper({ photos }: { photos: PhotoPlus[] }) {
     const initialTags = useMemo(() => buildPhotoTagGroups(photos), [photos]);

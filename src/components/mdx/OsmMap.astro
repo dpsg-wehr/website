@@ -44,20 +44,18 @@ const directUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${
 
 <div
     id={`wrapper-${frameId}`}
-    class={`w-full my-6 bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden isolate transition-all ${propClass || className}`}
+    class={`isolate my-6 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md transition-all dark:border-gray-700 dark:bg-gray-800 ${propClass || className}`}
     data-osm-wrapper
 >
     {/* 2-Click Consent Placeholder */}
     <div
         id={`placeholder-${frameId}`}
-        class="flex flex-col items-center text-center py-6 sm:py-8 px-4"
+        class="flex flex-col items-center px-4 py-6 text-center sm:py-8"
     >
-        <div
-            class="w-12 h-12 mb-4 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400"
-        >
+        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-6 h-6"
+                class="h-6 w-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -76,31 +74,30 @@ const directUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${
             </svg>
         </div>
 
-        <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-            {title}
-        </h4>
+        <h4 class="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h4>
 
-        <p class="max-w-lg text-sm text-gray-600 dark:text-gray-300 mb-5 leading-relaxed">
-            An dieser Stelle ist eine interaktive Karte von <strong>OpenStreetMap</strong> eingebunden.
-            Beim Laden der Karte werden Daten (wie Ihre IP-Adresse) an die Server der OpenStreetMap Foundation übertragen.
-            Weitere Informationen finden Sie in unserer{' '}
+        <p class="mb-5 max-w-lg text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+            An dieser Stelle ist eine interaktive Karte von <strong>OpenStreetMap</strong>{' '}
+            eingebunden. Beim Laden der Karte werden Daten (wie Ihre IP-Adresse) an die Server der
+            OpenStreetMap Foundation übertragen. Weitere Informationen finden Sie in unserer{' '}
             <a
                 href="/pages/datenschutz#openstreetmap"
-                class="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                class="font-medium text-blue-600 hover:underline dark:text-blue-400"
             >
                 Datenschutzerklärung
-            </a>.
+            </a>
+            .
         </p>
 
-        <div class="flex flex-col sm:flex-row items-center gap-3">
+        <div class="flex flex-col items-center gap-3 sm:flex-row">
             <button
                 type="button"
                 id={`btn-load-${frameId}`}
-                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs focus:ring-2 focus:ring-emerald-600 focus:outline-hidden transition-colors cursor-pointer"
+                class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-medium text-white shadow-xs transition-colors hover:bg-emerald-800 focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="w-4 h-4"
+                    class="h-4 w-4"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -124,11 +121,11 @@ const directUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${
                 href={directUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                class="inline-flex items-center justify-center gap-1.5 rounded-lg px-4 py-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
             >
                 <span>Größere Karte direkt bei OpenStreetMap öffnen</span>
                 <svg
-                    class="w-3.5 h-3.5"
+                    class="h-3.5 w-3.5"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -144,27 +141,32 @@ const directUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${
         </div>
 
         <noscript class="mt-4 text-xs text-amber-600 dark:text-amber-400">
-            JavaScript ist in Ihrem Browser deaktiviert. Bitte nutzen Sie den Link &bdquo;Größere Karte direkt bei OpenStreetMap öffnen&ldquo;.
+            JavaScript ist in Ihrem Browser deaktiviert. Bitte nutzen Sie den Link &bdquo;Größere
+            Karte direkt bei OpenStreetMap öffnen&ldquo;.
         </noscript>
     </div>
 
     {/* Map Container (initially hidden) */}
-    <div id={`map-container-${frameId}`} class="w-full rounded-t-xl overflow-hidden" style="display: none;">
+    <div
+        id={`map-container-${frameId}`}
+        class="w-full overflow-hidden rounded-t-xl"
+        style="display: none;"
+    >
         <iframe
             id={frameId}
             data-src={iframeSrc}
             title={title}
             width="100%"
             height={height}
-            class="w-full rounded-t-xl overflow-hidden"
+            class="w-full overflow-hidden rounded-t-xl"
             style={`border: none; width: 100%; height: ${height}; display: block; border-top-left-radius: 0.75rem; border-top-right-radius: 0.75rem; overflow: hidden;`}
         ></iframe>
-        <div class="px-4 py-2.5 bg-gray-50 dark:bg-gray-700/60 border-t border-gray-200 dark:border-gray-600/80 text-xs text-gray-600 dark:text-gray-300 flex flex-wrap justify-between items-center gap-2">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-t border-gray-200 bg-gray-50 px-4 py-2.5 text-xs text-gray-600 dark:border-gray-600/80 dark:bg-gray-700/60 dark:text-gray-300">
             <a
                 href={directUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="hover:underline font-medium text-blue-600 dark:text-blue-400"
+                class="font-medium text-blue-600 hover:underline dark:text-blue-400"
             >
                 Größere Karte anzeigen
             </a>
@@ -174,7 +176,7 @@ const directUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=${
                     href="https://www.openstreetmap.org/copyright"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="hover:underline text-blue-600 dark:text-blue-400"
+                    class="text-blue-600 hover:underline dark:text-blue-400"
                 >
                     OpenStreetMap-Mitwirkende
                 </a>

@@ -1,23 +1,23 @@
 'use client';
 
 import FullCalendar from '@fullcalendar/react';
-import deLocale from '@fullcalendar/react/locales/de';
-
 import dayGridPlugin from '@fullcalendar/react/daygrid';
-import timeGridPlugin from '@fullcalendar/react/timegrid';
 import listPlugin from '@fullcalendar/react/list';
+import deLocale from '@fullcalendar/react/locales/de';
 import classicThemePlugin from '@fullcalendar/react/themes/classic';
+import timeGridPlugin from '@fullcalendar/react/timegrid';
 
 import '@fullcalendar/react/skeleton.css';
 import '@fullcalendar/react/themes/classic/theme.css';
 import '@fullcalendar/react/themes/classic/palette.css';
 
 import publicEvents from '@/content/events/public.json';
+
 import './Calendar.css';
 
 export default function Calendar() {
     return (
-        <div className="not-prose text-sm break-all m-6">
+        <div className="not-prose m-6 text-sm break-all">
             <FullCalendar
                 height={670}
                 aspectRatio={1}

@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { IoChevronDown } from 'react-icons/io5';
-import ToggleThemeButton from '@/components/ui/ToggleThemeButton';
-import { getNavigationLinks } from '@/lib/navigation';
-import { getIconFromName } from '@/lib/icons';
-import Sidebar from './Sidebar';
+
 import SearchButton from '@/components/search/SearchButton';
-import LoginButton from './LoginButton';
+import ToggleThemeButton from '@/components/ui/ToggleThemeButton';
+import { getIconFromName } from '@/lib/icons';
+import { getNavigationLinks } from '@/lib/navigation';
 import type { NavigationLinkGroup, NavigationLink } from '@/types';
+
+import LoginButton from './LoginButton';
+import Sidebar from './Sidebar';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(() => {
@@ -33,10 +35,10 @@ export default function Navbar() {
                     <a
                         key={item.link}
                         href={item.link}
-                        className="leading-none py-2 px-2 font-light hover:bg-gray-200 dark:hover:bg-gray-600 rounded dark:text-white flex flex-row items-center whitespace-nowrap"
+                        className="flex flex-row items-center rounded px-2 py-2 leading-none font-light whitespace-nowrap hover:bg-gray-200 dark:text-white dark:hover:bg-gray-600"
                     >
                         <div
-                            className={`${isThemed ? 'w-[30px] h-[30px] rounded bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300' : 'w-5 h-5'} mr-2 flex items-center justify-center`}
+                            className={`${isThemed ? 'h-[30px] w-[30px] rounded bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300' : 'h-5 w-5'} mr-2 flex items-center justify-center`}
                         >
                             {Icon}
                         </div>
@@ -58,7 +60,7 @@ export default function Navbar() {
             );
 
             return (
-                <div key={link.label} className="relative group">
+                <div key={link.label} className="group relative">
                     {link.link && link.link !== '#' ? (
                         <a href={link.link} className={triggerClassName}>
                             {triggerContent}
@@ -69,8 +71,8 @@ export default function Navbar() {
                         </button>
                     )}
                     {/* Dropdown Menu */}
-                    <div className="absolute left-0 pt-2 hidden group-hover:block group-focus-within:block w-auto min-w-[200px] z-50">
-                        <div className="bg-white dark:bg-gray-700 shadow-lg border border-gray-100 dark:border-gray-600 rounded p-1 flex flex-col gap-1">
+                    <div className="absolute left-0 z-50 hidden w-auto min-w-[200px] pt-2 group-focus-within:block group-hover:block">
+                        <div className="flex flex-col gap-1 rounded border border-gray-100 bg-white p-1 shadow-lg dark:border-gray-600 dark:bg-gray-700">
                             {menuItems}
                         </div>
                     </div>
@@ -82,7 +84,7 @@ export default function Navbar() {
             <a
                 key={link.label}
                 href={link.link}
-                className="block leading-none py-2 px-1.5 md:px-2 lg:px-3 font-light rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+                className="block rounded px-1.5 py-2 leading-none font-light hover:bg-gray-200 md:px-2 lg:px-3 dark:hover:bg-gray-600"
             >
                 {link.label}
             </a>
@@ -93,28 +95,28 @@ export default function Navbar() {
         <>
             <header
                 data-nosnippet
-                className="h-[72px] px-4 sm:px-6 lg:px-8 shadow-md sticky top-0 z-50 dark:bg-gray-700 bg-gray-50"
+                className="sticky top-0 z-50 h-[72px] bg-gray-50 px-4 shadow-md sm:px-6 lg:px-8 dark:bg-gray-700"
             >
-                <div className="h-full flex justify-between items-center w-full">
+                <div className="flex h-full w-full items-center justify-between">
                     <div className="flex items-center gap-2 md:gap-4">
                         <button
                             onClick={() => setIsOpen((prev) => !prev)}
-                            className="min-[960px]:hidden rounded hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 z-50 flex flex-col justify-center items-center w-10 h-10 gap-1 group transition-colors duration-200 cursor-pointer"
+                            className="group z-50 flex h-10 w-10 cursor-pointer flex-col items-center justify-center gap-1 rounded text-gray-700 transition-colors duration-200 hover:bg-gray-200 min-[960px]:hidden dark:text-gray-200 dark:hover:bg-gray-600"
                             aria-label="Toggle navigation"
                         >
                             <span
-                                className={`block w-5 h-0.5 bg-current transition-all duration-300 ease-in-out${
-                                    isOpen ? ' rotate-45 translate-y-1.5' : ''
+                                className={`block h-0.5 w-5 bg-current transition-all duration-300 ease-in-out${
+                                    isOpen ? ' translate-y-1.5 rotate-45' : ''
                                 }`}
                             />
                             <span
-                                className={`block w-5 h-0.5 bg-current transition-all duration-300 ease-in-out${
+                                className={`block h-0.5 w-5 bg-current transition-all duration-300 ease-in-out${
                                     isOpen ? ' opacity-0' : ''
                                 }`}
                             />
                             <span
-                                className={`block w-5 h-0.5 bg-current transition-all duration-300 ease-in-out${
-                                    isOpen ? ' -rotate-45 -translate-y-1.5' : ''
+                                className={`block h-0.5 w-5 bg-current transition-all duration-300 ease-in-out${
+                                    isOpen ? ' -translate-y-1.5 -rotate-45' : ''
                                 }`}
                             />
                         </button>
@@ -134,7 +136,7 @@ export default function Navbar() {
                                         decoding="async"
                                     />
                                 </picture>
-                                <h1 className="font-bold text-lg ml-2 hidden min-[400px]:block overflow-auto">
+                                <h1 className="ml-2 hidden overflow-auto text-lg font-bold min-[400px]:block">
                                     Pfadfinder Wehr
                                 </h1>
                             </div>
@@ -142,7 +144,7 @@ export default function Navbar() {
                     </div>
 
                     <div className="flex items-center gap-1 md:gap-2 lg:gap-3">
-                        <div className="hidden min-[960px]:flex flex-row gap-0.5 md:gap-1 lg:gap-2 items-center mr-1 md:mr-2">
+                        <div className="mr-1 hidden flex-row items-center gap-0.5 min-[960px]:flex md:mr-2 md:gap-1 lg:gap-2">
                             {renderedItems}
                         </div>
                         <SearchButton />

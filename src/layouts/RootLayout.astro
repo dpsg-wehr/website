@@ -1,9 +1,9 @@
 ---
 import '@/styles/globals.css';
-import Navbar from '@/components/layout/Navbar';
+import GlobalLightbox from '@/components/gallery/GlobalLightbox';
 import Banner from '@/components/layout/Banner';
 import Footer from '@/components/layout/Footer';
-import GlobalLightbox from '@/components/gallery/GlobalLightbox';
+import Navbar from '@/components/layout/Navbar';
 import { getActiveBanner } from '@/lib/content/banner';
 import { createOrganizationSchema, getCanonicalUrl } from '@/lib/utils/seo';
 
@@ -88,7 +88,6 @@ const umamiDomains =
 
         <!-- Structured Data -->
         <script type="application/ld+json" set:html={JSON.stringify(organizationJsonLd)} />
-
         <!-- Umami Analytics (Cookieless & Privacy-Friendly) -->
         {umamiWebsiteId && (
             <script
@@ -108,7 +107,9 @@ const umamiDomains =
                     if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
                         return localStorage.getItem('theme');
                     }
-                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches
+                        ? 'dark'
+                        : 'light';
                 };
                 const applyTheme = (t) => {
                     if (t === 'dark') {
@@ -171,7 +172,10 @@ const umamiDomains =
                     if (btn) {
                         const isOpen = sb.classList.contains('translate-x-0');
                         toggleSidebar(!isOpen);
-                    } else if (e.target === sb || e.target.closest('[data-testid="mobile-sidebar"] a')) {
+                    } else if (
+                        e.target === sb ||
+                        e.target.closest('[data-testid="mobile-sidebar"] a')
+                    ) {
                         toggleSidebar(false);
                     }
                 });
@@ -204,12 +208,12 @@ const umamiDomains =
             })();
         </script>
     </head>
-    <body class="antialiased prose-headings:break-words prose-headings:hyphens-auto">
-        <div class="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-700 text-black dark:text-white">
+    <body class="prose-headings:break-words prose-headings:hyphens-auto antialiased">
+        <div class="flex min-h-screen flex-col bg-gray-100 text-black dark:bg-gray-700 dark:text-white">
             <Navbar client:load />
             {banner && <Banner banner={banner} client:only="react" />}
-            <div class="flex-1 flex flex-col relative">
-                <main class="max-w-4xl w-full mx-auto px-2 sm:px-4 my-12 md:my-20 flex-1">
+            <div class="relative flex flex-1 flex-col">
+                <main class="mx-auto my-12 w-full max-w-4xl flex-1 px-2 sm:px-4 md:my-20">
                     <slot />
                 </main>
             </div>

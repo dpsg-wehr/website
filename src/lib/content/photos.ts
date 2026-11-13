@@ -1,7 +1,8 @@
-import type { PhotoPlus } from '@/types';
-import { resolveImage } from '@/lib/assets/images';
-import photoInfo from '@/content/photos.json';
 import { getImage } from 'astro:assets';
+
+import photoInfo from '@/content/photos.json';
+import { resolveImage } from '@/lib/assets/images';
+import type { PhotoPlus } from '@/types';
 
 export async function getPhotos(): Promise<PhotoPlus[]> {
     const photos: (PhotoPlus | undefined)[] = await Promise.all(

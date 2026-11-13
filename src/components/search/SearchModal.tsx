@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
 import Fuse, { FuseResultMatch } from 'fuse.js';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { IoSearch, IoClose } from 'react-icons/io5';
+
 import { getIconFromName } from '@/lib/icons';
 import { findNavigationIcon } from '@/lib/navigation';
 import type { SearchItem } from '@/types';
@@ -99,7 +100,7 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
         const match = matches.find((m) => m.key === key);
         if (!match) return text;
 
-        const query = queryText.trim().toLowerCase();
+        const needle = queryText.trim().toLowerCase();
 
         // Simple Levenshtein distance
         const getEditDistance = (a: string, b: string): number => {
@@ -127,7 +128,7 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
             if (matchLen < 3) return false;
 
             // Maximum edit distance of 2
-            return getEditDistance(query, substring) <= 2;
+            return getEditDistance(needle, substring) <= 2;
         });
 
         if (targetIndices.length === 0) return text;
@@ -143,7 +144,7 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
             result.push(
                 <mark
                     key={start}
-                    className="bg-yellow-200 dark:bg-yellow-800/50 dark:text-yellow-100 rounded-sm px-0.5 font-medium"
+                    className="rounded-sm bg-yellow-200 px-0.5 font-medium dark:bg-yellow-800/50 dark:text-yellow-100"
                 >
                     {text.slice(start, end + 1)}
                 </mark>
@@ -199,7 +200,7 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
                                             ([s, e]) => [s - offset, e - offset] as [number, number]
                                         )
                                         .filter(([s, e]) => s < snippet.length && e >= 0),
-                                } as FuseResultMatch;
+                                };
                             }
                             return m;
                         });
@@ -253,28 +254,28 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4 sm:pt-32">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-20 sm:pt-32">
             <div
                 className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
                 onClick={handleClose}
             />
 
-            <div className="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center p-4 border-b border-gray-200 dark:border-gray-700">
-                    <IoSearch className="text-gray-400 text-xl mr-3" />
+            <div className="relative w-full max-w-2xl overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800">
+                <div className="flex items-center border-b border-gray-200 p-4 dark:border-gray-700">
+                    <IoSearch className="mr-3 text-xl text-gray-400" />
                     <input
                         ref={inputRef}
                         type="search"
                         inputMode="search"
                         autoFocus
-                        className="flex-1 bg-transparent border-none outline-none text-gray-900 dark:text-white placeholder-gray-400 text-lg"
+                        className="flex-1 border-none bg-transparent text-lg text-gray-900 placeholder-gray-400 outline-none dark:text-white"
                         placeholder="Suchen..."
                         value={query}
                         onChange={(e) => handleSearch(e.target.value)}
                     />
                     <button
                         onClick={handleClose}
-                        className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-400"
+                        className="rounded p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                         <IoClose size={24} />
                     </button>
@@ -286,7 +287,7 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
                             {results.map((item, index) => (
                                 <div
                                     key={item.slug}
-                                    className={`p-3 rounded-lg cursor-pointer flex justify-between items-center transition-colors ${
+                                    className={`flex cursor-pointer items-center justify-between rounded-lg p-3 transition-colors ${
                                         index === activeIndex
                                             ? 'bg-gray-100 dark:bg-gray-700'
                                             : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
@@ -294,11 +295,11 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
                                     onClick={() => handleSelect(item)}
                                     onMouseEnter={() => setActiveIndex(index)}
                                 >
-                                    <div className="mr-4 text-gray-400 dark:text-gray-500 text-xl hidden xs:flex w-6 justify-center">
+                                    <div className="xs:flex mr-4 hidden w-6 justify-center text-xl text-gray-400 dark:text-gray-500">
                                         {getIcon(item.type, item.slug)}
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="font-medium text-gray-900 dark:text-white line-clamp-1 text-base sm:text-lg">
+                                    <div className="min-w-0 flex-1">
+                                        <h3 className="line-clamp-1 text-base font-medium text-gray-900 sm:text-lg dark:text-white">
                                             {highlightFuzzy(
                                                 item.title,
                                                 item.matches,
@@ -306,7 +307,7 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
                                                 query
                                             )}
                                         </h3>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-3 sm:line-clamp-2 font-light break-words">
+                                        <p className="line-clamp-3 text-sm font-light break-words text-gray-500 sm:line-clamp-2 dark:text-gray-400">
                                             {highlightFuzzy(
                                                 item.content,
                                                 item.matches,
@@ -323,29 +324,29 @@ export default function SearchModal({ isOpen, onClose }: { isOpen: boolean; onCl
                             Keine Ergebnisse für &quot;{query}&quot; gefunden.
                         </div>
                     ) : (
-                        <div className="p-10 text-center text-gray-400 font-light">
+                        <div className="p-10 text-center font-light text-gray-400">
                             Tippe um zu suchen...
                         </div>
                     )}
                 </div>
 
-                <div className="p-3 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 flex justify-between text-[11px] text-gray-400">
+                <div className="flex justify-between border-t border-gray-200 bg-gray-50 p-3 text-[11px] text-gray-400 dark:border-gray-700 dark:bg-gray-800/50">
                     <div className="flex gap-4">
                         <span>
-                            <kbd className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-1 rounded">
+                            <kbd className="rounded border border-gray-300 bg-white px-1 dark:border-gray-600 dark:bg-gray-700">
                                 ↵
                             </kbd>{' '}
                             Auswählen
                         </span>
                         <span>
-                            <kbd className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-1 rounded">
+                            <kbd className="rounded border border-gray-300 bg-white px-1 dark:border-gray-600 dark:bg-gray-700">
                                 ↑↓
                             </kbd>{' '}
                             Navigieren
                         </span>
                     </div>
                     <span>
-                        <kbd className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 px-1 rounded">
+                        <kbd className="rounded border border-gray-300 bg-white px-1 dark:border-gray-600 dark:bg-gray-700">
                             ESC
                         </kbd>{' '}
                         Schließen
