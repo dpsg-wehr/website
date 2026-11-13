@@ -13,6 +13,9 @@
     "include": [
         ".astro/types.d.ts",
         "vitest-setup.ts",
+        "vitest.config.ts",
+        "vite.config.ts",
+        "playwright.config.ts",
         "src/**/*.d.ts",
         "src/**/*.ts",
         "src/**/*.tsx",

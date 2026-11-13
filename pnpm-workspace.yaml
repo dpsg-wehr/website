@@ -11,6 +11,17 @@ overrides:
     sharp: '0.35.5'
     tmp@<0.2.6: 0.2.7
     uuid@<11.1.1: 14.0.3
+    # Single Vitest instance: pin every consumer (tests, coverage, Vite+) to the catalog entry.
+    vitest@*: 'catalog:'
+
+catalog:
+    # The Vite+ toolchain pins. `vitest` and the `@vitest/*` packages must always match the
+    # version `vite-plus` bundles (check with `vp toolchain`), otherwise Vitest's internals
+    # split between two copies. Renovate updates this family as one group (renovate.json).
+    vite-plus: 1.6.0
+    vitest: 5.1.0
+    '@vitest/coverage-v8': 5.1.0
+    '@vitest/ui': 5.1.0
 
 allowBuilds:
     esbuild: true

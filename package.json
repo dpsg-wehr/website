@@ -1,35 +1,27 @@
 {
     "name": "website-dpsg-wehr",
     "version": "1.19.0",
-    "packageManager": "pnpm@12.18.0",
     "private": true,
-    "browserslist": [
-        "defaults and supports es6-module",
-        "maintained node versions"
-    ],
     "scripts": {
         "dev": "tsx scripts/generate-ics.ts && tsx scripts/generate-search-index.ts && astro dev --ignore-lock",
         "cms:proxy": "decap-server",
         "build": "tsx scripts/generate-ics.ts && tsx scripts/generate-search-index.ts && astro build",
         "preview": "astro preview",
         "start": "pnpm serve",
-        "lint": "eslint .",
+        "check": "vp check",
+        "check:fix": "vp check --fix",
+        "lint": "vp lint && eslint .",
+        "typecheck": "astro check && vp check --no-fmt --no-lint",
         "export": "pnpm run build",
         "serve": "npx serve@latest out",
-        "test": "vitest",
+        "test": "vp test",
+        "test:watch": "vp test watch",
         "test:e2e": "playwright test",
         "test:e2e:ui": "playwright test --ui",
-        "test:all": "pnpm test --run && pnpm test:e2e",
+        "test:all": "pnpm test && pnpm test:e2e",
         "test:report": "npx serve test-results",
         "audit:lighthouse": "tsx scripts/run-lighthouse.ts",
-        "format": "prettier --write .",
-        "format:check": "prettier --check .",
-        "typecheck": "astro check && tsc --noEmit",
-        "prepare": "husky"
-    },
-    "lint-staged": {
-        "*.{js,jsx,ts,tsx,css,md,mdx,json}": "prettier --write",
-        "*.{js,jsx,ts,tsx}": "eslint --fix --no-warn-ignored"
+        "prepare": "vp config --no-agent"
     },
     "dependencies": {
         "@astrojs/mdx": "8.1.3",
@@ -56,9 +48,8 @@
     },
     "devDependencies": {
         "@astrojs/check": "0.9.12",
+        "@astrojs/compiler-rs": "0.5.2",
         "@axe-core/playwright": "4.14.0",
-        "@eslint/eslintrc": "3.3.7",
-        "@eslint/js": "9.39.5",
         "@lhci/cli": "0.15.1",
         "@playwright/test": "1.64.1",
         "@tailwindcss/typography": "0.5.20",
@@ -72,27 +63,25 @@
         "@types/react": "19.3.0",
         "@types/react-dom": "19.3.0",
         "@types/sanitize-html": "2.16.2",
-        "@typescript-eslint/eslint-plugin": "8.72.1",
         "@typescript-eslint/parser": "8.72.1",
         "@vitejs/plugin-react": "6.2.1",
-        "@vitest/coverage-v8": "5.1.0",
-        "@vitest/ui": "5.1.0",
+        "@vitest/coverage-v8": "catalog:",
+        "@vitest/ui": "catalog:",
         "decap-server": "3.11.6",
         "eslint": "9.39.5",
-        "eslint-config-prettier": "10.1.8",
         "eslint-plugin-astro": "3.2.1",
-        "eslint-plugin-react": "7.37.5",
-        "eslint-plugin-react-hooks": "7.1.1",
-        "globals": "17.14.0",
-        "husky": "9.1.7",
         "jsdom": "31.0.0",
-        "lint-staged": "17.6.0",
         "monocart-reporter": "2.15.1",
-        "prettier": "3.9.10",
         "tailwindcss": "4.3.4",
         "tsx": "4.23.15",
         "typescript": "6.0.3",
-        "vite": "8.3.5",
-        "vitest": "5.1.0"
-    }
+        "vite": "8.3.7",
+        "vite-plus": "catalog:",
+        "vitest": "catalog:"
+    },
+    "browserslist": [
+        "defaults and supports es6-module",
+        "maintained node versions"
+    ],
+    "packageManager": "pnpm@12.18.0"
 }
