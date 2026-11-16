@@ -36,17 +36,17 @@ jobs:
         name: 🧪 Run Tests & Checks
         runs-on: ubuntu-latest
         container:
-            image: mcr.microsoft.com/playwright:v1.63.0-noble
+            image: mcr.microsoft.com/playwright:v1.64.1-noble
         steps:
             - uses: actions/checkout@v7.0.1
 
             - name: 📦 Setup pnpm
               uses: pnpm/action-setup@v6.1.1
 
-            - name: 🟢 Setup Node.js 24
+            - name: 🟢 Setup Node.js 26
               uses: actions/setup-node@v7.1.0
               with:
-                  node-version: 26.13.0
+                  node-version: 26.13.1
                   cache: 'pnpm'
 
             - name: 🔑 Fetch Secrets from Infisical
@@ -264,10 +264,10 @@ jobs:
             - name: 📦 Setup pnpm
               uses: pnpm/action-setup@v6.1.1
 
-            - name: 🟢 Setup Node.js 24
+            - name: 🟢 Setup Node.js 26
               uses: actions/setup-node@v7.1.0
               with:
-                  node-version: 26.13.0
+                  node-version: 26.13.1
                   cache: 'pnpm'
 
             - name: 🔑 Fetch Secrets from Infisical
