@@ -1,5 +1,8 @@
 import { NavigationLinkGroup } from '@/types';
 
+// Temporarily disabled until the Mitgliederportal launches next year.
+export const ENABLE_MITGLIEDERPORTAL = false;
+
 export const navigationLinks: Array<NavigationLinkGroup> = [
     { label: 'News', link: '/news', Icon: 'News' },
     {

@@ -1,5 +1,6 @@
 'use client';
 
+import { ENABLE_MITGLIEDERPORTAL } from '@/lib/config';
 import type { NavigationLinkGroup } from '@/types';
 
 import { NavbarLinksGroup } from './LinksGroup';
@@ -31,9 +32,11 @@ export default function Sidebar({
                 <div className="pt-2">
                     <NavbarLinksGroup toggleSidebar={toggle} links={links} />
                 </div>
-                <div className="mx-4 mb-8 shrink-0 border-t border-gray-200 pt-4 dark:border-gray-600/60">
-                    <LoginButton variant="sidebar" onClick={toggle} />
-                </div>
+                {ENABLE_MITGLIEDERPORTAL && (
+                    <div className="mx-4 mb-8 shrink-0 border-t border-gray-200 pt-4 dark:border-gray-600/60">
+                        <LoginButton variant="sidebar" onClick={toggle} />
+                    </div>
+                )}
             </div>
         </div>
     );

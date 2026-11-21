@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+import { ENABLE_MITGLIEDERPORTAL } from '../src/lib/config';
+
 test('has title and navigates to the news page', async ({ page }) => {
     await page.goto('/');
 
@@ -33,10 +35,17 @@ test('navigates from footer to the internal links page and displays services', a
     await expect(page.getByRole('link', { name: /Jitsi Meet öffnen/i })).toBeVisible();
 });
 
-test('displays campflow portal login button in navbar on desktop', async ({ page }) => {
+test('displays campflow portal login button in navbar on desktop when enabled', async ({
+    page,
+}) => {
     await page.goto('/');
 
     const loginLink = page.locator('header').getByRole('link', { name: /Login/i });
+    if (!ENABLE_MITGLIEDERPORTAL) {
+        await expect(loginLink).toHaveCount(0);
+        return;
+    }
+
     await expect(loginLink).toBeVisible();
     await expect(loginLink).toHaveAttribute('href', 'https://on.campflow.de/dpsg-wehr/portal');
     await expect(loginLink).toHaveAttribute('target', '_blank');

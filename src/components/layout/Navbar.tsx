@@ -3,6 +3,7 @@ import { IoChevronDown } from 'react-icons/io5';
 
 import SearchButton from '@/components/search/SearchButton';
 import ToggleThemeButton from '@/components/ui/ToggleThemeButton';
+import { ENABLE_MITGLIEDERPORTAL } from '@/lib/config';
 import { getIconFromName } from '@/lib/icons';
 import { getNavigationLinks } from '@/lib/navigation';
 import type { NavigationLinkGroup, NavigationLink } from '@/types';
@@ -149,7 +150,7 @@ export default function Navbar() {
                         </div>
                         <SearchButton />
                         <ToggleThemeButton />
-                        <LoginButton className="hidden sm:inline-flex" />
+                        {ENABLE_MITGLIEDERPORTAL && <LoginButton className="hidden sm:inline-flex" />}
                     </div>
                 </div>
             </header>
