@@ -150,7 +150,9 @@ export default function Navbar() {
                         </div>
                         <SearchButton />
                         <ToggleThemeButton />
-                        {ENABLE_MITGLIEDERPORTAL && <LoginButton className="hidden sm:inline-flex" />}
+                        {ENABLE_MITGLIEDERPORTAL && (
+                            <LoginButton className="hidden sm:inline-flex" />
+                        )}
                     </div>
                 </div>
             </header>

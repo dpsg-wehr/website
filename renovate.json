@@ -5,6 +5,9 @@
     "rangeStrategy": "pin",
     "baseBranches": ["dev"],
     "labels": ["dependencies", "automated"],
+    "github-actions": {
+        "managerFilePatterns": ["/(^|/)\\.forgejo/workflows/.+\\.ya?ml$/"]
+    },
     "vulnerabilityAlerts": {
         "labels": ["security", "dependencies"],
         "schedule": ["at any time"],
