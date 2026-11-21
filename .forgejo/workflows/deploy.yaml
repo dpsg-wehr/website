@@ -348,37 +348,27 @@ jobs:
                   SOURCE_URL="https://git.linus-fischer.de/${{ github.repository }}"
                   SOURCE_URL=$(echo "$SOURCE_URL" | tr '[:upper:]' '[:lower:]')
 
-                  # Base tags: exact commit SHA and short SHA
-                  TAGS="-t ${IMAGE_BASE}:${{ github.sha }} -t ${IMAGE_BASE}:sha-${SHORT_SHA}"
+                  # Base tag: short SHA for traceability
+                  TAGS="-t ${IMAGE_BASE}:sha-${SHORT_SHA}"
                   BUILD_VERSION="${CLEAN_VERSION}"
 
                   if [ "${{ github.ref_name }}" = "main" ]; then
                     BUILD_VERSION="${CLEAN_VERSION}"
-                    TAGS="${TAGS} -t ${IMAGE_BASE}:${CLEAN_VERSION} -t ${IMAGE_BASE}:v${CLEAN_VERSION} -t ${IMAGE_BASE}:latest"
-                    if [[ "$CLEAN_VERSION" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-                      MAJOR="${BASH_REMATCH[1]}"
-                      MINOR="${BASH_REMATCH[2]}"
-                      TAGS="${TAGS} -t ${IMAGE_BASE}:${MAJOR} -t ${IMAGE_BASE}:v${MAJOR} -t ${IMAGE_BASE}:${MAJOR}.${MINOR} -t ${IMAGE_BASE}:v${MAJOR}.${MINOR}"
-                    fi
+                    TAGS="${TAGS} -t ${IMAGE_BASE}:${CLEAN_VERSION} -t ${IMAGE_BASE}:latest"
                   elif [ "${{ github.ref_name }}" = "dev" ]; then
                     DEV_VERSION="${CLEAN_VERSION}-dev.${{ github.run_number }}"
                     BUILD_VERSION="${DEV_VERSION}"
-                    TAGS="${TAGS} -t ${IMAGE_BASE}:${DEV_VERSION} -t ${IMAGE_BASE}:v${DEV_VERSION} -t ${IMAGE_BASE}:dev -t ${IMAGE_BASE}:dev-${SHORT_SHA}"
+                    TAGS="-t ${IMAGE_BASE}:dev -t ${IMAGE_BASE}:dev-${SHORT_SHA}"
                   elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
                     TAG_NAME="${{ github.ref_name }}"
                     CLEAN_TAG="${TAG_NAME#v}"
                     BUILD_VERSION="${CLEAN_TAG}"
-                    TAGS="${TAGS} -t ${IMAGE_BASE}:${TAG_NAME} -t ${IMAGE_BASE}:${CLEAN_TAG} -t ${IMAGE_BASE}:latest"
-                    if [[ "$CLEAN_TAG" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-                      MAJOR="${BASH_REMATCH[1]}"
-                      MINOR="${BASH_REMATCH[2]}"
-                      TAGS="${TAGS} -t ${IMAGE_BASE}:${MAJOR} -t ${IMAGE_BASE}:v${MAJOR} -t ${IMAGE_BASE}:${MAJOR}.${MINOR} -t ${IMAGE_BASE}:v${MAJOR}.${MINOR}"
-                    fi
+                    TAGS="${TAGS} -t ${IMAGE_BASE}:${CLEAN_TAG} -t ${IMAGE_BASE}:latest"
                   else
                     SAFE_REF=$(echo "${{ github.ref_name }}" | tr '/' '-')
                     BRANCH_VERSION="${CLEAN_VERSION}-${SAFE_REF}.${{ github.run_number }}"
                     BUILD_VERSION="${BRANCH_VERSION}"
-                    TAGS="${TAGS} -t ${IMAGE_BASE}:${SAFE_REF} -t ${IMAGE_BASE}:${BRANCH_VERSION}"
+                    TAGS="${TAGS} -t ${IMAGE_BASE}:${SAFE_REF}"
                   fi
 
                   echo "IMAGE_BASE=${IMAGE_BASE}" >> "$GITHUB_ENV"
@@ -397,3 +387,19 @@ jobs:
             - name: 🚀 Push Image to Forgejo Registry
               run: |
                   docker push --all-tags "${IMAGE_BASE}"
+
+            - name: 🔄 Trigger nas-config Renovate
+              if: github.ref_name == 'main' || github.ref_name == 'dev' || startsWith(github.ref, 'refs/tags/')
+              env:
+                  DISPATCH_TOKEN: ${{ secrets.RENOVATE_TOKEN || secrets.FORGEJO_TOKEN }}
+              run: |
+                  if [ -z "$DISPATCH_TOKEN" ]; then
+                    echo "Notice: No token available to dispatch nas-config Renovate."
+                    exit 0
+                  fi
+                  curl -fsSL -X POST \
+                    -H "Authorization: token ${DISPATCH_TOKEN}" \
+                    -H "Content-Type: application/json" \
+                    -d '{"ref":"main"}' \
+                    "https://git.linus-fischer.de/api/v1/repos/linus/nas-config/actions/workflows/renovate.yaml/dispatches" \
+                    || echo "Notice: Could not dispatch nas-config Renovate workflow."
