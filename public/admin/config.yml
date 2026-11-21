@@ -8,8 +8,8 @@ backend:
     api_root: https://git.linus-fischer.de/api/v1
     app_id: 70806204-b459-4533-a732-cd0e285982cb
 
-media_folder: public/media/images
-public_folder: /media/images
+media_folder: src/assets/images
+public_folder: /src/assets/images
 
 site_url: https://dev.dpsg-wehr.de
 display_url: https://dev.dpsg-wehr.de
@@ -165,6 +165,8 @@ collections:
                       - label: Navigationseinträge
                         name: nav
                         widget: list
+                        collapsed: true
+                        summary: '{{fields.label}}'
                         fields:
                             - { label: Bezeichnung, name: label, widget: string }
                             - { label: Link, name: link, widget: string, required: false }
@@ -172,14 +174,15 @@ collections:
                             - label: Unterpunkte (Drop-Down)
                               name: links
                               widget: list
+                              collapsed: true
+                              summary: '{{fields.label}}'
                               required: false
                               fields:
                                   - { label: Bezeichnung, name: label, widget: string }
                                   - { label: Link, name: link, widget: string }
                                   - { label: Icon, name: icon, widget: string }
                                   - {
-                                        label: Farbe (optional,
-                                        z.B. Stufenfarbe),
+                                        label: 'Farbe (optional, z.B. Stufenfarbe)',
                                         name: color,
                                         widget: string,
                                         required: false,
@@ -207,16 +210,20 @@ collections:
                       - label: Spalten
                         name: columns
                         widget: list
+                        collapsed: true
+                        summary: '{{fields.title}}'
                         fields:
                             - { label: Spaltentitel, name: title, widget: string }
                             - label: Links
                               name: links
                               widget: list
+                              collapsed: true
+                              summary: '{{fields.text}}'
                               fields:
                                   - { label: Text, name: text, widget: string }
                                   - { label: URL, name: url, widget: string }
                                   - {
-                                        label: Externer Link?,
+                                        label: 'Externer Link?',
                                         name: external,
                                         widget: boolean,
                                         default: false,

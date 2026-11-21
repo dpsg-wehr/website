@@ -1,0 +1,28 @@
+---
+import { getEntry, render } from 'astro:content';
+
+import CmsEditButton from '@/components/ui/CmsEditButton.astro';
+import RootLayout from '@/layouts/RootLayout.astro';
+import { mdxComponents } from '@/mdx-components';
+
+const entry = await getEntry('pages', 'startseite');
+if (!entry) {
+    throw new Error('Could not find content/pages/startseite.mdx');
+}
+const { Content } = await render(entry);
+---
+
+<RootLayout title="DPSG Wehr" description="Website der DPSG Wehr">
+    <div class="dark:text-white">
+        <div class="landing-content prose sm:prose-lg dark:prose-invert max-w-none">
+            <Content components={mdxComponents} />
+        </div>
+        <div class="mt-8 flex justify-end border-t border-gray-200 pt-4 dark:border-gray-700">
+            <CmsEditButton
+                collection="pages"
+                entryId="startseite"
+                label="Startseite im CMS bearbeiten"
+            />
+        </div>
+    </div>
+</RootLayout>

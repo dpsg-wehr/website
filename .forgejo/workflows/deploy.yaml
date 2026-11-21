@@ -5,6 +5,8 @@ on:
         branches:
             - main
             - dev
+        tags:
+            - 'v*'
         paths-ignore:
             - 'docs/**'
             - 'README.md'
@@ -34,29 +36,59 @@ jobs:
         name: 🧪 Run Tests & Checks
         runs-on: ubuntu-latest
         container:
-            image: mcr.microsoft.com/playwright:v1.62.1-noble
+            image: mcr.microsoft.com/playwright:v1.65.1-noble
         steps:
-            - uses: actions/checkout@v7
+            - uses: actions/checkout@v7.0.1
 
             - name: 📦 Setup pnpm
-              uses: pnpm/action-setup@v6
+              uses: pnpm/action-setup@v6.1.1
 
-            - name: 🟢 Setup Node.js 24
-              uses: actions/setup-node@v7
+            - name: 🟢 Setup Node.js 26
+              uses: actions/setup-node@v7.1.0
               with:
-                  node-version: 24
+                  node-version: 26.13.1
                   cache: 'pnpm'
+
+            - name: 🔑 Fetch Secrets from Infisical
+              env:
+                  INFISICAL_API_URL: ${{ secrets.INFISICAL_API_URL }}
+                  INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+                  INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+                  INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
+              run: |
+                  if [ -z "$INFISICAL_CLIENT_ID" ]; then
+                    echo "Notice: INFISICAL_CLIENT_ID not set, skipping Infisical secrets fetch."
+                    exit 0
+                  fi
+
+                  npm install -g @infisical/cli
+
+                  INFISICAL_TOKEN=$(infisical login \
+                    --domain="${INFISICAL_API_URL}" \
+                    --method=universal-auth \
+                    --client-id="${INFISICAL_CLIENT_ID}" \
+                    --client-secret="${INFISICAL_CLIENT_SECRET}" \
+                    --silent \
+                    --plain)
+                  export INFISICAL_TOKEN
+
+                  infisical export \
+                    --domain="${INFISICAL_API_URL}" \
+                    --projectId="${INFISICAL_PROJECT_ID}" \
+                    --env="prod" \
+                    --path="/projects/website-dpsg-wehr" \
+                    --format=dotenv | sed -E "s/=(['\"])(.*)\1$/=\2/" >> "$GITHUB_ENV"
 
             - name: 🧩 Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: ⚡ Cache Next.js Build
-              uses: actions/cache@v6
+            - name: ⚡ Cache Astro Build
+              uses: actions/cache@v6.1.0
               with:
-                  path: .next/cache
-                  key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+                  path: .astro/cache
+                  key: ${{ runner.os }}-astro-build-cache-${{ hashFiles('src/assets/images/**', 'content/photos.json', 'pnpm-lock.yaml') }}
                   restore-keys: |
-                      ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
+                      ${{ runner.os }}-astro-build-cache-
 
             - name: 🔍 Typecheck & Lint
               run: |
@@ -67,65 +99,119 @@ jobs:
               run: pnpm audit --audit-level=critical || true
 
             - name: 🏗️ Build website
+              env:
+                  PUBLIC_GIT_COMMIT: ${{ github.sha }}
+                  PUBLIC_GIT_REF: ${{ github.ref_name }}
+                  PUBLIC_APP_ENV: test
               run: pnpm build
 
-            - name: 🚦 Run tests
+            - name: 🎭 Ensure Playwright browsers are installed
+              run: pnpm exec playwright install chromium
+
+            - name: 🚨 Run tests
               run: pnpm test:all
 
-            - name: 📝 Generate Test Summary
+            - name: ⚡ Audit with Lighthouse CI
+              if: github.ref_name == 'main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+              run: pnpm audit:lighthouse
+
+            - name: 📤 Upload Test Reports to Dufs
               if: ${{ !cancelled() }}
               run: |
-                  if [ -n "$GITHUB_STEP_SUMMARY" ]; then
-                    echo "### 🧪 Test Suite Results" >> "$GITHUB_STEP_SUMMARY"
-                    echo "" >> "$GITHUB_STEP_SUMMARY"
-                    if [ -f "test-results/e2e/index.json" ]; then
-                      node -e '
-                        const fs = require("fs");
-                        try {
-                          const data = JSON.parse(fs.readFileSync("test-results/e2e/index.json", "utf8"));
-                          const rows = data.rows || [];
-                          let passed = 0, failed = 0, flakies = 0, skipped = 0;
-                          const countCases = (item) => {
-                            if (item.type === "case") {
-                              if (item.status === "passed") passed++;
-                              else if (item.status === "failed") failed++;
-                              else if (item.status === "skipped") skipped++;
-                              if (item.retry > 0) flakies++;
-                            }
-                            if (item.subs) item.subs.forEach(countCases);
-                          };
-                          rows.forEach(countCases);
-                          const total = passed + failed + skipped;
-                          const duration = data.durationH || (data.duration ? (data.duration/1000).toFixed(1) + "s" : "-");
+                  REPORTS_SERVER_URL=$(echo "$REPORTS_SERVER_URL" | sed -e "s/^['\"]//" -e "s/['\"]$//")
+                  REPORTS_CI_PASSWORD=$(echo "$REPORTS_CI_PASSWORD" | sed -e "s/^['\"]//" -e "s/['\"]$//")
 
-                          let md = "#### 🎭 Playwright E2E Tests\n\n";
-                          md += "| Total | Passed | Failed | Flaky | Skipped | Duration |\n";
-                          md += "| :---: | :----: | :----: | :---: | :-----: | :------: |\n";
-                          md += `| **${total}** | ✅ ${passed} | ${failed > 0 ? "❌ " + failed : "0"} | ${flakies > 0 ? "⚠️ " + flakies : "0"} | ${skipped} | ⏱️ ${duration} |\n\n`;
-
-                          if (failed > 0) {
-                            md += "<details><summary>❌ Failed Tests</summary>\n\n";
-                            const findFailed = (item) => {
-                              if (item.type === "case" && item.status === "failed") {
-                                md += `- **${item.title}** (\`${item.location || ""}\`)\n`;
-                              }
-                              if (item.subs) item.subs.forEach(findFailed);
-                            };
-                            rows.forEach(findFailed);
-                            md += "\n</details>\n\n";
-                          }
-
-                          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, md);
-                        } catch (e) {
-                          console.error(e);
-                        }
-                      '
-                    fi
-                    echo "📁 Download the full HTML reports (Vitest & Playwright) from the **Artifacts** section of this run." >> "$GITHUB_STEP_SUMMARY"
+                  if [ -z "$REPORTS_SERVER_URL" ] || [ -z "$REPORTS_CI_PASSWORD" ]; then
+                    echo "Notice: REPORTS_SERVER_URL or REPORTS_CI_PASSWORD not set, skipping Dufs upload."
+                    exit 0
                   fi
 
+                  apt-get update -qy && apt-get install -qy rclone
+
+                  OBSCURED_PASS=$(rclone obscure "$REPORTS_CI_PASSWORD")
+                  REPO_NAME="${{ github.event.repository.name }}"
+                  if [ -z "$REPO_NAME" ]; then
+                    REPO_NAME="${GITHUB_REPOSITORY##*/}"
+                  fi
+                  RUN_NUM="${{ github.run_number }}"
+                  if [ -z "$RUN_NUM" ]; then
+                    RUN_NUM="${GITHUB_RUN_NUMBER:-latest}"
+                  fi
+                  TARGET_PATH="${REPO_NAME}/${RUN_NUM}"
+                  LATEST_PATH="${REPO_NAME}/latest"
+
+                  mkdir -p ./test-results
+                  printf '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=./e2e/index.html"></head><body><a href="./e2e/index.html">Playwright E2E Report</a></body></html>' > ./test-results/index.html
+
+                  # Upload run-specific reports
+                  rclone copy ./test-results :webdav:"$TARGET_PATH" \
+                    --webdav-url "$REPORTS_SERVER_URL" \
+                    --webdav-user ci \
+                    --webdav-pass "$OBSCURED_PASS" \
+                    --webdav-vendor other
+
+                  # Update 'latest' pointer
+                  rclone copy ./test-results :webdav:"$LATEST_PATH" \
+                    --webdav-url "$REPORTS_SERVER_URL" \
+                    --webdav-user ci \
+                    --webdav-pass "$OBSCURED_PASS" \
+                    --webdav-vendor other
+
+            - name: 💬 Post Reports Comment on PR
+              if: github.event_name == 'pull_request' && !cancelled()
+              env:
+                  FORGEJO_API: 'https://git.linus-fischer.de/api/v1'
+                  FORGEJO_TOKEN: ${{ secrets.RENOVATE_TOKEN || secrets.GITHUB_TOKEN }}
+                  REPO: ${{ github.repository }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+              run: |
+                  python3 - << 'EOF'
+                  import os, json, urllib.request
+
+                  api = os.getenv("FORGEJO_API")
+                  token = os.getenv("FORGEJO_TOKEN")
+                  repo = os.getenv("REPO")
+                  pr = os.getenv("PR_NUMBER")
+                  reports_url = os.getenv("REPORTS_SERVER_URL", "").rstrip("/")
+                  lhci_url = (os.getenv("LHCI_SERVER_BASE_URL") or os.getenv("LHCI_SERVER_URL") or "").rstrip("/")
+                  run_num = os.getenv("GITHUB_RUN_NUMBER", "latest")
+                  repo_name = repo.split("/")[-1] if "/" in repo else repo
+
+                  if not token or not repo or not pr:
+                      print("Notice: Missing token, repo, or PR number. Skipping comment.")
+                      exit(0)
+
+                  links = []
+                  if reports_url:
+                      links.append(f"- 🎭 **Playwright E2E Report**: [Interactive Report & Traces]({reports_url}/{repo_name}/{run_num}/e2e/index.html)")
+                  if lhci_url and (os.path.exists(".lighthouseci") or os.path.exists("./test-results/lighthouse")):
+                      links.append(f"- ⚡ **Lighthouse Performance**: [LHCI Dashboard & History]({lhci_url}/app/projects/{repo_name})")
+
+                  if not links:
+                      print("Notice: Neither reports_url nor lhci_url is set. Skipping comment.")
+                      exit(0)
+
+                  audit_label = "Test & Audit Results" if (os.path.exists(".lighthouseci") or os.path.exists("./test-results/lighthouse")) else "Test Results"
+                  body = f"### 🧪 {audit_label} (Run #{run_num})\n\n" + "\n".join(links)
+
+                  req = urllib.request.Request(
+                      f"{api}/repos/{repo}/issues/{pr}/comments",
+                      data=json.dumps({"body": body}).encode("utf-8"),
+                      headers={
+                          "Authorization": f"token {token}",
+                          "Content-Type": "application/json",
+                          "User-Agent": "Forgejo-CI-Reports/1.0"
+                      }
+                  )
+                  try:
+                      with urllib.request.urlopen(req) as resp:
+                          print("Successfully posted PR reports comment.")
+                  except Exception as e:
+                      print(f"Notice: Could not post PR comment ({e})")
+                  EOF
+
             - name: 📊 Upload Test Reports
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v3.2.2
               if: ${{ !cancelled() }}
               with:
                   name: test-results
@@ -144,12 +230,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v7
+              uses: actions/checkout@v7.0.1
 
             - name: Setup Python
-              uses: actions/setup-python@v7
+              uses: actions/setup-python@v7.1.0
               with:
-                  python-version: '3.14'
+                  python-version: '3.15.2'
 
             - name: Check AI Approval & Auto-Merge
               env:
@@ -162,67 +248,80 @@ jobs:
                   python3 scripts/automerge_pr.py
 
     build-and-deploy:
-        name: 🚀 Build & Deploy
+        name: 🐳 Build & Publish Container Image
         needs: test
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
         steps:
             - name: 📥 Checkout Code
-              uses: actions/checkout@v7
+              uses: actions/checkout@v7.0.1
               with:
                   fetch-depth: 0
 
             - name: 📦 Setup pnpm
-              uses: pnpm/action-setup@v6
+              uses: pnpm/action-setup@v6.1.1
 
-            - name: 🟢 Setup Node.js 24
-              uses: actions/setup-node@v7
+            - name: 🟢 Setup Node.js 26
+              uses: actions/setup-node@v7.1.0
               with:
-                  node-version: 24
+                  node-version: 26.13.1
                   cache: 'pnpm'
+
+            - name: 🔑 Fetch Secrets from Infisical
+              env:
+                  INFISICAL_API_URL: ${{ secrets.INFISICAL_API_URL }}
+                  INFISICAL_CLIENT_ID: ${{ secrets.INFISICAL_CLIENT_ID }}
+                  INFISICAL_CLIENT_SECRET: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+                  INFISICAL_PROJECT_ID: ${{ secrets.INFISICAL_PROJECT_ID }}
+              run: |
+                  if [ -z "$INFISICAL_CLIENT_ID" ]; then
+                    echo "Notice: INFISICAL_CLIENT_ID not set, skipping Infisical secrets fetch."
+                    exit 0
+                  fi
+
+                  npm install -g @infisical/cli
+
+                  INFISICAL_TOKEN=$(infisical login \
+                    --domain="${INFISICAL_API_URL}" \
+                    --method=universal-auth \
+                    --client-id="${INFISICAL_CLIENT_ID}" \
+                    --client-secret="${INFISICAL_CLIENT_SECRET}" \
+                    --silent \
+                    --plain)
+                  export INFISICAL_TOKEN
+
+                  infisical export \
+                    --domain="${INFISICAL_API_URL}" \
+                    --projectId="${INFISICAL_PROJECT_ID}" \
+                    --env="prod" \
+                    --path="/projects/website-dpsg-wehr" \
+                    --format=dotenv | sed -E "s/=(['\"])(.*)\1$/=\2/" >> "$GITHUB_ENV"
 
             - name: 🧩 Install Dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: ⚡ Cache Next.js & Image Optimizer
-              uses: actions/cache@v6
+            - name: ⚡ Cache Astro Build
+              uses: actions/cache@v6.1.0
               with:
-                  path: |
-                      .next/cache
-                      public/**/nextImageExportOptimizer
-                      public/media/images/next-image-export-optimizer-hashes.json
-                  key: ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**', '!public/**/nextImageExportOptimizer/**', '!public/media/images/next-image-export-optimizer-hashes.json') }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  path: .astro/cache
+                  key: ${{ runner.os }}-astro-build-cache-${{ hashFiles('src/assets/images/**', 'content/photos.json', 'pnpm-lock.yaml') }}
                   restore-keys: |
-                      ${{ runner.os }}-build-cache-${{ hashFiles('public/media/images/**', '!public/**/nextImageExportOptimizer/**', '!public/media/images/next-image-export-optimizer-hashes.json') }}-
-                      ${{ runner.os }}-build-cache-
+                      ${{ runner.os }}-astro-build-cache-
 
-            - name: 🏗️ Build Static Site & Optimize
+            - name: 🏗️ Build Static Site
               env:
-                  NEXT_TELEMETRY_DISABLED: 1
                   INTERNAL_ICS_TOKEN: ${{ secrets.INTERNAL_ICS_TOKEN }}
-                  nextImageExportOptimizer_imageFolderPath: 'public/media/images'
-                  nextImageExportOptimizer_exportFolderPath: 'out'
-                  nextImageExportOptimizer_exportFolderName: 'nextImageExportOptimizer'
-                  nextImageExportOptimizer_quality: '60'
-                  nextImageExportOptimizer_storePicturesInWEBP: 'true'
-                  nextImageExportOptimizer_generateAndUseBlurImages: 'true'
-                  nextImageExportOptimizer_imageSizes: '16,64,128,256,384'
-                  nextImageExportOptimizer_deviceSizes: '640,1080,1920'
-              run: |
-                  pnpm build
-                  pnpm next-image-export-optimizer
-                  node scripts/inline-css.mjs
+                  PUBLIC_UMAMI_WEBSITE_ID: ${{ secrets.PUBLIC_UMAMI_WEBSITE_ID || env.PUBLIC_UMAMI_WEBSITE_ID }}
+                  PUBLIC_GIT_COMMIT: ${{ github.sha }}
+                  PUBLIC_GIT_REF: ${{ github.ref_name }}
+                  PUBLIC_APP_ENV: ${{ (github.ref_name == 'main' || startsWith(github.ref, 'refs/tags/')) && 'production' || 'staging' }}
+              run: pnpm build
 
-            - name: 🛠️ Ensure Docker & SSH Tools Installed
+            - name: 🛠️ Ensure Docker CLI Installed
               run: |
-                  if ! command -v ssh >/dev/null 2>&1; then
-                    echo "Installing openssh-client..."
-                    if command -v apt-get >/dev/null 2>&1; then
-                      apt-get update && apt-get install -y openssh-client
-                    elif command -v apk >/dev/null 2>&1; then
-                      apk add --no-cache openssh-client
-                    fi
-                  fi
                   if ! command -v docker >/dev/null 2>&1; then
                     echo "Installing Docker CLI..."
                     if command -v apt-get >/dev/null 2>&1; then
@@ -232,32 +331,75 @@ jobs:
                     fi
                   fi
 
-            - name: 🐳 Build Static Nginx Image
+            - name: 🔑 Log in to Forgejo Container Registry
               run: |
-                  TAG="${{ github.ref_name == 'main' && 'latest' || 'dev' }}"
-                  echo "Building image dpsg-wehr:$TAG ..."
-                  docker build -t dpsg-wehr:$TAG -f Dockerfile.static .
+                  echo "${{ secrets.REGISTRY_TOKEN || secrets.FORGEJO_TOKEN || secrets.GITHUB_TOKEN }}" | docker login git.linus-fischer.de -u "${{ github.actor }}" --password-stdin
 
-            - name: 🚀 Stream Image & Deploy to VPS over SSH
+            - name: 🏷️ Determine Image Tags & OCI Labels
+              id: meta
+              run: |
+                  IMAGE_BASE="git.linus-fischer.de/${{ github.repository }}"
+                  IMAGE_BASE=$(echo "$IMAGE_BASE" | tr '[:upper:]' '[:lower:]')
+
+                  PKG_VERSION=$(node -p "require('./package.json').version")
+                  CLEAN_VERSION="${PKG_VERSION#v}"
+                  SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+                  BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+                  SOURCE_URL="https://git.linus-fischer.de/${{ github.repository }}"
+                  SOURCE_URL=$(echo "$SOURCE_URL" | tr '[:upper:]' '[:lower:]')
+
+                  # Base tag: short SHA for traceability
+                  TAGS="-t ${IMAGE_BASE}:sha-${SHORT_SHA}"
+                  BUILD_VERSION="${CLEAN_VERSION}"
+
+                  if [ "${{ github.ref_name }}" = "main" ]; then
+                    BUILD_VERSION="${CLEAN_VERSION}"
+                    TAGS="${TAGS} -t ${IMAGE_BASE}:${CLEAN_VERSION} -t ${IMAGE_BASE}:latest"
+                  elif [ "${{ github.ref_name }}" = "dev" ]; then
+                    DEV_VERSION="${CLEAN_VERSION}-dev.${{ github.run_number }}"
+                    BUILD_VERSION="${DEV_VERSION}"
+                    TAGS="-t ${IMAGE_BASE}:dev -t ${IMAGE_BASE}:dev-${SHORT_SHA}"
+                  elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+                    TAG_NAME="${{ github.ref_name }}"
+                    CLEAN_TAG="${TAG_NAME#v}"
+                    BUILD_VERSION="${CLEAN_TAG}"
+                    TAGS="${TAGS} -t ${IMAGE_BASE}:${CLEAN_TAG} -t ${IMAGE_BASE}:latest"
+                  else
+                    SAFE_REF=$(echo "${{ github.ref_name }}" | tr '/' '-')
+                    BRANCH_VERSION="${CLEAN_VERSION}-${SAFE_REF}.${{ github.run_number }}"
+                    BUILD_VERSION="${BRANCH_VERSION}"
+                    TAGS="${TAGS} -t ${IMAGE_BASE}:${SAFE_REF}"
+                  fi
+
+                  echo "IMAGE_BASE=${IMAGE_BASE}" >> "$GITHUB_ENV"
+                  echo "TAGS=${TAGS}" >> "$GITHUB_ENV"
+                  echo "BUILD_VERSION=${BUILD_VERSION}" >> "$GITHUB_ENV"
+                  echo "BUILD_DATE=${BUILD_DATE}" >> "$GITHUB_ENV"
+
+            - name: 🐳 Build Docker Image
+              run: |
+                  docker build ${TAGS} \
+                    --build-arg VERSION="${BUILD_VERSION}" \
+                    --build-arg VCS_REF="${{ github.sha }}" \
+                    --build-arg BUILD_DATE="${BUILD_DATE}" \
+                    -f Dockerfile.static .
+
+            - name: 🚀 Push Image to Forgejo Registry
+              run: |
+                  docker push --all-tags "${IMAGE_BASE}"
+
+            - name: 🔄 Trigger nas-config Renovate
+              if: github.ref_name == 'main' || github.ref_name == 'dev' || startsWith(github.ref, 'refs/tags/')
               env:
-                  SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-                  VPS_HOST: ${{ secrets.VPS_HOST }}
-                  VPS_USER: ${{ secrets.VPS_USER }}
-                  VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
-                  VPS_PATH: ${{ secrets.VPS_PATH || '/home/linus/docker/website-pfadfinder' }}
+                  DISPATCH_TOKEN: ${{ secrets.RENOVATE_TOKEN || secrets.FORGEJO_TOKEN }}
               run: |
-                  mkdir -p ~/.ssh
-                  echo "$SSH_KEY" > ~/.ssh/id_ed25519
-                  chmod 600 ~/.ssh/id_ed25519
-                  ssh-keyscan -p "$VPS_PORT" -H "$VPS_HOST" >> ~/.ssh/known_hosts
-
-                  TAG="${{ github.ref_name == 'main' && 'latest' || 'dev' }}"
-                  SVC="${{ github.ref_name == 'main' && 'website' || 'website-dev' }}"
-
-                  echo "🚀 Streaming dpsg-wehr:$TAG to VPS ($VPS_HOST)..."
-                  docker save dpsg-wehr:$TAG | ssh -p "$VPS_PORT" -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" "docker load"
-
-                  echo "🔄 Restarting service $SVC in $VPS_PATH on VPS..."
-                  ssh -p "$VPS_PORT" -i ~/.ssh/id_ed25519 "$VPS_USER@$VPS_HOST" "cd \"$VPS_PATH\" && docker compose up -d $SVC && docker image prune -f"
-
-                  echo "✅ Deployment completed successfully!"
+                  if [ -z "$DISPATCH_TOKEN" ]; then
+                    echo "Notice: No token available to dispatch nas-config Renovate."
+                    exit 0
+                  fi
+                  curl -fsSL -X POST \
+                    -H "Authorization: token ${DISPATCH_TOKEN}" \
+                    -H "Content-Type: application/json" \
+                    -d '{"ref":"main"}' \
+                    "https://git.linus-fischer.de/api/v1/repos/linus/nas-config/actions/workflows/renovate.yaml/dispatches" \
+                    || echo "Notice: Could not dispatch nas-config Renovate workflow."

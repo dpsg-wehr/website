@@ -1,0 +1,69 @@
+---
+import { Image } from 'astro:assets';
+
+import { resolveImage } from '@/lib/assets/images';
+import type { PostMetadata } from '@/types';
+
+interface Props extends PostMetadata {
+    priority?: boolean;
+}
+
+const props = Astro.props;
+const imageMeta = resolveImage(props.image?.src);
+---
+
+<article class="mt-4 w-full max-w-md rounded-md border shadow-sm hover:shadow-lg dark:border-gray-600">
+    <a href={`/posts/${props.slug}`} class="flex h-full w-full flex-col no-underline">
+        <div class="relative aspect-video w-full overflow-hidden rounded-t-md bg-gray-200 dark:bg-gray-800">
+            {imageMeta ? (
+                <>
+                    <Image
+                        src={imageMeta}
+                        alt=""
+                        width={32}
+                        quality={30}
+                        class="absolute inset-0 h-full w-full scale-105 object-cover text-transparent opacity-50 blur-md"
+                        loading="lazy"
+                        aria-hidden="true"
+                    />
+                    <Image
+                        src={imageMeta}
+                        alt={props.title}
+                        width={400}
+                        widths={[320, 400, 600].filter((w) => w <= imageMeta.width)}
+                        sizes="(max-width: 768px) 100vw, 400px"
+                        class="absolute inset-0 z-10 h-full w-full object-contain text-transparent"
+                        loading={props.priority ? 'eager' : 'lazy'}
+                    />
+                </>
+            ) : props.image?.src ? (
+                <>
+                    <img
+                        src={props.image.src}
+                        alt=""
+                        width={32}
+                        class="absolute inset-0 h-full w-full scale-105 object-cover text-transparent opacity-50 blur-md"
+                        loading="lazy"
+                        data-image-component="true"
+                        aria-hidden="true"
+                    />
+                    <img
+                        src={props.image.src}
+                        alt={props.title}
+                        width={400}
+                        class="absolute inset-0 z-10 h-full w-full object-contain text-transparent"
+                        loading={props.priority ? 'eager' : 'lazy'}
+                        data-image-component="true"
+                    />
+                </>
+            ) : (
+                <div class="h-full w-full bg-gray-100 dark:bg-gray-600" />
+            )}
+        </div>
+        <div class="mr-2 mb-3 ml-4 flex flex-1 flex-col pt-3">
+            <h2 class="text-xl text-gray-900 dark:text-white">{props.title}</h2>
+            <p class="mt-1 flex-1 text-sm text-gray-600 dark:text-gray-300">{props.desc}</p>
+            <p class="mt-2 self-end text-xs text-gray-600 dark:text-gray-200">{props.date}</p>
+        </div>
+    </a>
+</article>

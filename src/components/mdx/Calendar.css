@@ -1,0 +1,160 @@
+@reference "../../styles/globals.css";
+
+:root {
+    --fc-neutral-bg-color: rgb(243, 244, 246);
+    --fc-page-bg-color: #ffffff;
+
+    /* FullCalendar v7 Classic Theme - Light Mode */
+    --fc-classic-background: #ffffff;
+    --fc-classic-foreground: #111827;
+    --fc-classic-border: #e5e7eb;
+    --fc-classic-strong-border: #d1d5db;
+    --fc-classic-faint: rgba(0, 0, 0, 0.03);
+    --fc-classic-muted: rgba(0, 0, 0, 0.06);
+    --fc-classic-strong: rgba(0, 0, 0, 0.1);
+    --fc-classic-faint-foreground: #6b7280;
+    --fc-classic-muted-foreground: #4b5563;
+    --fc-classic-highlight: rgba(229, 231, 235, 0.5);
+    --fc-classic-today: #fef9c3;
+
+    /* Calendar buttons in Light Mode matching website neutral buttons */
+    --fc-classic-button: #ffffff;
+    --fc-classic-button-border: #d1d5db;
+    --fc-classic-button-foreground: #374151;
+    --fc-classic-button-hover-bg: #f3f4f6;
+    --fc-classic-button-hover-border: #9ca3af;
+    --fc-classic-button-hover-fg: #111827;
+    --fc-classic-button-strong: #e5e7eb;
+    --fc-classic-button-strong-border: #9ca3af;
+    --fc-classic-button-strong-fg: #111827;
+    --fc-classic-button-outline: rgba(156, 163, 175, 0.4);
+}
+
+.dark,
+[data-color-scheme='dark'],
+.dark [data-color-scheme='dark'] {
+    /* FullCalendar v7 Classic Theme - Dark Mode */
+    --fc-classic-background: #1f2937;
+    --fc-classic-foreground: #f9fafb;
+    --fc-classic-border: #374151;
+    --fc-classic-strong-border: #4b5563;
+    --fc-classic-faint: rgba(255, 255, 255, 0.05);
+    --fc-classic-muted: rgba(255, 255, 255, 0.09);
+    --fc-classic-strong: rgba(255, 255, 255, 0.16);
+    --fc-classic-faint-foreground: #9ca3af;
+    --fc-classic-muted-foreground: #d1d5db;
+    --fc-classic-highlight: rgba(55, 65, 81, 0.5);
+    --fc-classic-today: rgba(250, 204, 21, 0.15);
+
+    /* Calendar buttons in Dark Mode matching website dark buttons */
+    --fc-classic-button: #374151;
+    --fc-classic-button-border: #4b5563;
+    --fc-classic-button-foreground: #e5e7eb;
+    --fc-classic-button-hover-bg: #4b5563;
+    --fc-classic-button-hover-border: #6b7280;
+    --fc-classic-button-hover-fg: #ffffff;
+    --fc-classic-button-strong: #1f2937;
+    --fc-classic-button-strong-border: #6b7280;
+    --fc-classic-button-strong-fg: #ffffff;
+    --fc-classic-button-outline: rgba(107, 114, 128, 0.4);
+
+    /* FullCalendar v5/v6 legacy variables fallback */
+    --fc-border-color: rgb(75, 85, 99);
+    --fc-neutral-bg-color: rgb(31 41 55);
+    --fc-page-bg-color: rgb(31 41 55);
+    --fc-list-event-hover-bg-color: rgb(107 114 128);
+    --fc-neutral-text-color: rgb(255 255 255 / 80%);
+}
+
+.dark .fc-theme-standard .fc-list-day-cushion {
+    background-color: rgb(31, 41, 55);
+}
+
+.event-title {
+    padding: 0 1px;
+    white-space: normal;
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.fc .fc-list-sticky .fc-list-day > * {
+    z-index: 1;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background: var(--fc-classic-background, var(--fc-page-bg-color, #fff));
+}
+
+/* Button styling matching the website's clean neutral palette */
+#calendar-root button {
+    border: 1px solid var(--fc-classic-button-border) !important;
+    background-color: var(--fc-classic-button) !important;
+    color: var(--fc-classic-button-foreground) !important;
+    font-weight: 500;
+    line-height: 1.25rem;
+    padding-top: 0.375rem !important;
+    padding-bottom: 0.375rem !important;
+    border-radius: 0 !important;
+    position: relative;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+/* Collapse adjacent borders in button groups */
+#calendar-root button + button {
+    margin-left: -1px !important;
+}
+
+/* Rounded outer corners for button groups */
+#calendar-root button:first-child {
+    border-top-left-radius: 0.375rem !important;
+    border-bottom-left-radius: 0.375rem !important;
+}
+
+#calendar-root button:last-child {
+    border-top-right-radius: 0.375rem !important;
+    border-bottom-right-radius: 0.375rem !important;
+}
+
+/* Hover state */
+#calendar-root button:hover {
+    background-color: var(--fc-classic-button-hover-bg) !important;
+    border-color: var(--fc-classic-button-hover-border) !important;
+    color: var(--fc-classic-button-hover-fg) !important;
+    z-index: 2 !important;
+}
+
+/* Active / selected state (e.g. active view tab 'Monat') */
+#calendar-root button.fc-classic-Adi,
+#calendar-root button[aria-pressed='true'],
+#calendar-root button.fc-button-active {
+    background-color: var(--fc-classic-button-strong) !important;
+    border-color: var(--fc-classic-button-strong-border) !important;
+    color: var(--fc-classic-button-strong-fg) !important;
+    z-index: 1 !important;
+}
+
+#calendar-root button.fc-classic-Adi:hover,
+#calendar-root button[aria-pressed='true']:hover,
+#calendar-root button.fc-button-active:hover {
+    z-index: 3 !important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active:focus,
+.fc .fc-button-primary:not(:disabled):active:focus {
+    box-shadow: none !important;
+}
+
+.fc .fc-button-primary:focus {
+    box-shadow: none !important;
+}
+
+.fc .fc-button:focus {
+    box-shadow: none !important;
+    outline: 0px;
+}

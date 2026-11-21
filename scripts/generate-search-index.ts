@@ -1,18 +1,14 @@
 import fs from 'fs';
 import path from 'path';
+
 import matter from 'gray-matter';
 
-interface SearchItem {
-    title: string;
-    content: string;
-    slug: string;
-    type: 'post' | 'page' | 'group' | 'file';
-}
+import type { SearchItem } from '../src/types';
 
 const CONTENT_DIRS = [
-    { dir: 'content/posts', type: 'post', baseRoute: '/posts' },
-    { dir: 'content/pages', type: 'page', baseRoute: '/pages' },
-    { dir: 'content/gruppen', type: 'group', baseRoute: '/pages/gruppen' },
+    { dir: 'content/posts', type: 'post' as const, baseRoute: '/posts' },
+    { dir: 'content/pages', type: 'page' as const, baseRoute: '/pages' },
+    { dir: 'content/gruppen', type: 'group' as const, baseRoute: '/pages/gruppen' },
 ];
 
 function cleanContent(content: string): string {
@@ -60,7 +56,7 @@ function generateSearchIndex() {
             const fileContent = fs.readFileSync(filePath, 'utf8');
             const { data, content } = matter(fileContent);
 
-            let slug = file.replace('.mdx', '');
+            let slug = data.slug || file.replace('.mdx', '');
             let route = `${baseRoute}/${slug}`;
 
             // Special cases for custom routes
@@ -87,7 +83,7 @@ function generateSearchIndex() {
                 title: data.title || slug,
                 content: cleanContent(content),
                 slug: route,
-                type: type as 'post' | 'page' | 'group' | 'file',
+                type: type,
             });
         });
     });

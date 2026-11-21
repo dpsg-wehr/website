@@ -2,7 +2,7 @@
 
 ## Overview
 
-The DPSG Wehr website is a **Statically Generated (SSG)** Next.js application designed for high performance, low maintenance, and simple hosting. Content is written in Markdown / MDX files stored in the repository.
+The DPSG Wehr website is a **Statically Generated (SSG)** Astro application designed for high performance, low maintenance, and simple hosting. Content is written in Markdown / MDX files stored in the repository.
 
 ## Architecture Diagram
 
@@ -25,7 +25,7 @@ graph TD
         PushDev[Push to dev] --> DockerBuildDev[Build & Tag :dev]
         DockerBuildDev -->|SSH Stream & Load| VPS[VPS Docker Host]
         PushMain[Push to main] --> Release[Semantic Release]
-        Release --> DockerBuild[Build Next.js SSG + Optimize Images]
+        Release --> DockerBuild[Build Astro SSG + Optimize Assets]
         DockerBuild -->|SSH Stream & Load| VPS
         VPS -->|docker compose up -d| Nginx
         VPS -->|docker compose up -d| NginxDev
@@ -47,9 +47,7 @@ When running `pnpm build` or in Forgejo Actions:
 
 1. **ICS Generation:** Generates public (and optional internal) `.ics` calendar files via `scripts/generate-ics.ts`.
 2. **Search Indexing:** Generates Fuse.js search index via `scripts/generate-search-index.ts`.
-3. **Next.js Export:** Exports static HTML/JS/CSS to `out/`.
-4. **Image Optimization:** Optimizes and converts images to WebP via `next-image-export-optimizer`.
-5. **CSS Inlining:** Inlines critical CSS for fast rendering via `scripts/inline-css.mjs`.
+3. **Astro Build:** Exports static HTML/JS/CSS to `out/` via `astro build`, optimizing images with Sharp.
 
 ## Deployment Workflow
 
@@ -88,5 +86,5 @@ When running `pnpm build` or in Forgejo Actions:
 ### VPS Setup
 
 1. Clone repo.
-2. Run `./scripts/setup-vps.sh` to initialize `.env`.
+2. Run `./scripts/setup-vps.sh` to initialize `.env``.
 3. Start stack: `docker compose up -d`.

@@ -1,0 +1,91 @@
+---
+import { getImage } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+
+import Post from '@/components/posts/Post.astro';
+import RootLayout from '@/layouts/RootLayout.astro';
+import { resolveImage } from '@/lib/assets/images';
+import { getPostBySlug, cleanContentSlug } from '@/lib/content/posts';
+import { getExcerpt } from '@/lib/utils/metadata';
+import {
+    getCanonicalUrl,
+    createBreadcrumbSchema,
+    createBlogPostingSchema,
+    createEventSchema,
+} from '@/lib/utils/seo';
+import { mdxComponents } from '@/mdx-components';
+
+export async function getStaticPaths() {
+    const posts = await getCollection('posts');
+    return posts.map((post) => ({
+        params: { slug: post.data.slug || cleanContentSlug(post.id) },
+        props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const slug = post.data.slug || cleanContentSlug(post.id);
+const metadata = getPostBySlug(slug);
+
+const description = post.data.desc || post.data.description || getExcerpt(post.body || '');
+let imageUrl = '/media/images/logo.png';
+let imageWidth = 800;
+let imageHeight = 800;
+
+const imageMeta = resolveImage(metadata?.image?.src || post.data.image);
+if (imageMeta) {
+    const optimized = await getImage({ src: imageMeta, width: 1200, format: 'webp' });
+    imageUrl = optimized.src;
+    imageWidth = optimized.attributes.width;
+    imageHeight = optimized.attributes.height;
+}
+
+const canonicalPostUrl = getCanonicalUrl(`/posts/${slug}`, Astro.site);
+const datePublished =
+    typeof post.data.date === 'string' ? post.data.date : post.data.date.toISOString();
+
+const blogPostingJsonLd = createBlogPostingSchema({
+    headline: post.data.title,
+    description: description,
+    canonicalUrl: canonicalPostUrl,
+    imageUrl: imageUrl,
+    datePublished: datePublished,
+    author: post.data.author,
+    site: Astro.site,
+});
+
+const breadcrumbJsonLd = createBreadcrumbSchema(
+    [
+        { name: 'Startseite', path: '/' },
+        { name: 'Aktuelles', path: '/news' },
+        { name: post.data.title, url: canonicalPostUrl },
+    ],
+    Astro.site
+);
+
+const eventJsonLd = createEventSchema(post.data.event, {
+    fallbackTitle: post.data.title,
+    description: description,
+    image: post.data.image,
+    site: Astro.site,
+});
+---
+
+<RootLayout
+    title={post.data.title}
+    description={description}
+    image={imageUrl}
+    imageWidth={imageWidth}
+    imageHeight={imageHeight}
+    type="article"
+    publishedTime={datePublished}
+    author={post.data.author}
+>
+    <script type="application/ld+json" set:html={JSON.stringify(blogPostingJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    {eventJsonLd && <script type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />}
+    <Post metadata={metadata} collection="posts" entryId={slug}>
+        <Content components={mdxComponents} />
+    </Post>
+</RootLayout>

@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets';
+
+import logoImg from '@/assets/images/logo.png';
+import RootLayout from '@/layouts/RootLayout.astro';
+---
+
+<RootLayout
+    title="Fehler 404 - Pfad nicht gefunden"
+    description="Seite nicht gefunden"
+    robots="noindex, nofollow"
+>
+    <div class="flex h-full flex-col items-center">
+        <div class="mx-auto my-auto flex flex-col items-center">
+            <Image
+                src={logoImg}
+                alt="Logo Pfadfinder Wehr"
+                width={220}
+                class="-ml-8"
+                loading="eager"
+            />
+            <div class="prose dark:prose-invert mt-4 max-w-none text-center">
+                <h1>Fehler 404 - Pfad nicht gefunden</h1>
+                <p>
+                    Oh nein! Wir haben nicht gefunden wonach du gesucht hast. Manchmal passiert das
+                    selbst uns. Möglicherweise ist der Link falsch oder die Seite wurde entfernt.
+                    Bitte überprüfe die URL und versuch es erneut. Vielen Dank!
+                </p>
+                <a href="/">Hier gehts zurück zur Startseite</a>
+            </div>
+        </div>
+    </div>
+</RootLayout>

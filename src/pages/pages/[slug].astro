@@ -1,0 +1,46 @@
+---
+import { getCollection, render } from 'astro:content';
+
+import CmsEditButton from '@/components/ui/CmsEditButton.astro';
+import RootLayout from '@/layouts/RootLayout.astro';
+import { cleanContentSlug } from '@/lib/content/posts';
+import { getExcerpt } from '@/lib/utils/metadata';
+import { createBreadcrumbSchema, getCanonicalUrl } from '@/lib/utils/seo';
+import { mdxComponents } from '@/mdx-components';
+
+export async function getStaticPaths() {
+    const pages = await getCollection('pages');
+    const excluded = ['startseite', 'gallerie'];
+    return pages
+        .filter((page) => !excluded.includes(cleanContentSlug(page.id)))
+        .map((page) => ({
+            params: { slug: cleanContentSlug(page.id) },
+            props: { page },
+        }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+const slug = cleanContentSlug(page.id);
+const title = page.data.title || slug;
+const description = page.data.description || page.data.desc || getExcerpt(page.body || '');
+
+const canonicalPageUrl = getCanonicalUrl(`/pages/${slug}`, Astro.site);
+const breadcrumbJsonLd = createBreadcrumbSchema(
+    [
+        { name: 'Startseite', path: '/' },
+        { name: title, url: canonicalPageUrl },
+    ],
+    Astro.site
+);
+---
+
+<RootLayout title={title} description={description}>
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+    <article class="prose sm:prose-lg dark:prose-invert max-w-none">
+        <Content components={mdxComponents} />
+    </article>
+    <div class="mt-8 flex justify-end border-t border-gray-200 pt-4 dark:border-gray-700">
+        <CmsEditButton collection="pages" entryId={slug} label="Seite im CMS bearbeiten" />
+    </div>
+</RootLayout>

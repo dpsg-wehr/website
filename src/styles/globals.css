@@ -1,0 +1,61 @@
+@import 'tailwindcss';
+
+@plugin "@tailwindcss/typography";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --breakpoint-xs: 360px;
+    --breakpoint-s: 560px;
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1024px;
+    --breakpoint-xl: 1280px;
+    --breakpoint-2xl: 1536px;
+
+    --animate-unblur: unblur 0.3s ease-in-out;
+    @keyframes unblur {
+        from {
+            filter: blur(5px);
+        }
+        to {
+            filter: blur(0px);
+        }
+    }
+}
+
+@layer base {
+    html {
+        @apply bg-gray-100 dark:bg-gray-700;
+    }
+    body {
+        @apply text-black dark:text-white;
+    }
+    img {
+        color: transparent;
+    }
+}
+
+.landing-content > h1 {
+    @apply mb-6 text-center text-4xl font-bold;
+}
+
+.landing-content > h2 {
+    @apply mt-12 mb-6 text-3xl font-bold;
+}
+
+.landing-content > p {
+    @apply mb-4 text-lg leading-relaxed;
+}
+
+.landing-content {
+    @apply max-w-none;
+}
+
+.img-blur {
+    filter: blur(5px);
+}
+
+.unblur {
+    animation: unblur 0.5s linear;
+}

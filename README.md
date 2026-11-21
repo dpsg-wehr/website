@@ -1,42 +1,62 @@
 # Website der DPSG Wehr
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
+![Astro](https://img.shields.io/badge/Astro-7-orange?logo=astro&logoColor=white)
 
-Hier findet ihr den Quellcode zu unserer Homepage. Die Website wurde mit [Next.js](https://nextjs.org) entwickelt und wird komplett statisch generiert.
+Hier findet ihr den Quellcode zu unserer Homepage. Die Website wurde mit [Astro](https://astro.build) (v7) entwickelt und wird komplett statisch generiert.
 
 ## Entwicklung
 
 ### Tools verwalten mit mise
 
-Dieses Projekt verwendet [mise](https://mise.jdx.sh/) zur Verwaltung von Entwicklungs-Tools (Node.js, pnpm). Wenn mise installiert ist, werden die richtigen Versionen automatisch beim Öffnen des Verzeichnisses aktiviert (oder können mise `mise install` installiert werden).
+Dieses Projekt verwendet [mise](https://mise.jdx.sh/) zur Verwaltung von Entwicklungs-Tools (Node.js, pnpm). Wenn mise installiert ist, werden die richtigen Versionen automatisch beim Öffnen des Verzeichnisses aktiviert (oder können mit `mise install` installiert werden).
 
 Die Nutzung von mise muss ggf. mit `mise trust` erlaubt werden.
 
 ## Generieren der Website
 
-Zum generieren der Website werden [git](https://git-scm.com/) und [pnpm](https://pnpm.io/installation) benötigt. Sie kann mit den folgenden Befehlen erstellt werden.
+Zum Generieren der Website werden [git](https://git-scm.com/) und [pnpm](https://pnpm.io/installation) benötigt. Sie kann mit den folgenden Befehlen erstellt werden:
 
 ```bash
 # Repository klonen
-git clone https://github.com/Linus-f/website-dpsg-wehr.git
+git clone https://github.com/dpsg-wehr/website.git
 
-# In Ordnder wechseln
-cd website-dpsg-wehr
+# In Ordner wechseln
+cd website
 
 # Abhängigkeiten installieren
 pnpm install
 
 # Website generieren
-pnpm export
+pnpm build
 ```
 
-Die generierte Website wird im Ordner `out` gespeichert. Zur Entwicklung kann ein lokaler server gestartet werden:
+Die generierte Website wird im Ordner `out` gespeichert. Zur Entwicklung kann ein lokaler Server gestartet werden:
 
 ```bash
 pnpm dev
 ```
 
-Die Website ist dann unter [http://localhost:3000](http://localhost:3000) verfügbar. Falls einige Bilder nicht geladen werden können, müssen die optimierten Versionen erst mit `pnpm export` generiert werden.
+Die Website ist dann unter [http://localhost:3000](http://localhost:3000) verfügbar.
+
+## Code-Qualität (Vite+)
+
+Formatierung, Lint und Typprüfung laufen über [Vite+](https://viteplus.dev) (`vite-plus`), das als Projekt-Abhängigkeit installiert ist – ein global installiertes `vp` wird nicht benötigt.
+
+```bash
+# Format + Lint + Typprüfung in einem Durchlauf
+pnpm check
+
+# ... inkl. automatischer Korrekturen
+pnpm check:fix
+
+# Lint (Oxlint + ESLint für .astro-Templates)
+pnpm lint
+
+# Typprüfung (astro check + tsgolint)
+pnpm typecheck
+```
+
+Konfiguration: `vite.config.ts` (Format, Lint, Pre-Commit-Checks), `vitest.config.ts` (Tests) und `eslint.config.mjs` (nur `.astro`-Templates). Der Pre-Commit-Hook `.vite-hooks/pre-commit` läuft über `vp staged` und lässt sich mit `VP_GIT_HOOKS=0` umgehen (z. B. für CMS-Automatisierung).
 
 ## Testing
 
@@ -45,8 +65,11 @@ Das Projekt verfügt über eine automatisierte Testsuite, die Unit-Tests, Kompon
 ### Tests ausführen
 
 ```bash
-# Unit- & Komponenten-Tests (Vitest) im Watch-Mode
+# Unit- & Komponenten-Tests (Vitest über vp test, ein Durchlauf)
 pnpm test
+
+# ... im Watch-Mode
+pnpm test:watch
 
 # E2E-Tests (Playwright)
 pnpm test:e2e
@@ -58,50 +81,6 @@ pnpm test:e2e:ui
 pnpm test:all
 ```
 
-### Reports & Abdeckung
+## Bereitstellung (Deployment)
 
-```bash
-# Testabdeckung (Coverage) anzeigen
-pnpm test --coverage
-
-# Playwright Test-Report öffnen
-npx playwright show-report
-
-# Lokale Test-Ergebnisse (Monocart) im Browser ansehen
-pnpm test:report
-```
-
-## Kalender & ICS Generierung
-
-Die Website generiert automatisch ICS-Kalenderdateien für Termine.
-
-- **Öffentliche Termine**: Werden in `lib/events.public.ts` gepflegt und sind im Repository enthalten.
-- **Interne Termine**: Können in einer lokalen Datei `lib/events.internal.ts` definiert werden. Diese Datei wird von Git ignoriert (`.gitignore`).
-
-**Format für `lib/events.internal.ts`:**
-
-```typescript
-import { AppEvent } from '../types';
-
-export const internalEvents: AppEvent[] = [
-    {
-        title: 'Leiterrunde',
-        start: '2024-01-01',
-        //optional: end: "2024-01-01"
-    },
-];
-```
-
-Die Kalender werden automatisch vor dem Build (`pnpm build`) generiert:
-
-1.  `public/events.ics`: Enthält nur öffentliche Termine.
-2.  `public/internal-events.ics`: Enthält öffentliche und interne Termine (falls `events.internal.ts` existiert).
-
-Beide generierten `.ics` Dateien sind ebenfalls in `.gitignore` und werden nicht committed.
-
-## Lizenz
-
-Der Quellcode dieses Projekts ist unter der **MIT Lizenz** veröffentlicht. Siehe [LICENSE](LICENSE) für Details.
-
-**Hinweis zum Inhalt:**
-Die Inhalte in den Ordnern `content/` und `public/` (Texte, Bilder, Grafiken) sind Eigentum der DPSG Wehr und unterliegen dem Urheberrecht. Sie sind **nicht** Teil der Open-Source-Lizenz und dürfen nicht ohne Genehmigung weiterverwendet werden.
+Die Bereitstellung erfolgt vollautomatisch über Forgejo Actions. Jeder Push auf den Branch `dev` baut ein Test-Image, welches über Tailscale SSH auf den Server übertragen und mit `docker compose up -d` aktualisiert wird. Bei Änderungen auf `main` wird zusätzlich über Semantic Release eine Versionierung vorgenommen und die Produktivumgebung aktualisiert.

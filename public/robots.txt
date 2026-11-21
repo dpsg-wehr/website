@@ -2,4 +2,4 @@ User-Agent: *
 Allow: /
 Disallow: /private/
 
-Sitemap: https://dpsg-wehr.de/sitemap.xml
+Sitemap: https://dpsg-wehr.de/sitemap-index.xml

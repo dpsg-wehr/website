@@ -5,6 +5,9 @@
     "rangeStrategy": "pin",
     "baseBranches": ["dev"],
     "labels": ["dependencies", "automated"],
+    "github-actions": {
+        "managerFilePatterns": ["/(^|/)\\.forgejo/workflows/.+\\.ya?ml$/"]
+    },
     "vulnerabilityAlerts": {
         "labels": ["security", "dependencies"],
         "schedule": ["at any time"],
@@ -30,6 +33,24 @@
                 "sharp"
             ],
             "schedule": ["at any time"]
+        },
+        {
+            "description": "Group Playwright npm package and Docker image together",
+            "matchPackageNames": ["@playwright/test", "playwright", "mcr.microsoft.com/playwright"],
+            "groupName": "Playwright",
+            "schedule": ["at any time"]
+        },
+        {
+            "description": "Vite+ bundles Vitest: update vite-plus and the Vitest pins together (see catalog in pnpm-workspace.yaml)",
+            "matchPackageNames": ["vite-plus", "vitest", "@vitest/*"],
+            "groupName": "Vite+ toolchain",
+            "schedule": ["at any time"]
+        },
+        {
+            "description": "Prevent breaking major updates on pnpm-workspace.yaml overrides (e.g. js-yaml v3 for gray-matter, brace-expansion v1 for minimatch)",
+            "matchDepTypes": ["pnpm-workspace.overrides"],
+            "matchUpdateTypes": ["major"],
+            "enabled": false
         }
     ]
 }

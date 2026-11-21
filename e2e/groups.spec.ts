@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { navigationLinks } from '../lib/config';
+
+import { navigationLinks } from '../src/lib/config';
 
 const groups = navigationLinks.find((n) => n.label === 'Gruppen')?.links || [];
 
@@ -31,6 +32,14 @@ test.describe('Group Pages', () => {
                 intervals: [500, 1000, 2000],
                 timeout: 10000,
             });
+
+            // 6. Verify CMS edit link is present
+            const editButton = page.getByTestId('cms-edit-button');
+            await expect(editButton).toBeVisible();
+            await expect(editButton).toHaveAttribute(
+                'href',
+                /https:\/\/dev\.dpsg-wehr\.de\/admin\/#\/collections\/gruppen\/entries\//
+            );
         });
     }
 });

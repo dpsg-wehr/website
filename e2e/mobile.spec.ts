@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+import { ENABLE_MITGLIEDERPORTAL } from '../src/lib/config';
+
 test.use({
     viewport: { width: 390, height: 844 },
     userAgent:
@@ -26,5 +28,26 @@ test.describe('Mobile Menu', () => {
 
         // 5. Verify sidebar is hidden (off-screen)
         await expect(sidebar).not.toBeInViewport();
+    });
+
+    test('displays campflow portal login link in mobile sidebar when enabled', async ({ page }) => {
+        await page.goto('/');
+
+        const menuButton = page.getByRole('button', { name: 'Toggle navigation' });
+        await menuButton.click();
+
+        const sidebar = page.getByTestId('mobile-sidebar');
+        await expect(sidebar).toBeInViewport();
+
+        const portalLink = sidebar.getByRole('link', { name: /Mitgliederportal/i });
+        if (!ENABLE_MITGLIEDERPORTAL) {
+            await expect(portalLink).toHaveCount(0);
+            return;
+        }
+
+        await expect(portalLink).toBeVisible();
+        await expect(portalLink).toHaveAttribute('href', 'https://on.campflow.de/dpsg-wehr/portal');
+        await expect(portalLink).toHaveAttribute('target', '_blank');
+        await expect(portalLink).toHaveAttribute('rel', 'noopener noreferrer');
     });
 });

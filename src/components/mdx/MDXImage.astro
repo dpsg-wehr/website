@@ -1,0 +1,99 @@
+---
+import { Image } from 'astro:assets';
+
+import { resolveImage } from '@/lib/assets/images';
+
+interface Props {
+    src: string;
+    alt?: string;
+    title?: string;
+    width?: string | number;
+    height?: string | number;
+    priority?: boolean | string;
+    loading?: 'eager' | 'lazy';
+    class?: string;
+    className?: string;
+    fetchPriority?: 'high' | 'low' | 'auto';
+    id?: string;
+    widths?: number[];
+    sizes?: string;
+}
+
+const {
+    src,
+    alt = '',
+    title = '',
+    width,
+    height,
+    priority,
+    loading: loadingProp,
+    fetchPriority: fetchPriorityProp,
+    class: classProp,
+    className: classNameProp,
+    id,
+    widths: widthsProp,
+    sizes: sizesProp,
+} = Astro.props;
+
+if (!src) return;
+
+const isPriority = priority === true || priority === 'true' || loadingProp === 'eager';
+const loadingAttr = isPriority ? 'eager' : loadingProp || 'lazy';
+const fetchPriorityAttr = fetchPriorityProp || (isPriority ? 'high' : undefined);
+const imageMeta = resolveImage(src);
+
+const w = width ? Number(width) : imageMeta?.width || 800;
+const h = height ? Number(height) : imageMeta?.height || 600;
+const appliedClass = `object-contain h-auto max-w-full transition duration-300 drop-shadow-xl hover:drop-shadow-[0_15px_15px_rgba(0,0,0,0.35)] cursor-pointer text-transparent ${classProp || classNameProp || ''}`;
+const displayAlt = alt || title || '';
+
+// Responsive widths up to the image resolution
+const candidateWidths = [360, 480, 640, 800, 1024, 1280, 1600];
+const maxAvailableWidth = imageMeta ? Math.max(imageMeta.width, w) : w;
+let responsiveWidths = widthsProp || candidateWidths.filter((cw) => cw <= maxAvailableWidth);
+if (responsiveWidths.length === 0) {
+    responsiveWidths = [maxAvailableWidth];
+} else if (!responsiveWidths.includes(maxAvailableWidth) && maxAvailableWidth <= 1600) {
+    responsiveWidths = [...responsiveWidths, maxAvailableWidth].sort((a, b) => a - b);
+}
+const responsiveSizes = sizesProp || '(max-width: 896px) 100vw, 896px';
+---
+
+{imageMeta ? (
+    <Image
+        src={imageMeta}
+        alt={displayAlt}
+        width={w}
+        height={h}
+        widths={responsiveWidths}
+        sizes={responsiveSizes}
+        id={id || src}
+        class={appliedClass}
+        loading={loadingAttr}
+        decoding={isPriority ? 'sync' : 'async'}
+        fetchpriority={fetchPriorityAttr}
+        data-lightbox="true"
+        data-src={imageMeta.src}
+        data-alt={displayAlt}
+        data-width={w}
+        data-height={h}
+    />
+) : (
+    <img
+        src={src}
+        alt={displayAlt}
+        width={w}
+        height={h}
+        id={id || src}
+        class={appliedClass}
+        loading={loadingAttr}
+        decoding={isPriority ? 'sync' : 'async'}
+        fetchpriority={fetchPriorityAttr}
+        data-image-component="true"
+        data-lightbox="true"
+        data-src={src}
+        data-alt={displayAlt}
+        data-width={w}
+        data-height={h}
+    />
+)}

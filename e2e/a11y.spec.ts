@@ -1,5 +1,5 @@
-import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { test, expect } from '@playwright/test';
 
 const pagesToTest = [
     { name: 'Home', path: '/' },
@@ -8,6 +8,8 @@ const pagesToTest = [
     { name: 'Subscribe', path: '/subscribe' },
     { name: 'Impressum', path: '/pages/impressum' },
     { name: 'Datenschutz', path: '/pages/datenschutz' },
+    { name: 'Kontakt', path: '/pages/kontakt' },
+    { name: 'Anmeldung', path: '/pages/anmeldung' },
 ];
 
 test.describe('Accessibility (a11y) Audits', () => {
