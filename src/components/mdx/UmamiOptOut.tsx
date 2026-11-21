@@ -174,56 +174,58 @@ export default function UmamiOptOut({ className = '' }: UmamiOptOutProps) {
                     )}
                 </div>
 
-                <div className="shrink-0">
-                    <button
-                        type="button"
-                        data-testid="umami-opt-out-button"
-                        onClick={toggleOptOut}
-                        className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-xs font-medium transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none ${
-                            isOptedOut
-                                ? 'bg-blue-600 text-white shadow-xs hover:bg-blue-700'
-                                : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700'
-                        }`}
-                    >
-                        {isOptedOut ? (
-                            <>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-3.5 w-3.5"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M5 13l4 4L19 7"
-                                    />
-                                </svg>
-                                <span>Webanalyse wieder aktivieren</span>
-                            </>
-                        ) : (
-                            <>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-3.5 w-3.5 text-gray-500 dark:text-gray-400"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
-                                    />
-                                </svg>
-                                <span>Webanalyse für diesen Browser deaktivieren (Opt-Out)</span>
-                            </>
-                        )}
-                    </button>
-                </div>
+                {(!isDnt || isOptedOut) && (
+                    <div className="shrink-0">
+                        <button
+                            type="button"
+                            data-testid="umami-opt-out-button"
+                            onClick={toggleOptOut}
+                            className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-xs font-medium transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none ${
+                                isOptedOut
+                                    ? 'bg-blue-600 text-white shadow-xs hover:bg-blue-700'
+                                    : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700'
+                            }`}
+                        >
+                            {isOptedOut ? (
+                                <>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-3.5 w-3.5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M5 13l4 4L19 7"
+                                        />
+                                    </svg>
+                                    <span>Webanalyse wieder aktivieren</span>
+                                </>
+                            ) : (
+                                <>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-3.5 w-3.5 text-gray-500 dark:text-gray-400"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                                        />
+                                    </svg>
+                                    <span>Webanalyse für diesen Browser deaktivieren (Opt-Out)</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

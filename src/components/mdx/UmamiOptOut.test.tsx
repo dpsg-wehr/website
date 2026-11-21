@@ -85,6 +85,7 @@ describe('UmamiOptOut component', () => {
 
         expect(await screen.findByTestId('opt-out-badge-dnt')).toBeInTheDocument();
         expect(screen.getByText(/Do Not Track/i)).toBeInTheDocument();
+        expect(screen.queryByTestId('umami-opt-out-button')).not.toBeInTheDocument();
 
         if (originalDnt) {
             Object.defineProperty(navigator, 'doNotTrack', originalDnt);
